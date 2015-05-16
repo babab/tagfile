@@ -1,0 +1,100 @@
+#!/usr/bin/env python
+
+import hashlib
+import logging
+import os
+import sqlite3
+import sys
+
+DB_FILE = 'example.db'
+LOG_FILE = 'example.log'
+HASH_ALGO = 'sha1'
+HASH_BUF_SIZE = 1024
+LOAD_BAR = True
+
+logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG, style='{',
+                    format='{asctime}:{levelname}: {message}')
+
+
+class DB:
+    __tablename__ = 'files'
+
+    fields = [
+        'hash text',
+        'location text',
+        'tags text',
+    ]
+
+    def __init__(self):
+        self.conn = sqlite3.connect(DB_FILE)
+        self.c = self.conn.cursor()
+
+    def _squery(self, string, t, s):
+        query = string.format(t=t, s=', '.join(s))
+        logging.debug(query)
+        self.c.execute(query)
+
+    def save(self, close=True):
+        self.conn.commit()
+        if close:
+            self.conn.close()
+
+    def create(self, soft=False):
+        if soft:
+            self._squery('CREATE TABLE IF NOT EXISTS {t} ({s})',
+                         self.__tablename__, self.fields)
+        else:
+            self._squery('CREATE TABLE {t} ({s})',
+                         self.__tablename__, self.fields)
+
+    def insert(self, value_list):
+        s = []
+        for i in value_list:
+            if type(i) == str:
+                s.append("'{}'".format(i))
+            else:
+                s.append(str(i))
+        self._squery('INSERT INTO {t} VALUES ({s})', self.__tablename__, s)
+
+
+class Files:
+    @staticmethod
+    def walkdir(directory):
+        paths = []
+        for root, directories, files in os.walk(os.path.expanduser(directory)):
+            for filename in files:
+                filepath = os.path.join(root, filename)
+                paths.append(filepath)
+        return paths
+
+    @staticmethod
+    def hashfile(filepath):
+        if HASH_ALGO == 'md5':
+            h = hashlib.md5()
+        elif HASH_ALGO == 'sha1':
+            h = hashlib.sha1()
+        else:
+            raise Exception('Invalid HASH_ALGO in configuration')
+
+        with open(filepath, 'rb') as f:
+            while True:
+                data = f.read(HASH_BUF_SIZE)
+                if not data:
+                    break
+                h.update(data)
+        return h.hexdigest()
+
+if __name__ == '__main__':
+    db = DB()
+    db.create(soft=True)
+
+    paths = Files.walkdir('~/Desktop')
+
+    i = 0
+    total = len(paths)
+    for path in paths:
+        i += 1
+        if LOAD_BAR:
+            sys.stdout.write('\r {} / {}'.format(i, total))
+        db.insert([Files.hashfile(path), path, 'new'])
+    db.save()
