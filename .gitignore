@@ -1,2 +1,6 @@
 *.db
 *.log
+
+config.yaml
+
+/.virtualenv/
