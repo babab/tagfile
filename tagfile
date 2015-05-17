@@ -93,7 +93,7 @@ class TagFile:
             if config['load-bar']:
                 sys.stdout.write('\r  {} / {}'.format(iall, total))
             try:
-                Index.get(filename=path)
+                Index.get(Index.filename == path)
             except Index.DoesNotExist:
                 inew += 1
                 Index.create(filehash=Files.hashfile(path), filename=path)
