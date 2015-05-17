@@ -102,38 +102,47 @@ class TagFile:
         self.paths.extend(Files.walkdir(path))
         return self
 
+    def search(self, substring):
+        res = Index.select().where(Index.basename.contains(substring))
+        for i in res:
+            print(i.filepath)
+
     def scan(self):
         '''Check if filepaths are in database, otherwise hash file and save'''
         iall = 0
         inew = 0
         iignore = 0
         total = len(self.paths)
-        for path in self.paths:
-            file_is_valid = True
-            iall += 1
-            if config['load-bar']:
-                sys.stdout.write('\r  {} / {}'.format(iall, total))
+        try:
+            for path in self.paths:
+                file_is_valid = True
+                iall += 1
+                if config['load-bar']:
+                    sys.stdout.write('\r  {} / {}'.format(iall, total))
 
-            for ignorepatt in config['ignore']:
-                if ignorepatt in path:
-                    file_is_valid = False
-                    iignore += 1
-                    logging.debug('Ignored ' + path)
+                for ignorepatt in config['ignore']:
+                    if ignorepatt in path:
+                        file_is_valid = False
+                        iignore += 1
+                        logging.debug('Ignored ' + path)
 
-            if file_is_valid:
-                try:
-                    Index.get(Index.filepath == path)
-                except Index.DoesNotExist:
-                    inew += 1
-                    Index.create(filehash=Files.hashfile(path), filepath=path,
-                                 basename=os.path.basename(path))
-                    logging.debug('Added ' + path)
-        if inew:
-            print(colors.green('\rAdded {} new files'.format(inew)))
-        if iignore:
-            print(colors.cyan('\rIgnored {} files'.format(iignore)))
-        if not inew and not iignore:
-            print('\r                         ')
+                if file_is_valid:
+                    try:
+                        Index.get(Index.filepath == path)
+                    except Index.DoesNotExist:
+                        inew += 1
+                        Index.create(
+                            filehash=Files.hashfile(path), filepath=path,
+                            basename=os.path.basename(path)
+                        )
+                        logging.debug('Added ' + path)
+        finally:
+            if inew:
+                print(colors.green('\rAdded {} new files'.format(inew)))
+            if iignore:
+                print(colors.cyan('\rIgnored {} files'.format(iignore)))
+            if not inew and not iignore:
+                print('\r                         ')
         return self
 
 
@@ -144,6 +153,7 @@ class Command(pycommand.CommandBase):
     optionList = (
         ('help', ('h', False, 'show this help information')),
         ('update', ('u', False, 'scan pwd and update index')),
+        ('search', ('s', '<string>', 'search all filenames for <string>')),
         ('version', ('V', False, 'show version information')),
         ('config', ('F', '<filename>', 'use specified config file')),
     )
@@ -179,6 +189,10 @@ class Command(pycommand.CommandBase):
         tf = TagFile()
         if self.flags['update']:
             tf.addPath(os.getcwd()).scan()
+            return
+
+        if self.flags['search']:
+            tf.search(self.flags['search'])
             return
 
         # Show usage if there are no arguments
