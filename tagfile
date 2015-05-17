@@ -29,6 +29,7 @@ ignore:
     - .virtualenv
     - __pycache__
     - node_modules
+ignore-empty:   yes
 hash-algo:      sha1
 hash-buf-size:  1024
 '''
@@ -141,7 +142,10 @@ class TagFile:
                     if ignorepatt in path:
                         file_is_valid = False
                         iignore += 1
-                        logging.debug('Ignored ' + path)
+                        logging.info('Ignored ' + path)
+
+                if config['ignore-empty'] and not os.path.getsize(path):
+                    file_is_valid = False
 
                 if file_is_valid:
                     try:
@@ -152,7 +156,7 @@ class TagFile:
                             filehash=Files.hashfile(path), filepath=path,
                             basename=os.path.basename(path)
                         )
-                        logging.debug('Added ' + path)
+                        logging.info('Added ' + path)
         finally:
             if inew:
                 print(colors.green('\rAdded {} new files'.format(inew)))
@@ -200,7 +204,7 @@ class Command(pycommand.CommandBase):
         # Setup logging
         logging.basicConfig(
             filename=os.path.expanduser(config['log-file']),
-            level=logging.DEBUG, style='{',
+            level=logging.INFO, style='{',
             format='{asctime}:{levelname}: {message}'
         )
 
