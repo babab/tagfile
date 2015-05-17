@@ -6,6 +6,9 @@ import os
 import sys
 
 import yaml
+import peewee as pw
+import colors
+
 
 defaultconfig = '''
 db-file:        example.db
@@ -24,6 +27,16 @@ logging.basicConfig(
     filename=config['log-file'], level=logging.DEBUG, style='{',
     format='{asctime}:{levelname}: {message}'
 )
+
+db = pw.SqliteDatabase(config['db-file'])
+
+
+class Index(pw.Model):
+    filehash = pw.CharField()
+    filename = pw.CharField()
+
+    class Meta:
+        database = db
 
 
 class Files:
@@ -53,14 +66,39 @@ class Files:
                 h.update(data)
         return h.hexdigest()
 
-if __name__ == '__main__':
-    paths = Files.walkdir('~/Desktop')
 
-    i = 0
-    total = len(paths)
-    for path in paths:
-        i += 1
-        if config['load-bar']:
-            sys.stdout.write('\r {} / {}'.format(i, total))
-        # db.insert([Files.hashfile(path), path, 'new'])
-    print('')
+class TagFile:
+    def __init__(self):
+        db.connect()
+
+        if not Index.table_exists():
+            db.create_tables([Index])
+
+        self.paths = []
+
+    def addPath(self, path):
+        self.paths.extend(Files.walkdir(path))
+
+    def scan(self):
+        iall = 0
+        inew = 0
+        total = len(self.paths)
+        for path in self.paths:
+            iall += 1
+            if config['load-bar']:
+                sys.stdout.write('\r  {} / {}'.format(iall, total))
+            try:
+                Index.get(filename=path)
+            except Index.DoesNotExist:
+                inew += 1
+                Index.create(filehash=Files.hashfile(path), filename=path)
+        print(colors.green('\rAdded {} new files'.format(inew)))
+
+
+if __name__ == '__main__':
+    try:
+        main = TagFile()
+        main.addPath('~/Desktop')
+        main.scan()
+    except KeyboardInterrupt:
+        print('\nOk, well...see you later then I guess.')
