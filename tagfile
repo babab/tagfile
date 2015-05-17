@@ -19,9 +19,16 @@ __version_info__ = (0, 1, 0, 'alpha', 0)
 __version__ = '0.1.0'
 
 defaultconfig = '''
-log-file:       ~/.tagfile/tagfile.log
-load-bar:       yes
-ignore:         ['.git', '.hg', '.svn', '.pyc', '__pycache__', '.virtualenv']
+log-file:   ~/.tagfile/tagfile.log
+load-bar:   yes
+ignore:
+    - .git
+    - .hg
+    - .svn
+    - .pyc
+    - .virtualenv
+    - __pycache__
+    - node_modules
 hash-algo:      sha1
 hash-buf-size:  1024
 '''
@@ -105,6 +112,18 @@ class TagFile:
         for i in res:
             print(i.filepath)
 
+    def same(self):
+        res = Index.raw('''SELECT *, COUNT(filehash) FROM `index`
+                        GROUP BY filehash HAVING ( COUNT(filehash) > 1 )''')
+        hashes = []
+        for i in res:
+            hashes.append(i.filehash)
+        res = (Index.select()
+                    .where(Index.filehash << hashes)
+                    .order_by(Index.filehash))
+        for i in res:
+            print('{} {}'.format(colors.magenta(i.filehash[:5]), i.filepath))
+
     def scan(self):
         '''Check if filepaths are in database, otherwise hash file and save'''
         iall = 0
@@ -151,10 +170,11 @@ class Command(pycommand.CommandBase):
     optionList = (
         ('help', ('h', False, 'show this help information')),
         ('scan', ('', False, 'scan pwd and update index')),
-        ('add', ('a', '<directory>', 'scan <directory> and add to index')),
-        ('find', ('f', '<string>', 'find all filenames for <string>')),
-        ('version', ('V', False, 'show version information')),
-        ('config', ('F', '<filename>', 'use specified config file')),
+        ('add', ('', '<directory>', 'scan <directory> and add to index')),
+        ('find', ('', '<string>', 'find all filenames for <string>')),
+        ('same', ('', False, 'show all indexed duplicate files')),
+        ('version', ('', False, 'show version information')),
+        ('config', ('', '<filename>', 'use specified config file')),
     )
 
     def run(self):
@@ -186,23 +206,20 @@ class Command(pycommand.CommandBase):
 
         # Setup TagFile
         tf = TagFile()
+
         if self.flags['scan']:
-            tf.addPath(os.getcwd()).scan()
-            return
-
-        if self.flags['add']:
-            tf.addPath(os.path.expanduser(self.flags['add'])).scan()
-            return
-
-        if self.flags['find']:
+            tf.addPath(os.getcwd())
+            tf.scan()
+        elif self.flags['add']:
+            tf.addPath(os.path.expanduser(self.flags['add']))
+            tf.scan()
+        elif self.flags['find']:
             tf.find(self.flags['find'])
-            return
-
-        # Show usage if there are no arguments
-        if not self.args:
+        elif self.flags['same']:
+            tf.same()
+        else:
             print('Use "tagfile --scan" to scan "{}" for files. '
                   'See "tagfile --help" for more options'.format(os.getcwd()))
-            return
 
 if __name__ == '__main__':
     try:
