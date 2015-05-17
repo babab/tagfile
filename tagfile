@@ -19,15 +19,33 @@ __version_info__ = (0, 1, 0, 'alpha', 0)
 __version__ = '0.1.0'
 
 defaultconfig = '''
-db-file:        ~/git/o/tagfile/example.db
-log-file:       ~/git/o/tagfile/example.log
+log-file:       ~/.tagfile/tagfile.log
 load-bar:       yes
+ignore:         ['.git', '.hg', '.svn', '.pyc', '__pycache__', '.virtualenv']
 hash-algo:      sha1
 hash-buf-size:  1024
 '''
 
 config = yaml.load(defaultconfig)
-db = pw.SqliteDatabase(os.path.expanduser(config['db-file']))
+
+# Set base path and initially create config and data files
+BASE_PATH = os.path.expanduser('~/.tagfile')
+
+# initialize data path
+if not os.path.exists(BASE_PATH):
+    os.mkdir(BASE_PATH)
+    fn = os.path.join(BASE_PATH, 'config.yaml')
+    with open(fn, 'w') as f:
+        f.write(defaultconfig[1:])
+    print(colors.green('Created config file in {}\n'.format(fn)))
+
+# Read from default user config file
+fn = os.path.join(BASE_PATH, 'config.yaml')
+if os.path.exists(fn):
+    config.update(yaml.load(open(fn).read()))
+
+# Init sqlite database - used in peewee models
+DB = pw.SqliteDatabase(os.path.join(BASE_PATH, 'index.db'))
 
 
 class Index(pw.Model):
@@ -37,7 +55,7 @@ class Index(pw.Model):
     basename = pw.CharField()
 
     class Meta:
-        database = db
+        database = DB
 
 
 class Files:
@@ -72,10 +90,10 @@ class Files:
 class TagFile:
     '''Search, index and tag your files and find multiple copies'''
     def __init__(self):
-        db.connect()
+        DB.connect()
 
         if not Index.table_exists():
-            db.create_tables([Index])
+            DB.create_tables([Index])
 
         self.paths = []
 
@@ -88,18 +106,34 @@ class TagFile:
         '''Check if filepaths are in database, otherwise hash file and save'''
         iall = 0
         inew = 0
+        iignore = 0
         total = len(self.paths)
         for path in self.paths:
+            file_is_valid = True
             iall += 1
             if config['load-bar']:
                 sys.stdout.write('\r  {} / {}'.format(iall, total))
-            try:
-                Index.get(Index.filepath == path)
-            except Index.DoesNotExist:
-                inew += 1
-                Index.create(filehash=Files.hashfile(path), filepath=path,
-                             basename=os.path.basename(path))
-        print(colors.green('\rAdded {} new files'.format(inew)))
+
+            for ignorepatt in config['ignore']:
+                if ignorepatt in path:
+                    file_is_valid = False
+                    iignore += 1
+                    logging.debug('Ignored ' + path)
+
+            if file_is_valid:
+                try:
+                    Index.get(Index.filepath == path)
+                except Index.DoesNotExist:
+                    inew += 1
+                    Index.create(filehash=Files.hashfile(path), filepath=path,
+                                 basename=os.path.basename(path))
+                    logging.debug('Added ' + path)
+        if inew:
+            print(colors.green('\rAdded {} new files'.format(inew)))
+        if iignore:
+            print(colors.cyan('\rIgnored {} files'.format(iignore)))
+        if not inew and not iignore:
+            print('\r                         ')
         return self
 
 
@@ -116,6 +150,7 @@ class Command(pycommand.CommandBase):
 
     def run(self):
         '''Run from shell; main application program flow.'''
+
         # Flags that will print and exit
         if self.flags['help']:
             print(self.usage)
@@ -124,7 +159,7 @@ class Command(pycommand.CommandBase):
             print('Python version ' + sys.version.split()[0])
             return
 
-        # Load config from default file or argument
+        # Update config with file
         if self.flags['config']:
             fn = self.flags['config']
             if os.path.exists(fn):
@@ -132,10 +167,6 @@ class Command(pycommand.CommandBase):
             else:
                 print('ERROR: file does not exist')
                 return 2
-        else:
-            fn = os.path.expanduser('~/tagfile.conf')
-            if os.path.exists(fn):
-                config.update(yaml.load(open(fn).read()))
 
         # Setup logging
         logging.basicConfig(
@@ -150,8 +181,10 @@ class Command(pycommand.CommandBase):
             tf.addPath(os.getcwd()).scan()
             return
 
+        # Show usage if there are no arguments
         if not self.args:
-            print(self.usage)
+            print('Use "tagfile -u" to scan {} for files.\n'
+                  'See "tagfile --help" for more options'.format(os.getcwd()))
             return
 
 if __name__ == '__main__':
