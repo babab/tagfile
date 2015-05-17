@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''search, index and tag your files and find multiple copies'''
+'''Search, index and tag your files and find multiple copies'''
 
 import hashlib
 import logging
@@ -88,13 +88,11 @@ class Files:
 
 
 class TagFile:
-    '''Search, index and tag your files and find multiple copies'''
+    '''find, index and tag your files and find multiple copies'''
     def __init__(self):
         DB.connect()
-
         if not Index.table_exists():
             DB.create_tables([Index])
-
         self.paths = []
 
     def addPath(self, path):
@@ -102,7 +100,7 @@ class TagFile:
         self.paths.extend(Files.walkdir(path))
         return self
 
-    def search(self, substring):
+    def find(self, substring):
         res = Index.select().where(Index.basename.contains(substring))
         for i in res:
             print(i.filepath)
@@ -152,8 +150,8 @@ class Command(pycommand.CommandBase):
     description = TagFile.__doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),
-        ('update', ('u', False, 'scan pwd and update index')),
-        ('search', ('s', '<string>', 'search all filenames for <string>')),
+        ('scan', ('s', False, 'scan pwd and update index')),
+        ('find', ('f', '<string>', 'find all filenames for <string>')),
         ('version', ('V', False, 'show version information')),
         ('config', ('F', '<filename>', 'use specified config file')),
     )
@@ -187,17 +185,17 @@ class Command(pycommand.CommandBase):
 
         # Setup TagFile
         tf = TagFile()
-        if self.flags['update']:
+        if self.flags['scan']:
             tf.addPath(os.getcwd()).scan()
             return
 
-        if self.flags['search']:
-            tf.search(self.flags['search'])
+        if self.flags['find']:
+            tf.find(self.flags['find'])
             return
 
         # Show usage if there are no arguments
         if not self.args:
-            print('Use "tagfile -u" to scan {} for files.\n'
+            print('Use "tagfile --scan" to scan "{}" for files. '
                   'See "tagfile --help" for more options'.format(os.getcwd()))
             return
 
