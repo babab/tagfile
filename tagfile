@@ -150,7 +150,8 @@ class Command(pycommand.CommandBase):
     description = TagFile.__doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),
-        ('scan', ('s', False, 'scan pwd and update index')),
+        ('scan', ('', False, 'scan pwd and update index')),
+        ('add', ('a', '<directory>', 'scan <directory> and add to index')),
         ('find', ('f', '<string>', 'find all filenames for <string>')),
         ('version', ('V', False, 'show version information')),
         ('config', ('F', '<filename>', 'use specified config file')),
@@ -187,6 +188,10 @@ class Command(pycommand.CommandBase):
         tf = TagFile()
         if self.flags['scan']:
             tf.addPath(os.getcwd()).scan()
+            return
+
+        if self.flags['add']:
+            tf.addPath(os.path.expanduser(self.flags['add'])).scan()
             return
 
         if self.flags['find']:
