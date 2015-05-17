@@ -19,15 +19,15 @@ __version_info__ = (0, 1, 0, 'alpha', 0)
 __version__ = '0.1.0'
 
 defaultconfig = '''
-db-file:        example.db
-log-file:       example.log
+db-file:        ~/git/o/tagfile/example.db
+log-file:       ~/git/o/tagfile/example.log
 load-bar:       yes
 hash-algo:      sha1
 hash-buf-size:  1024
 '''
 
 config = yaml.load(defaultconfig)
-db = pw.SqliteDatabase(config['db-file'])
+db = pw.SqliteDatabase(os.path.expanduser(config['db-file']))
 
 
 class Index(pw.Model):
@@ -137,7 +137,8 @@ class Command(pycommand.CommandBase):
 
         # Setup logging
         logging.basicConfig(
-            filename=config['log-file'], level=logging.DEBUG, style='{',
+            filename=os.path.expanduser(config['log-file']),
+            level=logging.DEBUG, style='{',
             format='{asctime}:{levelname}: {message}'
         )
 
