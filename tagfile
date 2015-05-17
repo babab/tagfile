@@ -1,14 +1,22 @@
 #!/usr/bin/env python
 
+'''search, index and tag your files and find multiple copies'''
+
 import hashlib
 import logging
 import os
 import sys
 
-import yaml
-import peewee as pw
 import colors
+import peewee as pw
+import pycommand
+import yaml
 
+__docformat__ = 'restructuredtext'
+__author__ = "Benjamin Althues"
+__copyright__ = "Copyright (C) 2015  Benjamin Althues"
+__version_info__ = (0, 1, 0, 'alpha', 0)
+__version__ = '0.1.0'
 
 defaultconfig = '''
 db-file:        example.db
@@ -19,19 +27,11 @@ hash-buf-size:  1024
 '''
 
 config = yaml.load(defaultconfig)
-
-
-if os.path.exists('config.yaml'):
-    config.update(yaml.load(open('config.yaml').read()))
-logging.basicConfig(
-    filename=config['log-file'], level=logging.DEBUG, style='{',
-    format='{asctime}:{levelname}: {message}'
-)
-
 db = pw.SqliteDatabase(config['db-file'])
 
 
 class Index(pw.Model):
+    '''Database model for peewee ORM'''
     filehash = pw.CharField()
     filename = pw.CharField()
 
@@ -40,6 +40,7 @@ class Index(pw.Model):
 
 
 class Files:
+    '''Filesystem functions'''
     @staticmethod
     def walkdir(directory):
         paths = []
@@ -56,7 +57,7 @@ class Files:
         elif config['hash-algo'] == 'sha1':
             h = hashlib.sha1()
         else:
-            raise Exception('Invalid HASH_ALGO in configuration')
+            raise Exception('Invalid "hash-algo" in configuration')
 
         with open(filepath, 'rb') as f:
             while True:
@@ -68,6 +69,7 @@ class Files:
 
 
 class TagFile:
+    '''Search, index and tag your files and find multiple copies'''
     def __init__(self):
         db.connect()
 
@@ -77,9 +79,12 @@ class TagFile:
         self.paths = []
 
     def addPath(self, path):
+        '''Walk path and add all found files'''
         self.paths.extend(Files.walkdir(path))
+        return self
 
     def scan(self):
+        '''Check if filenames are in database, otherwise hash file and save'''
         iall = 0
         inew = 0
         total = len(self.paths)
@@ -93,12 +98,66 @@ class TagFile:
                 inew += 1
                 Index.create(filehash=Files.hashfile(path), filename=path)
         print(colors.green('\rAdded {} new files'.format(inew)))
+        return self
 
+
+class Command(pycommand.CommandBase):
+    '''Argument handler based on pycommand'''
+    usagestr = 'Usage: tagfile <options>'
+    description = TagFile.__doc__
+    optionList = (
+        ('help', ('h', False, 'show this help information')),
+        ('update', ('u', False, 'scan pwd and update index')),
+        ('version', ('V', False, 'show version information')),
+        ('config', ('F', '<filename>', 'use specified config file')),
+    )
+
+    def run(self):
+        '''Run from shell; the main application program flow.'''
+        # Flags that will print and exit
+        if self.flags['help']:
+            print(self.usage)
+            return
+        elif self.flags['version']:
+            print('Python version ' + sys.version.split()[0])
+            return
+
+        # Load config from default file or argument
+        if self.flags['config']:
+            fn = self.flags['config']
+            if os.path.exists(fn):
+                config.update(yaml.load(open(fn).read()))
+            else:
+                print('ERROR: file does not exist')
+                return 2
+        else:
+            fn = os.path.expanduser('~/tagfile.conf')
+            if os.path.exists(fn):
+                config.update(yaml.load(open(fn).read()))
+
+        # Setup logging
+        logging.basicConfig(
+            filename=config['log-file'], level=logging.DEBUG, style='{',
+            format='{asctime}:{levelname}: {message}'
+        )
+
+        # Setup TagFile
+        tf = TagFile()
+        if self.flags['update']:
+            tf.addPath(os.getcwd()).scan()
+            return
+
+        if not self.args:
+            print(self.usage)
+            return
 
 if __name__ == '__main__':
     try:
-        main = TagFile()
-        main.addPath('~/Desktop')
-        main.scan()
+        cmd = Command(sys.argv[1:])
+        if cmd.error:
+            print('error: {0}'.format(cmd.error))
+            sys.exit(1)
+        else:
+            sys.exit(cmd.run())
     except KeyboardInterrupt:
-        print('\nOk, well...see you later then I guess.')
+        print('\nOk, well... see you later then I guess.')
