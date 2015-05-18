@@ -120,12 +120,25 @@ class TagFile:
         for i in res:
             print(i.filepath)
 
-    def same(self):
+    def stats(self):
+        repos = str(Index.select().count())
+        files = str(Repository.select().count())
+        duplos = str(self.same(return_count=True))
+        print('{} repos (main paths)\n'
+              '{} files indexed\n'
+              '{} duplicate files'
+              .format(colors.magenta(repos), colors.green(files),
+                      colors.cyan(duplos)))
+
+    def same(self, return_count=False):
         res = Index.raw('''SELECT *, COUNT(filehash) FROM `index`
                         GROUP BY filehash HAVING ( COUNT(filehash) > 1 )''')
         hashes = []
         for i in res:
             hashes.append(i.filehash)
+        if return_count:
+            return len(hashes)
+
         res = (Index.select()
                     .where(Index.filehash << hashes)
                     .order_by(Index.filehash))
@@ -188,7 +201,8 @@ class Command(pycommand.CommandBase):
         '  scan               scan current directory and add to index\n'
         '  add <directory>    scan <directory> and add to index\n'
         '  find <string>      find all filenames for <string>\n'
-        '  same               show all indexed duplicate files'
+        '  same               show all indexed duplicate files\n'
+        '  stats              show statistics for index, repos and tags'
     )
 
     def run(self):
@@ -246,6 +260,8 @@ class Command(pycommand.CommandBase):
                 print('error: command find requires argument')
         elif command == 'same':
             tf.same()
+        elif command == 'stats':
+            tf.stats()
         else:
             print(self.usage)
 
