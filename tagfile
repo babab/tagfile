@@ -56,14 +56,20 @@ if os.path.exists(fn):
 DB = pw.SqliteDatabase(os.path.join(BASE_PATH, 'index.db'))
 
 
-class Index(pw.Model):
+class Model(pw.Model):
     '''Database model for peewee ORM'''
+    class Meta:
+        database = DB
+
+
+class Index(Model):
     filehash = pw.CharField()
     filepath = pw.CharField()
     basename = pw.CharField()
 
-    class Meta:
-        database = DB
+
+class Repository(Model):
+    filepath = pw.CharField()
 
 
 class Files:
@@ -100,12 +106,13 @@ class TagFile:
     def __init__(self):
         DB.connect()
         if not Index.table_exists():
-            DB.create_tables([Index])
+            DB.create_tables([Index, Repository])
         self.paths = []
 
     def addPath(self, path):
         '''Walk path and add all found files'''
         self.paths.extend(Files.walkdir(path))
+        Repository.get_or_create(filepath=path)
         return self
 
     def find(self, substring):
@@ -222,7 +229,7 @@ class Command(pycommand.CommandBase):
         elif self.flags['same']:
             tf.same()
         else:
-            print('Use "tagfile --scan" to scan "{}" for files. '
+            print('Use "tagfile --scan" to scan PWD for files. \n'
                   'See "tagfile --help" for more options'.format(os.getcwd()))
 
 if __name__ == '__main__':
