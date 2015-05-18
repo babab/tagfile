@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''Search, index and tag your files and find multiple copies'''
+'''Search, index and tag your files and find duplicates'''
 
 import hashlib
 import logging
@@ -102,7 +102,7 @@ class Files:
 
 
 class TagFile:
-    '''find, index and tag your files and find multiple copies'''
+    '''Search, index and tag your files and find duplicates'''
     def __init__(self):
         DB.connect()
         if not Index.table_exists():
@@ -180,12 +180,15 @@ class Command(pycommand.CommandBase):
     description = TagFile.__doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),
-        ('scan', ('', False, 'scan pwd and update index')),
-        ('add', ('', '<directory>', 'scan <directory> and add to index')),
-        ('find', ('', '<string>', 'find all filenames for <string>')),
-        ('same', ('', False, 'show all indexed duplicate files')),
         ('version', ('', False, 'show version information')),
         ('config', ('', '<filename>', 'use specified config file')),
+    )
+    usageTextExtra = (
+        'Commands:\n'
+        '  scan               scan current directory and add to index\n'
+        '  add <directory>    scan <directory> and add to index\n'
+        '  find <string>      find all filenames for <string>\n'
+        '  same               show all indexed duplicate files'
     )
 
     def run(self):
@@ -218,19 +221,33 @@ class Command(pycommand.CommandBase):
         # Setup TagFile
         tf = TagFile()
 
-        if self.flags['scan']:
+        try:
+            command = self.args[0]
+        except IndexError:
+            command = None
+        try:
+            arg = self.args[1]
+        except IndexError:
+            arg = None
+
+        if command == 'scan':
             tf.addPath(os.getcwd())
             tf.scan()
-        elif self.flags['add']:
-            tf.addPath(os.path.expanduser(self.flags['add']))
-            tf.scan()
-        elif self.flags['find']:
-            tf.find(self.flags['find'])
-        elif self.flags['same']:
+        elif command == 'add':
+            if arg:
+                tf.addPath(os.path.expanduser(arg))
+                tf.scan()
+            else:
+                print('error: command add requires argument')
+        elif command == 'find':
+            if arg:
+                tf.find(arg)
+            else:
+                print('error: command find requires argument')
+        elif command == 'same':
             tf.same()
         else:
-            print('Use "tagfile --scan" to scan PWD for files. \n'
-                  'See "tagfile --help" for more options'.format(os.getcwd()))
+            print(self.usage)
 
 if __name__ == '__main__':
     try:
