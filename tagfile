@@ -139,8 +139,17 @@ class TagFile:
         res = (Index.select()
                     .where(Index.filehash << hashes)
                     .order_by(Index.filehash))
+        changed = ''
+        toggler = False
         for i in res:
-            print('{} {}'.format(colors.magenta(i.filehash[:5]), i.filepath))
+            if changed != i.filehash:
+                toggler = False if toggler else True
+            if toggler:
+                print('{} {}'.format(colors.green(i.filehash[:5]), i.filepath))
+            else:
+                print('{} {}'.format(colors.magenta(i.filehash[:5]),
+                                     colors.bold(i.filepath)))
+            changed = i.filehash
 
     def scan(self):
         '''Check if filepaths are in database, otherwise hash file and save'''
