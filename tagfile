@@ -121,14 +121,11 @@ class TagFile:
             print(i.filepath)
 
     def stats(self):
-        repos = str(Index.select().count())
-        files = str(Repository.select().count())
-        duplos = str(self.same(return_count=True))
-        print('{} repos (main paths)\n'
-              '{} files indexed\n'
-              '{} duplicate files'
-              .format(colors.magenta(repos), colors.green(files),
-                      colors.cyan(duplos)))
+        files = colors.green(str(Index.select().count()))
+        repos = colors.green(str(Repository.select().count()))
+        duplos = colors.green(str(self.same(return_count=True)))
+        print('{}\tfiles indexed\n{}\trepositories (main paths)\n'
+              '{}\tduplicate files'.format(files, repos, duplos))
 
     def same(self, return_count=False):
         res = Index.raw('''SELECT *, COUNT(filehash) FROM `index`
