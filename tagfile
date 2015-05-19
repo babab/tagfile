@@ -141,6 +141,12 @@ class TagFile:
         print('{}\tfiles indexed\n{}\trepositories (main paths)\n'
               '{}\tduplicate files'.format(files, repos, duplos))
 
+    def re_index(self):
+        Index.delete().execute()
+        for i in Repository.select():
+            self.addPath(i.filepath)
+        self.scan()
+
     def same(self, return_count=False):
         res = Index.raw('''SELECT *, COUNT(filehash) FROM `index`
                         GROUP BY filehash HAVING ( COUNT(filehash) > 1 )''')
@@ -182,7 +188,7 @@ class TagFile:
                     if ignorepatt in path:
                         file_is_valid = False
                         iignore += 1
-                        logging.info('Ignored ' + path)
+                        logging.debug('Ignored ' + path)
 
                 if config['ignore-empty'] and not os.path.getsize(path):
                     file_is_valid = False
@@ -196,7 +202,7 @@ class TagFile:
                             filehash=Files.hashfile(path), filepath=path,
                             basename=os.path.basename(path)
                         )
-                        logging.info('Added ' + path)
+                        logging.debug('Added ' + path)
         finally:
             if inew:
                 print(colors.green('\rAdded {} new files'.format(inew)))
@@ -222,7 +228,8 @@ class Command(pycommand.CommandBase):
         '  add <directory>    scan <directory> and add to index\n'
         '  find <string>      find all filenames for <string>\n'
         '  same               show all indexed duplicate files\n'
-        '  stats              show statistics for index, repos and tags'
+        '  stats              show statistics for index, repos and tags\n'
+        '  re-index           re-index all repos'
     )
 
     def run(self):
@@ -282,6 +289,8 @@ class Command(pycommand.CommandBase):
             tf.same()
         elif command == 'stats':
             tf.stats()
+        elif command == 're-index':
+            tf.re_index()
         else:
             print(self.usage)
 
