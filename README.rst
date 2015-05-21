@@ -6,7 +6,6 @@ Search, index and tag your files and find duplicates.
 Prerequisites:
 
 - Python 3.2 or later (no Python 2 support, but it may very well work)
-- Support for \*BSD, Linux and Windows (w/ Cygwin)
 
 Dependencies (installed with pip):
 
@@ -14,6 +13,9 @@ Dependencies (installed with pip):
 - PyYAML (http://pyyaml.org/)
 - ansicolors (https://pypi.python.org/pypi/ansicolors/1.0.2)
 - pycommand (http://pythonhosted.org/pycommand/)
+
+
+**tagfile is in an early development stage and has not been released yet**
 
 
 Quick Manual
