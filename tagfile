@@ -48,7 +48,7 @@ hash-algo:      sha1
 hash-buf-size:  1024
 '''
 
-config = yaml.load(defaultconfig)
+config = yaml.safe_load(defaultconfig)
 
 # Set base path and initially create config and data files
 BASE_PATH = os.path.expanduser('~/.tagfile')
@@ -64,7 +64,7 @@ if not os.path.exists(BASE_PATH):
 # Read from default user config file
 fn = os.path.join(BASE_PATH, 'config.yaml')
 if os.path.exists(fn):
-    config.update(yaml.load(open(fn).read()))
+    config.update(yaml.safe_load(open(fn).read()))
 
 # Init sqlite database - used in peewee models
 DB = pw.SqliteDatabase(os.path.join(BASE_PATH, 'index.db'))
@@ -247,7 +247,7 @@ class Command(pycommand.CommandBase):
         if self.flags['config']:
             fn = self.flags['config']
             if os.path.exists(fn):
-                config.update(yaml.load(open(fn).read()))
+                config.update(yaml.safe_load(open(fn).read()))
             else:
                 print('ERROR: file does not exist')
                 return 2

@@ -5,14 +5,14 @@ Search, index and tag your files and find duplicates.
 
 Prerequisites:
 
-- Python 3.2 or later (no Python 2 support, but it may very well work)
+- Python 3.7 or later
 
 Dependencies (installed with pip):
 
+- ansicolors (https://pypi.python.org/pypi/ansicolors/)
 - Peewee ORM (https://peewee.readthedocs.org/en/latest/)
-- PyYAML (http://pyyaml.org/)
-- ansicolors (https://pypi.python.org/pypi/ansicolors/1.0.2)
 - pycommand (http://pythonhosted.org/pycommand/)
+- PyYAML (http://pyyaml.org/)
 
 
 **tagfile is in an early development stage and has not been released yet**
