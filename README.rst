@@ -52,7 +52,7 @@ Make sure that pip points to the python3 interpreter and run::
 Software license
 ----------------
 
-Copyright (c) 2015  Benjamin Althues <benjamin@babab.nl>
+Copyright (c) 2015-2023  Benjamin Althues <benjamin@babab.nl>
 
 Permission to use, copy, modify, and distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
