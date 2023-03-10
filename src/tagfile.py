@@ -294,13 +294,19 @@ class Command(pycommand.CommandBase):
         else:
             print(self.usage)
 
-if __name__ == '__main__':
+
+def main():
     try:
         cmd = Command(sys.argv[1:])
         if cmd.error:
             print('error: {0}'.format(cmd.error))
-            sys.exit(1)
+            return 1
         else:
-            sys.exit(cmd.run())
+            return cmd.run()
     except KeyboardInterrupt:
-        print('\nOk, well... see you later then I guess.')
+        print('\nTagfile successfully exited.')
+        return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
