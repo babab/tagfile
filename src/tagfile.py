@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 '''Search, index and tag your files and find duplicates'''
 
 # Copyright (c) 2015-2023 Benjamin Althues <benjamin@babab.nl>

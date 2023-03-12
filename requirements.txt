@@ -1,4 +1,0 @@
-ansicolors>=1.1.8
-peewee>=3.15.4
-pycommand>=0.4.0
-PyYAML>=6.0
