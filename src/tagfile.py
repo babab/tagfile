@@ -45,6 +45,22 @@ __author__ = "Benjamin Althues"
 __copyright__ = "Copyright (C) 2015-2023  Benjamin Althues"
 __version_info__ = (0, 1, 0, 'alpha', 0)
 __version__ = '0.1.0'
+versionStr = 'tagfile {}'.format(__version__)
+
+
+def verboseVersionInfo():
+    '''Returns a string with verbose version information
+    The string shows the version of tagfile and that of Python.
+    It also displays the name of the operating system/platform name.
+    '''
+    return '{}\n{}\n\nPython {}\nInterpreter is at {}\nPlatform is {}'.format(
+        versionStr,
+        __copyright__,
+        sys.version.replace('\n', ''),
+        sys.executable or 'unknown',
+        os.name,
+    )
+
 
 defaultconfig = '''
 log-file:   ~/.tagfile/tagfile.log
@@ -254,7 +270,7 @@ class Command(pycommand.CommandBase):
             print(self.usage)
             return
         elif self.flags['version']:
-            print('Python version ' + sys.version.split()[0])
+            print(verboseVersionInfo())
             return
 
         # Update config with file
