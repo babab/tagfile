@@ -11,7 +11,7 @@ Dependencies (installed with pip):
 
 - ansicolors (https://pypi.python.org/pypi/ansicolors/)
 - Peewee ORM (https://peewee.readthedocs.org/en/latest/)
-- pycommand (http://pythonhosted.org/pycommand/)
+- pycommand (https://babab.github.io/pycommand/)
 - PyYAML (http://pyyaml.org/)
 
 
