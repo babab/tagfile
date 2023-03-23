@@ -74,6 +74,8 @@ ignore:
     - __pycache__
     - node_modules
 ignore-empty:   yes
+
+# hash-algo can be 'md5' or 'sha1'
 hash-algo:      sha1
 hash-buf-size:  1024
 '''
