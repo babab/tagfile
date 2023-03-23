@@ -107,6 +107,6 @@ get-pipx:
 	command -v pipx >/dev/null || ${PIP} install --user pipx
 
 # These are to help debug this Makefile:
-# pipuserlist = "$$(${PIP} list --user --format=freeze)"
-# purge_all_user_packages_from_pip:
-# 	"${PIP}" uninstall -y "${pipuserlist}"
+pipuserlist = "$$(${PIP} list --user --format=freeze)"
+X-WARNING-purge-all-user-packages-from-pip:
+	${PIP} uninstall -y "${pipuserlist}"
