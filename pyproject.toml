@@ -10,10 +10,6 @@ readme = "README.rst"
 requires-python = ">=3.7"
 license = {file = "LICENSE"}
 classifiers = [
-
-    # FIXME block uploads to PyPI, TODO remove when ready
-    "Private :: Do Not Upload",
-
     "Development Status :: 4 - Beta",
     #"Development Status :: 5 - Production/Stable",
     "Environment :: Console",
