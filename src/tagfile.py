@@ -43,7 +43,7 @@ import yaml
 __docformat__ = 'restructuredtext'
 __author__ = "Benjamin Althues"
 __copyright__ = "Copyright (C) 2015-2023  Benjamin Althues"
-__version__ = '0.1.0'
+__version__ = '0.2.0a0'
 versionStr = 'tagfile {}'.format(__version__)
 
 

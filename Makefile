@@ -29,7 +29,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 NAME    = tagfile
-VERSION = 0.1.0
+VERSION = 0.2.0a0
 PYTHON  = python3
 PIP     = ${PYTHON} -m pip
 WHEEL   = dist/${NAME}-${VERSION}-py3-none-any.whl
@@ -70,7 +70,7 @@ release:
 	#  $ git tag -S vX.X.X
 	#  $ git push --tags
 	#
-	#  - set __version__ to X.X.X-dev
+	#  - set __version__ to X.X.Xa0
 
 
 dist: get-flit
