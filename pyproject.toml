@@ -51,7 +51,7 @@ Home = "https://github.com/babab/tagfile"
 
 
 [project.scripts]
-tagfile = "tagfile:main"
+tagfile = "tagfile.commands.tagfile:main"
 
 
 [tool.flit.sdist]
