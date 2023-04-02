@@ -73,11 +73,17 @@ using pipx (https://pypa.github.io/pipx/) is recommended because it
 avoids dependency problems and/or clashes with python packages from your
 system's package manager in the future.
 
-Install tagfile:
+Install latest release from PyPI:
 
 .. code:: console
 
    $ pipx install tagfile
+
+Install latest development version from git:
+
+.. code:: console
+
+   $ pipx install git+https://github.com/babab/tagfile@devel
 
 To build and install from source you can use:
 
