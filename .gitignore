@@ -1,7 +1,9 @@
 *.db
 *.log
+*.spec
 
 config.yaml
 
+/build/
 /dist/
 /.virtualenv/
