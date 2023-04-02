@@ -134,3 +134,7 @@ class Command(pycommand.CommandBase):
             tf.re_index()
         else:
             print(self.usage)
+
+
+if __name__ == '__main__':
+    sys.exit(main())
