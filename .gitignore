@@ -3,6 +3,7 @@
 *.spec
 
 config.yaml
+config.mk
 
 /build/
 /dist/

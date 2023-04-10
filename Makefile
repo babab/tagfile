@@ -28,11 +28,26 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
-NAME    = tagfile
-VERSION = 0.2.0a0
-PYTHON  = python3
-PIP     = ${PYTHON} -m pip
-WHEEL   = dist/${NAME}-${VERSION}-py3-none-any.whl
+# Settings
+NAME      = tagfile
+VERSION   = 0.2.0a0
+SCRIPT    = ./src/${NAME}/commands/${NAME}.py
+CODE_DIRS = src tests
+
+# absolute path to system python (version)
+SYSPYTHON = /usr/bin/python3
+
+# directory name, will be created next to Makefile
+VENVDIR   = .virtualenv
+
+# Variables - changing these is not advised.
+sys_pip   = ${SYSPYTHON} -m pip
+venv_pip  = ${VENVDIR}/bin/python -m pip
+dist_whl  = dist/${NAME}-${VERSION}-py3-none-any.whl
+
+# Include any local configuration overrides
+sinclude config.mk
+
 
 help:
 	# This makefile is meant to aid in development flow as
@@ -44,11 +59,14 @@ help:
 	#  release	- show manual release steps
 	#
 	# DEVELOPMENT TARGETS
+	#  venv		- only make virtualenv and install build deps
 	#  build        - flit build
 	#  install      - flit build and install with pipx install
-	#  install-dev  - install with pipx install --editable .
+	#  install-dev  - install with 'pipx install --editable .'
 	#  uninstall    - same as pipx uninstall NAME
 	#  clean        - remove build and dist folders
+	#  exe          - build a single executable file with pyinstaller'
+	#  test         - run pytest and test code
 	#
 	# BUILD DEPENDENCIES that are precursors to the targets above
 	#  get-flit - install flit if it isn't in PATH
@@ -73,6 +91,22 @@ release:
 	#  - set __version__ to X.X.Xa0
 
 
+${VENVDIR}:
+	@printf "\n--- SETTING UP VIRTUAL ENVIRONMENT AND FLIT ---\n"
+	@printf "Using python version: "
+	@${SYSPYTHON} --version
+	${SYSPYTHON} -m venv ${VENVDIR}
+	${venv_pip} install -U pip
+	${venv_pip} install flit
+
+venv: ${VENVDIR}
+
+exe: clean ${VENVDIR}
+	@printf "\n--- INSTALL ALL DEPENDENCIES BUT NOT %s ITSELF ---\n" "${NAME}"
+	${VENVDIR}/bin/flit install --only-deps
+	@printf "\n--- FREEZE AND COMPILE WITH PYINSTALLER ---\n"
+	${VENVDIR}/bin/pyinstaller --onefile --clean ${SCRIPT}
+
 dist: get-flit
 	@echo
 	### BUILD ###
@@ -80,10 +114,18 @@ dist: get-flit
 
 build: dist
 
+test: ${VENVDIR}
+	@printf "\n--- INSTALL ALL DEPENDENCIES AND %s ITSELF ---\n" "${NAME}"
+	${VENVDIR}/bin/flit install
+	@printf "\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n"
+	${VENVDIR}/bin/flake8 -v --max-complexity=20 ${CODE_DIRS}
+	@printf "\n--- TEST CODE ---\n"
+	${VENVDIR}/bin/pytest  # uses config section in pyproject.toml
+
 install: get-pipx uninstall dist
 	@echo
 	### INSTALL ###
-	pipx install "${WHEEL}"
+	pipx install "${dist_whl}"
 
 install-dev: get-pipx uninstall dist
 	@echo
@@ -95,19 +137,21 @@ uninstall:
 	### UNINSTALL ###
 	-pipx uninstall "${NAME}"
 clean:
-	rm -rf dist
+	@printf "\n--- CLEANING UP FILES AND VIRTUAL ENV ---\n"
+	rm -rf build dist ${VENVDIR}
+	rm -f ${NAME}.spec
 	find -type d -name __pycache__ -print0 | xargs -0 rm -rf
 
 get-flit:
 	@echo
 	### GET-FLIT ###
-	command -v flit >/dev/null || ${PIP} install --user flit
+	command -v flit >/dev/null || ${sys_pip} install --user flit
 get-pipx:
 	@echo
 	### GET-PIPX ###
-	command -v pipx >/dev/null || ${PIP} install --user pipx
+	command -v pipx >/dev/null || ${sys_pip} install --user pipx
 
 # These are to help debug this Makefile:
-pipuserlist = "$$(${PIP} list --user --format=freeze)"
+pipuserlist = "$$(${sys_pip} list --user --format=freeze)"
 X-WARNING-purge-all-user-packages-from-pip:
-	${PIP} uninstall -y "${pipuserlist}"
+	${sys_pip} uninstall -y "${pipuserlist}"

@@ -65,7 +65,7 @@ tagfile = "tagfile.commands.tagfile:main"
 
 
 [tool.flit.sdist]
-exclude = [".circleci", ".gitignore", "Makefile"]
+exclude = [".circleci", ".gitignore"]
 
 
 [tool.pytest.ini_options]
