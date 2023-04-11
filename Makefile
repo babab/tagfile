@@ -28,7 +28,7 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
-# Settings
+### Settings #################################################################
 NAME      = tagfile
 VERSION   = 0.2.0a0
 SCRIPT    = ./src/${NAME}/commands/${NAME}.py
@@ -40,14 +40,14 @@ SYSPYTHON = /usr/bin/python3
 # directory name, will be created next to Makefile
 VENVDIR   = .virtualenv
 
-# Variables - changing these is not advised.
+
+### Variables - changing these is not advised ################################
 sys_pip   = ${SYSPYTHON} -m pip
 venv_pip  = ${VENVDIR}/bin/python -m pip
 dist_whl  = dist/${NAME}-${VERSION}-py3-none-any.whl
 
 # Include any local configuration overrides
 sinclude config.mk
-
 
 help:
 	# This makefile is meant to aid in development flow as well as
@@ -92,6 +92,12 @@ release:
 	#  - set __version__ to X.X.Xa0
 
 
+### targets using venv #######################################################
+
+build: dist
+
+venv: ${VENVDIR}
+
 ${VENVDIR}:
 	@printf "\n--- SETTING UP VIRTUAL ENVIRONMENT AND FLIT ---\n"
 	@printf "Using python version: "
@@ -99,8 +105,6 @@ ${VENVDIR}:
 	${SYSPYTHON} -m venv ${VENVDIR}
 	${venv_pip} install -U pip
 	${venv_pip} install flit
-
-venv: ${VENVDIR}
 
 exe: clean ${VENVDIR}
 	@printf "\n--- INSTALL ALL DEPENDENCIES BUT NOT %s ITSELF ---\n" "${NAME}"
@@ -112,8 +116,6 @@ dist: ${VENVDIR}
 	@printf "\n--- BUILD WITH FLIT ---\n"
 	${VENVDIR}/bin/flit build
 
-build: dist
-
 test: ${VENVDIR}
 	@printf "\n--- INSTALL ALL DEPENDENCIES AND %s ITSELF ---\n" "${NAME}"
 	${VENVDIR}/bin/flit install
@@ -121,6 +123,15 @@ test: ${VENVDIR}
 	${VENVDIR}/bin/flake8 -v --max-complexity=20 ${CODE_DIRS}
 	@printf "\n--- TEST CODE ---\n"
 	${VENVDIR}/bin/pytest  # uses config section in pyproject.toml
+
+clean:
+	@printf "\n--- CLEANING UP FILES AND VIRTUAL ENV ---\n"
+	rm -rf build dist ${VENVDIR}
+	rm -f ${NAME}.spec
+	find -type d -name __pycache__ -print0 | xargs -0 rm -rf
+
+
+### pipx targets / user packages #############################################
 
 pipx-install: get-pipx pipx-remove dist
 	@printf "\n--- INSTALL IN A PIPX ENVIRONMENT ---\n"
@@ -133,12 +144,6 @@ pipx-devel: get-pipx pipx-remove dist
 pipx-remove:
 	@printf "\n--- UNINSTALL FROM PIPX IF FOUND, ELSE CONTINUE ---\n"
 	-pipx uninstall "${NAME}"
-clean:
-	@printf "\n--- CLEANING UP FILES AND VIRTUAL ENV ---\n"
-	rm -rf build dist ${VENVDIR}
-	rm -f ${NAME}.spec
-	find -type d -name __pycache__ -print0 | xargs -0 rm -rf
-
 get-pipx:
 	@printf "\n--- FIND PIPX OR ELSE INSTALL PIPX IN USER ENVIRONMENT ---\n"
 	command -v pipx >/dev/null || ${sys_pip} install --user pipx
