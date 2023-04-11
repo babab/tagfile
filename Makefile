@@ -62,6 +62,7 @@ help:
 	#  build | dist - flit build
 	#  exe          - build a single executable file with pyinstaller'
 	#  test         - build and install; check style and run unit tests
+	#  develop      - install into venv with 'pip install --editable .'
 	#
 	@printf '# PIPX TARGETS (using ~/.local/pipx/venvs/%s)\n' "${NAME}"
 	#  pipx-install - flit build and install with pipx install
@@ -70,6 +71,7 @@ help:
 	#
 	# MISC TARGETS that are primarily precursors to the targets above
 	#  venv         - only make virtualenv and install build deps
+	#  venv-install - install into venv with all dependencies/extras
 	#  clean        - remove venv, build and dist directories
 	#  get-pipx     - install pipx into user site-packages if not in PATH
 
@@ -116,9 +118,15 @@ dist: ${VENVDIR}
 	@printf "\n--- BUILD WITH FLIT ---\n"
 	${VENVDIR}/bin/flit build
 
-test: ${VENVDIR}
+venv-install: ${VENVDIR}
 	@printf "\n--- INSTALL ALL DEPENDENCIES AND %s ITSELF ---\n" "${NAME}"
 	${VENVDIR}/bin/flit install
+
+venv-develop: ${VENVDIR}
+	@printf "\n--- INSTALL IN VENV WITH EDITABLE SOURCE ---\n"
+	${venv_pip} install --editable .
+
+test: ${VENVDIR} venv-install
 	@printf "\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n"
 	${VENVDIR}/bin/flake8 -v --max-complexity=20 ${CODE_DIRS}
 	@printf "\n--- TEST CODE ---\n"
