@@ -54,15 +54,26 @@ help:
 	# document it. Regular users should follow the instructions on
 	@printf '# installing %s in the README.\n' "${NAME}"
 	#
+	# To work on this project while keeping package dependencies isolated
+	# from system packages, you can either use:
+	#
+	# - 'make pipx-develop' to have command(s) directly available in PATH
+	# - 'make develop' to keep the command(s) out your PATH (by default,
+	#   but available after sourcing bin/activate).
+	#
+	# The test target will always build and install using the wheel dist,
+	# even when this project is already installed with an --editable flag.
+	# This is to minimize any issues that may arrise in the packaging
+	# process by including it in testing.
+	#
 	# HELP
 	#  help         - show this help information
 	#  release	- show manual release steps
 	#
 	@printf '# BUILD AND TEST TARGETS (using venv at %s)\n' "${VENVDIR}"
-	#  build | dist - flit build
-	#  exe          - build a single executable file with pyinstaller'
 	#  test         - build and install; check style and run unit tests
 	#  develop      - install into venv with 'pip install --editable .'
+	#  exe          - build a single executable file with pyinstaller'
 	#
 	@printf '# PIPX TARGETS (using ~/.local/pipx/venvs/%s)\n' "${NAME}"
 	#  pipx-install - flit build and install with pipx install
@@ -70,10 +81,11 @@ help:
 	@printf '#  pipx-remove  - same as pipx uninstall %s\n' "${NAME}"
 	#
 	# MISC TARGETS that are primarily precursors to the targets above
-	#  venv         - only make virtualenv and install build deps
-	#  venv-install - install into venv with all dependencies/extras
+	#  build | dist - flit build
 	#  clean        - remove venv, build and dist directories
 	#  get-pipx     - install pipx into user site-packages if not in PATH
+	#  venv         - only make virtualenv and install build deps
+	#  venv-install - install into venv with all dependencies/extras
 
 release:
 	# MANUAL RELEASE STEPS
@@ -122,7 +134,7 @@ venv-install: ${VENVDIR}
 	@printf "\n--- INSTALL ALL DEPENDENCIES AND %s ITSELF ---\n" "${NAME}"
 	${VENVDIR}/bin/flit install
 
-venv-develop: ${VENVDIR}
+develop: ${VENVDIR}
 	@printf "\n--- INSTALL IN VENV WITH EDITABLE SOURCE ---\n"
 	${venv_pip} install --editable .
 
