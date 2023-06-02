@@ -50,60 +50,65 @@ dist_whl  = dist/${NAME}-${VERSION}-py3-none-any.whl
 sinclude config.mk
 
 help:
-	# This makefile is meant to aid in development flow as well as
-	# document it. Regular users should follow the instructions on
-	@printf '# installing %s in the README.\n' "${NAME}"
-	#
-	# To work on this project while keeping package dependencies isolated
-	# from system packages, you can either use:
-	#
-	# - 'make pipx-develop' to have command(s) directly available in PATH
-	# - 'make develop' to keep the command(s) out your PATH (by default,
-	#   but available after sourcing bin/activate).
-	#
-	# The test target will always build and install using the wheel dist,
-	# even when this project is already installed with an --editable flag.
-	# This is to minimize any issues that may arrise in the packaging
-	# process by including it in testing.
-	#
-	# HELP
-	#  help         - show this help information
-	#  release	- show manual release steps
-	#
-	@printf '# BUILD AND TEST TARGETS (using venv at %s)\n' "${VENVDIR}"
-	#  test         - build and install; check style and run unit tests
-	#  develop      - install into venv with 'pip install --editable .'
-	#  exe          - build a single executable file with pyinstaller'
-	#
-	@printf '# PIPX TARGETS (using ~/.local/pipx/venvs/%s)\n' "${NAME}"
-	#  pipx-install - flit build and install with pipx install
-	#  pipx-devel   - install with 'pipx install --editable .'
-	@printf '#  pipx-remove  - same as pipx uninstall %s\n' "${NAME}"
-	#
-	# MISC TARGETS that are primarily precursors to the targets above
-	#  build | dist - flit build
-	#  clean        - remove venv, build and dist directories
-	#  get-pipx     - install pipx into user site-packages if not in PATH
-	#  venv         - only make virtualenv and install build deps
-	#  venv-install - install into venv with all dependencies/extras
+	@echo 'This makefile is meant to aid in development flow as well as'
+	@echo 'document it. Regular users should follow the instructions on'
+	@printf 'installing %s in the README.\n' "${NAME}"
+	@echo
+	@echo 'To work on this project while keeping package dependencies isolated'
+	@echo 'from system packages, you can either use:'
+	@echo
+	@echo "- 'make pipx-develop' to have command(s) directly available in PATH"
+	@echo "- 'make develop' to keep the command(s) out your PATH (by default,"
+	@echo '  but available after sourcing bin/activate).'
+	@echo
+	@echo 'The test target will install a link to the project code so that'
+	@echo 'the source and tests can be inspected for code coverage.'
+	@echo
+	@echo 'The test-pkg target will always build and install using the'
+	@echo 'wheel dist, even when this project is already installed with an'
+	@echo '--editable flag. This is to minimize any issues that may arise'
+	@echo 'in the packaging process by including it in testing. This target'
+	@echo 'does not check for coverage.'
+	@echo
+	@echo 'HELP'
+	@echo ' help         - show this help information'
+	@echo ' release      - show manual release steps'
+	@echo
+	@printf 'BUILD AND TEST TARGETS (using venv at %s)\n' "${VENVDIR}"
+	@echo ' test         - make develop and run tests through Coverage.py'
+	@echo " develop      - install into venv with 'pip install --editable .'"
+	@echo ' exe          - build a single executable file with pyinstaller'
+	@echo ' test-pkg     - install pkg and run checks/tests without coverage'
+	@echo
+	@printf 'PIPX TARGETS (using ~/.local/pipx/venvs/%s)\n' "${NAME}"
+	@echo ' pipx-install - flit build and install with pipx install'
+	@echo " pipx-devel   - install with 'pipx install --editable .'"
+	@printf ' pipx-remove  - same as pipx uninstall %s\n' "${NAME}"
+	@echo
+	@echo 'MISC TARGETS that are used as precursors in the targets above'
+	@echo ' build | dist - flit build'
+	@echo ' clean        - remove venv, build and dist directories'
+	@echo ' get-pipx     - install pipx into user site-packages if not in PATH'
+	@echo ' venv         - only make virtualenv and install build deps'
+	@echo ' venv-install - install into venv with all dependencies/extras'
 
 release:
-	# MANUAL RELEASE STEPS
-	#  - Create / edit ~/.pypirc
-	#
-	#  $ make clean
-	#  $ flit publish --repository testpypi
-	#
-	#  - check sdist and project page on test.pypi.org
-	#  - if not already done, bump version in package/module and Makefile.
-	#  - edit changelog,
-	#  - make final signed commit for release.
-	#
-	#  $ flit publish
-	#  $ git tag -S vX.X.X
-	#  $ git push --tags
-	#
-	#  - set __version__ to X.X.Xa0
+	@echo 'MANUAL RELEASE STEPS'
+	@echo ' - Create / edit ~/.pypirc'
+	@echo
+	@echo ' $$ make clean'
+	@echo ' $$ flit publish --repository testpypi'
+	@echo
+	@echo ' - check sdist and project page on test.pypi.org'
+	@echo ' - if not already done, bump version in package/module and Makefile.'
+	@echo ' - edit changelog,'
+	@echo ' - make final signed commit for release.'
+	@echo
+	@echo ' $$ flit publish'
+	@echo ' $$ git tag -S vX.X.X'
+	@echo ' $$ git push --tags'
+	@echo
+	@echo ' - set __version__ to X.X.Xa0'
 
 
 ### targets using venv #######################################################
@@ -113,40 +118,49 @@ build: dist
 venv: ${VENVDIR}
 
 ${VENVDIR}:
-	@printf "\n--- SETTING UP VIRTUAL ENVIRONMENT AND FLIT ---\n"
-	@printf "Using python version: "
+	@printf '\n--- SETTING UP VIRTUAL ENVIRONMENT AND FLIT ---\n'
+	@printf 'Using python version: '
 	@${SYSPYTHON} --version
 	${SYSPYTHON} -m venv ${VENVDIR}
 	${venv_pip} install -U pip
 	${venv_pip} install flit
+	@printf '\n--- INSTALL ALL DEPENDENCIES BUT NOT %s ITSELF ---\n' "${NAME}"
+	${VENVDIR}/bin/flit install --only-deps
 
 exe: clean ${VENVDIR}
-	@printf "\n--- INSTALL ALL DEPENDENCIES BUT NOT %s ITSELF ---\n" "${NAME}"
-	${VENVDIR}/bin/flit install --only-deps
-	@printf "\n--- FREEZE AND COMPILE WITH PYINSTALLER ---\n"
+	@printf '\n--- FREEZE AND COMPILE WITH PYINSTALLER ---\n'
 	${VENVDIR}/bin/pyinstaller --onefile --clean ${SCRIPT}
 
 dist: ${VENVDIR}
-	@printf "\n--- BUILD WITH FLIT ---\n"
+	@printf '\n--- BUILD WITH FLIT ---\n'
 	${VENVDIR}/bin/flit build
 
 venv-install: ${VENVDIR}
-	@printf "\n--- INSTALL ALL DEPENDENCIES AND %s ITSELF ---\n" "${NAME}"
+	@printf '\n--- INSTALL ALL DEPENDENCIES AND %s ITSELF ---\n' "${NAME}"
 	${VENVDIR}/bin/flit install
 
 develop: ${VENVDIR}
-	@printf "\n--- INSTALL IN VENV WITH EDITABLE SOURCE ---\n"
+	@printf '\n--- INSTALL IN VENV WITH EDITABLE SOURCE ---\n'
 	${venv_pip} install --editable .
 
-test: ${VENVDIR} venv-install
-	@printf "\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n"
+test: ${VENVDIR} develop
+	@printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
 	${VENVDIR}/bin/flake8 -v --max-complexity=20 ${CODE_DIRS}
-	@printf "\n--- TEST CODE ---\n"
+	@printf '\n--- RUN PYTEST THROUGH COVERAGE ---\n'
+	${VENVDIR}/bin/coverage run -m pytest
+	@printf '\n--- COVERAGE REPORT ---\n'
+	${VENVDIR}/bin/coverage report
+	${VENVDIR}/bin/coverage html
+
+test-pkg: ${VENVDIR} venv-install
+	@printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
+	${VENVDIR}/bin/flake8 -v --max-complexity=20 ${CODE_DIRS}
+	@printf '\n--- RUN PYTEST ---\n'
 	${VENVDIR}/bin/pytest  # uses config section in pyproject.toml
 
 clean:
-	@printf "\n--- CLEANING UP FILES AND VIRTUAL ENV ---\n"
-	rm -rf build dist ${VENVDIR}
+	@printf '\n--- CLEANING UP FILES AND VIRTUAL ENV ---\n'
+	rm -rf build dist htmlcov ${VENVDIR}
 	rm -f ${NAME}.spec
 	find -type d -name __pycache__ -print0 | xargs -0 rm -rf
 
@@ -154,18 +168,18 @@ clean:
 ### pipx targets / user packages #############################################
 
 pipx-install: get-pipx pipx-remove dist
-	@printf "\n--- INSTALL IN A PIPX ENVIRONMENT ---\n"
+	@printf '\n--- INSTALL IN A PIPX ENVIRONMENT ---\n'
 	pipx install "${dist_whl}"
 
-pipx-devel: get-pipx pipx-remove dist
-	@printf "\n--- INSTALL IN A PIPX ENVIRONMENT WITH EDITABLE SOURCE ---\n"
+pipx-devel: get-pipx pipx-remove
+	@printf '\n--- INSTALL IN A PIPX ENVIRONMENT WITH EDITABLE SOURCE ---\n'
 	pipx install --editable .
 
 pipx-remove:
-	@printf "\n--- UNINSTALL FROM PIPX IF FOUND, ELSE CONTINUE ---\n"
+	@printf '\n--- UNINSTALL FROM PIPX IF FOUND, ELSE CONTINUE ---\n'
 	-pipx uninstall "${NAME}"
 get-pipx:
-	@printf "\n--- FIND PIPX OR ELSE INSTALL PIPX IN USER ENVIRONMENT ---\n"
+	@printf '\n--- FIND PIPX OR ELSE INSTALL PIPX IN USER ENVIRONMENT ---\n'
 	command -v pipx >/dev/null || ${sys_pip} install --user pipx
 
 # These are to help debug this Makefile:
