@@ -2,9 +2,11 @@
 *.log
 *.spec
 
+.coverage
 config.yaml
 config.mk
 
 /build/
 /dist/
+/htmlcov/
 /.virtualenv/
