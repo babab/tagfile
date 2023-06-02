@@ -1,0 +1,232 @@
+# Copyright (c) 2023 Benjamin Althues <benjamin@babab.nl>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+# this list of conditions and the following disclaimer in the documentation
+# and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its
+# contributors may be used to endorse or promote products derived from this
+# software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+# EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# SPDX-License-Identifier: BSD-3-Clause
+
+version: '3'  # https://taskfile.dev
+
+vars:
+  ### Settings ###############################################################
+  NAME: tagfile
+  VERSION: 0.2.0a0
+  SCRIPT: ./src/{{.NAME}}/commands/{{.NAME}}.py
+  CODE_DIRS: src tests
+  # absolute path to system python (version)
+  SYSPYTHON: /usr/bin/python3
+  # directory name, will be created next to Makefile
+  VENVDIR: .virtualenv
+
+  ### Variables - changing these is not advised ##############################
+  sys_pip: '{{.SYSPYTHON}} -m pip'
+  venv_pip: '{{.VENVDIR}}/bin/python -m pip'
+  dist_whl: 'dist/{{.NAME}}-{{.VERSION}}-py3-none-any.whl'
+
+tasks:
+  default:
+    desc: Show main help information
+    aliases: [help]
+    cmds:
+      - echo 'This taskfile is meant to aid in development flow as well as'
+      - echo 'document it. Regular users should follow the instructions on'
+      - printf 'installing %s in the README.\n' "{{.NAME}}"
+      - echo
+      - echo 'To work on this project while keeping package dependencies isolated'
+      - echo 'from system packages, you can either use:'
+      - echo
+      - echo "- 'task pipx-develop' to have command(s) directly available in PATH"
+      - echo "- 'task develop' to keep the command(s) out your PATH (by default,"
+      - echo '  but available after sourcing bin/activate).'
+      - echo
+      - echo 'The test task will install a link to the project code so that'
+      - echo 'the source and tests can be inspected for code coverage.'
+      - echo
+      - echo 'The test-pkg task will always build and install using the'
+      - echo 'wheel dist, even when this project is already installed with an'
+      - echo '--editable flag. This is to minimize any issues that may arise'
+      - echo 'in the packaging process by including it in testing. This task'
+      - echo 'does not check for coverage.'
+      - echo
+      - echo 'HELP'
+      - echo ' help         - show this help information'
+      - echo ' release      - show manual release steps'
+      - echo
+      - printf 'BUILD AND TEST TASKS (using venv at %s)\n' "{{.VENVDIR}}"
+      - echo ' test         - make develop and run tests through Coverage.py'
+      - echo " develop      - install into venv with 'pip install --editable .'"
+      - echo ' exe          - build a single executable file with pyinstaller'
+      - echo ' test-pkg     - install pkg and run checks/tests without coverage'
+      - echo
+      - printf 'PIPX TASKS (using ~/.local/pipx/venvs/%s)\n' "{{.NAME}}"
+      - echo ' pipx-install - flit build and install with pipx install'
+      - echo " pipx-devel   - install with 'pipx install --editable .'"
+      - printf ' pipx-remove  - same as pipx uninstall %s\n' "{{.NAME}}"
+      - echo
+      - echo 'MISC TASKS that are used as precursors in the tasks above'
+      - echo ' build | dist - flit build'
+      - echo ' clean        - remove venv, build and dist directories'
+      - echo ' get-pipx     - install pipx into user site-packages if not in PATH'
+      - echo ' venv         - only make virtualenv and install build deps'
+      - echo ' venv-install - install into venv with all dependencies/extras'
+    silent: true
+  release:
+    desc: Show manual steps for release
+    cmds:
+      - echo 'MANUAL RELEASE STEPS'
+      - echo ' - Create / edit ~/.pypirc'
+      - echo
+      - echo ' $ make clean'
+      - echo ' $ flit publish --repository testpypi'
+      - echo
+      - echo ' - check sdist and project page on test.pypi.org'
+      - echo ' - if not already done, bump version in package/module and Makefile.'
+      - echo ' - edit changelog,'
+      - echo ' - make final signed commit for release.'
+      - echo
+      - echo ' $ flit publish'
+      - echo ' $ git tag -S vX.X.X'
+      - echo ' $ git push --tags'
+      - echo
+      - echo ' - set __version__ to X.X.Xa0'
+    silent: true
+
+### targets using venv #######################################################
+  venv:
+    desc: Set up virtual environment, pip and flit
+    cmds:
+      - cmd: "printf '\n--- SETTING UP VIRTUAL ENVIRONMENT AND FLIT ---\n'"
+        silent: true
+      - cmd: "printf 'Using python version: '"
+        silent: true
+      - cmd: '{{.SYSPYTHON}} --version'
+        silent: true
+      - '{{.SYSPYTHON}} -m venv {{.VENVDIR}}'
+      - '{{.venv_pip}} install -U pip'
+      - '{{.venv_pip}} install flit'
+      - cmd: printf '\n--- INSTALL ALL DEPENDENCIES BUT NOT %s ITSELF ---\n' "{{.NAME}}"
+        silent: true
+      - '{{.VENVDIR}}/bin/flit install --only-deps'
+    status:
+      - test -f '{{.VENVDIR}}/bin/python3'
+  exe:
+    desc: Compile to a single executable file (using PyInstaller)
+    cmds:
+      - task: clean
+      - task: venv
+      - cmd: printf '\n--- FREEZE AND COMPILE WITH PYINSTALLER ---\n'
+        silent: true
+      - '{{.VENVDIR}}/bin/pyinstaller --onefile --clean {{.SCRIPT}}'
+  dist:
+    desc: Build with flit
+    aliases: [build]
+    cmds:
+      - task: venv
+      - cmd: printf '\n--- BUILD WITH FLIT ---\n'
+        silent: true
+      - '{{.VENVDIR}}/bin/flit build'
+  venv-install:
+    desc: 'Install project into venv'
+    cmds:
+      - task: venv
+      - cmd: printf '\n--- INSTALL ALL DEPENDENCIES AND %s ITSELF ---\n' "{{.NAME}}"
+        silent: true
+      - '{{.VENVDIR}}/bin/flit install'
+  develop:
+    desc: 'Install project into venv, with editable/linked source'
+    cmds:
+      - task: venv
+      - cmd: printf '\n--- INSTALL IN VENV WITH EDITABLE SOURCE ---\n'
+        silent: true
+      - '{{.venv_pip}} install --editable .'
+  test:
+    desc: Run all tests through Coverage.py and check for style and complexity
+    cmds:
+      - task: venv
+      - task: develop
+      - cmd: printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
+        silent: true
+      - '{{.VENVDIR}}/bin/flake8 -v --max-complexity=20 {{.CODE_DIRS}}'
+      - cmd: printf '\n--- RUN PYTEST THROUGH COVERAGE ---\n'
+        silent: true
+      - '{{.VENVDIR}}/bin/coverage run -m pytest'
+      - cmd: printf '\n--- COVERAGE REPORT ---\n'
+        silent: true
+      - '{{.VENVDIR}}/bin/coverage report'
+      - '{{.VENVDIR}}/bin/coverage html'
+  test-pkg:
+    desc: Run all tests and check code for style and complexity
+    cmds:
+      - task: venv
+      - task: venv-install
+      - cmd: printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
+        silent: true
+      - '{{.VENVDIR}}/bin/flake8 -v --max-complexity=20 {{.CODE_DIRS}}'
+      - cmd: printf '\n--- RUN PYTEST ---\n'
+        silent: true
+      - '{{.VENVDIR}}/bin/pytest  # uses config section in pyproject.toml'
+  clean:
+    desc: Clean up files and virtual env
+    cmds:
+      - cmd: printf '\n--- CLEANING UP FILES AND VIRTUAL ENV ---\n'
+        silent: true
+      - 'rm -rf build dist htmlcov {{.VENVDIR}}'
+      - 'rm -f {{.NAME}}.spec'
+      - find -type d -name __pycache__ -print0 | xargs -0 rm -rf
+
+### pipx targets / user packages #############################################
+  pipx-install:
+    desc: Install project into/using a pipx env
+    cmds:
+      - task: get-pipx
+      - task: pipx-remove
+      - task: dist
+      - cmd: printf '\n--- INSTALL IN A PIPX ENVIRONMENT ---\n'
+        silent: true
+      - 'pipx install "{{.dist_whl}}"'
+  pipx-devel:
+    desc: Install project using pipx env with editable/linked source
+    cmds:
+      - task: get-pipx
+      - task: pipx-remove
+      - cmd: printf '\n--- INSTALL IN A PIPX ENVIRONMENT WITH EDITABLE SOURCE ---\n'
+        silent: true
+      - pipx install --editable .
+  pipx-remove:
+    desc: Uninstall from pipx if found, else continue
+    cmds:
+      - cmd: printf '\n--- UNINSTALL FROM PIPX IF FOUND, ELSE CONTINUE ---\n'
+        silent: true
+      - cmd: 'pipx uninstall "{{.NAME}}"'
+        ignore_error: true
+  get-pipx:
+    desc: If pipx is not found, intall pipx with pip install --user
+    cmds:
+      - cmd: printf '\n--- FIND PIPX OR ELSE INSTALL PIPX IN USER ENVIRONMENT ---\n'
+        silent: true
+      - 'command -v pipx >/dev/null || {{.sys_pip}} install --user pipx'
+
+# https://taskfile.dev
