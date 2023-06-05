@@ -102,6 +102,17 @@ class TagFile:
             self.addPath(i.filepath)
         self.scan()
 
+    def prune(self):
+        print('Scanning index for entries with missing files')
+        res = Index.raw('''SELECT * FROM `index`''')
+        npruned = 0
+        for i in res:
+            if not os.path.exists(i.filepath):
+                Index.delete().where(Index.id == i.id).execute()
+                print('Removed {}'.format(i.filepath))
+                npruned += 1
+        print('DONE. {} files were removed from the index'.format(npruned))
+
     def same(self, return_count=False):
         res = Index.raw('''SELECT *, COUNT(filehash) FROM `index`
                         GROUP BY filehash HAVING ( COUNT(filehash) > 1 )''')

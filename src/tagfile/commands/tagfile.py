@@ -70,7 +70,8 @@ class Command(pycommand.CommandBase):
         '  find <string>      find all filenames for <string>\n'
         '  same               show all indexed duplicate files\n'
         '  stats              show statistics for index, repos and tags\n'
-        '  re-index           re-index all repos'
+        '  re-index           re-index all repos\n'
+        '  prune              remove entries from index if files are missing'
     )
 
     def run(self):
@@ -132,6 +133,8 @@ class Command(pycommand.CommandBase):
             tf.stats()
         elif command == 're-index':
             tf.re_index()
+        elif command == 'prune':
+            tf.prune()
         else:
             print(self.usage)
 
