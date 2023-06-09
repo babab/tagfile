@@ -54,10 +54,25 @@ def main():
         return 0
 
 
+class HelpCommand(pycommand.CommandBase):
+    usagestr = 'usage: tagfile help [<command>]'
+    description = 'Show help information'
+
+    def run(self):
+        if self.args:
+            if self.args[0] == 'help':
+                print(self.usage)
+        else:
+            print(Command([]).usage)
+
+
 class Command(pycommand.CommandBase):
     '''Argument handler based on pycommand'''
     usagestr = 'Usage: tagfile <options>'
     description = TagFile.__doc__
+    commands = {
+        'help': HelpCommand,
+    }
     optionList = (
         ('help', ('h', False, 'show this help information')),
         ('version', ('', False, 'show version information')),
@@ -65,6 +80,7 @@ class Command(pycommand.CommandBase):
     )
     usageTextExtra = (
         'Commands:\n'
+        '  help               show help information\n'
         '  scan               scan current directory and add to index\n'
         '  add <directory>    scan <directory> and add to index\n'
         '  find <string>      find all filenames for <string>\n'
@@ -132,8 +148,21 @@ class Command(pycommand.CommandBase):
             tf.stats()
         elif command == 'prune':
             tf.prune()
+
+        # parse commands in pycommand style
+        try:
+            cmd = super(Command, self).run()
+        except pycommand.CommandExit as e:
+            return e.err
+
+        cmd.registerParentFlag('config', self.flags.config)
+
+        if cmd.error:
+            print('tagfile {cmd}: {error}'
+                  .format(cmd=self.args[0], error=cmd.error))
+            return 1
         else:
-            print(self.usage)
+            return cmd.run()
 
 
 if __name__ == '__main__':
