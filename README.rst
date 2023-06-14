@@ -17,9 +17,10 @@ Features
 --------
 
 - index files with their checksums
-- find duplicate files
+- find duplicate files/checksums
 - scan all files in a directory recursively
 - ignore files according to rules in user config
+- prune index from files that got moved or deleted
 
 Features to be implemented in later versions:
 
@@ -140,5 +141,5 @@ Software license
 Copyright (c) 2015-2023 Benjamin Althues <benjamin at babab . nl>
 
 tagfile is open source software, licensed under a BSD-3-Clause license.
-See the `LICENSE <https://github.com/babab/tagfile/blob/master/LICENSE>`_
+See the `LICENSE <https://github.com/babab/tagfile/blob/devel/LICENSE>`_
 file for the full license text.
