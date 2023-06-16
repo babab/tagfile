@@ -91,11 +91,16 @@ class _TagFileManager:
             print(i.filepath)
 
     def stats(self):
+        qrep = Repository.select()
         files = colors.green(str(Index.select().count()))
-        repos = colors.green(str(Repository.select().count()))
+        repos = colors.green(str(qrep.count()))
         duplos = colors.green(str(self.same(return_count=True)))
         print('{}\tfiles indexed\n{}\trepositories (main paths)\n'
               '{}\tduplicate files'.format(files, repos, duplos))
+        print('\nPATHS:')
+
+        for item in qrep:
+            print(item.filepath)
 
     def re_index(self):
         Index.delete().execute()
