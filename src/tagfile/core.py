@@ -162,8 +162,12 @@ class _TagFileManager:
                         iignore += 1
                         logging.debug('Ignored ' + path)
 
-                if config['ignore-empty'] and not os.path.getsize(path):
-                    file_is_valid = False
+                if config['ignore-empty']:
+                    try:
+                        if not os.path.getsize(path):
+                            file_is_valid = False
+                    except FileNotFoundError:
+                        file_is_valid = False
 
                 if file_is_valid:
                     try:
