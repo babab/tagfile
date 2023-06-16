@@ -70,8 +70,9 @@ class Files:
         return h.hexdigest()
 
 
-class TagFile:
-    '''Search, index and tag your files and find duplicates'''
+class _TagFileManager:
+    '''Private _TagFileManager class. Instance available as
+       `tagfile.core.tfman`'''
     def __init__(self):
         DB.connect()
         if not Index.table_exists():
@@ -177,3 +178,8 @@ class TagFile:
             if not inew and not iignore:
                 print('\r                         ')
         return self
+
+
+tfman = _TagFileManager()
+'''A single public instance of the private `_TagFileManager` object to
+use. The class `_TagFileManager` should not be used directly.'''

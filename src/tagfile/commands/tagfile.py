@@ -37,8 +37,8 @@ import sys
 import pycommand
 import yaml
 
-from tagfile import config, verboseVersionInfo
-from tagfile.core import TagFile
+from tagfile import config, verboseVersionInfo, __doc__ as main_description
+from tagfile.core import tfman
 
 
 def main():
@@ -69,7 +69,7 @@ class HelpCommand(pycommand.CommandBase):
 class Command(pycommand.CommandBase):
     '''Argument handler based on pycommand'''
     usagestr = 'Usage: tagfile <options>'
-    description = TagFile.__doc__
+    description = main_description
     commands = {
         'help': HelpCommand,
     }
@@ -116,9 +116,6 @@ class Command(pycommand.CommandBase):
             format='{asctime}:{levelname}: {message}'
         )
 
-        # Setup TagFile
-        tf = TagFile()
-
         try:
             command = self.args[0]
         except IndexError:
@@ -129,25 +126,25 @@ class Command(pycommand.CommandBase):
             arg = None
 
         if command == 'scan':
-            tf.addPath(os.getcwd())
-            tf.scan()
+            tfman.addPath(os.getcwd())
+            tfman.scan()
         elif command == 'add':
             if arg:
-                tf.addPath(os.path.expanduser(arg))
-                tf.scan()
+                tfman.addPath(os.path.expanduser(arg))
+                tfman.scan()
             else:
                 print('error: command add requires argument')
         elif command == 'find':
             if arg:
-                tf.find(arg)
+                tfman.find(arg)
             else:
                 print('error: command find requires argument')
         elif command == 'same':
-            tf.same()
+            tfman.same()
         elif command == 'stats':
-            tf.stats()
+            tfman.stats()
         elif command == 'prune':
-            tf.prune()
+            tfman.prune()
 
         # parse commands in pycommand style
         try:
