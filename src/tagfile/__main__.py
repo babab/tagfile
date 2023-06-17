@@ -32,9 +32,9 @@
 
 import sys
 
-import tagfile.commands.tagfile
+import tagfile.commands.main_cmd
 
-# Run main function from the main command `tagfile.commands.tagfile`.
-# The main function will gracefully handle any KeyboardInterrupt.
+# Run `entry` function from the main command `tagfile.commands.main_cmd`.
+# The `entry` function will gracefully handle any KeyboardInterrupt.
 if __name__ == '__main__':
-    sys.exit(tagfile.commands.tagfile.main())
+    sys.exit(tagfile.commands.main_cmd.entry())

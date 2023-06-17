@@ -30,8 +30,8 @@
 
 ### Settings #################################################################
 NAME      = tagfile
-VERSION   = 0.2.0a0
-SCRIPT    = ./src/${NAME}/commands/${NAME}.py
+VERSION   = 0.2.0a3
+SCRIPT    = ./src/${NAME}/commands/main_cmd.py
 CODE_DIRS = src tests
 
 # absolute path to system python (version)
@@ -129,7 +129,7 @@ ${VENVDIR}:
 
 exe: clean ${VENVDIR}
 	@printf '\n--- FREEZE AND COMPILE WITH PYINSTALLER ---\n'
-	${VENVDIR}/bin/pyinstaller --onefile --clean ${SCRIPT}
+	${VENVDIR}/bin/pyinstaller -F -n ${NAME} --clean ${SCRIPT}
 
 dist: ${VENVDIR}
 	@printf '\n--- BUILD WITH FLIT ---\n'

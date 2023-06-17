@@ -33,8 +33,8 @@ version: '3'  # https://taskfile.dev
 vars:
   ### Settings ###############################################################
   NAME: tagfile
-  VERSION: 0.2.0a0
-  SCRIPT: ./src/{{.NAME}}/commands/{{.NAME}}.py
+  VERSION: 0.2.0a3
+  SCRIPT: ./src/{{.NAME}}/commands/main_cmd.py
   CODE_DIRS: src tests
   # absolute path to system python (version)
   SYSPYTHON: /usr/bin/python3
@@ -139,7 +139,7 @@ tasks:
       - task: venv
       - cmd: printf '\n--- FREEZE AND COMPILE WITH PYINSTALLER ---\n'
         silent: true
-      - '{{.VENVDIR}}/bin/pyinstaller --onefile --clean {{.SCRIPT}}'
+      - '{{.VENVDIR}}/bin/pyinstaller -F -n {{.NAME}} --clean {{.SCRIPT}}'
   dist:
     desc: Build with flit
     aliases: [build]

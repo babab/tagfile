@@ -1,4 +1,4 @@
-# file: src/tagfile/commands/main.py
+# file: src/tagfile/commands/main_cmd.py
 
 # Copyright (c) 2015-2023 Benjamin Althues <benjamin@babab.nl>
 #
@@ -42,7 +42,7 @@ from tagfile.core import tfman
 from tagfile.commands.add import AddCommand
 
 
-def main():
+def entry():
     try:
         cmd = Command(sys.argv[1:])
         if cmd.error:
@@ -161,4 +161,4 @@ class Command(pycommand.CommandBase):
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(entry())
