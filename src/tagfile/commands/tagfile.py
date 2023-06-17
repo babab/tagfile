@@ -39,6 +39,7 @@ import yaml
 
 from tagfile import config, verboseVersionInfo, __doc__ as main_description
 from tagfile.core import tfman
+from tagfile.commands.add import AddCommand
 
 
 def main():
@@ -62,6 +63,8 @@ class HelpCommand(pycommand.CommandBase):
         if self.args:
             if self.args[0] == 'help':
                 print(self.usage)
+            elif self.args[0] == 'add':
+                print(AddCommand([]).usage)
         else:
             print(Command([]).usage)
 
@@ -71,6 +74,7 @@ class Command(pycommand.CommandBase):
     usagestr = 'Usage: tagfile <options>'
     description = main_description
     commands = {
+        'add': AddCommand,
         'help': HelpCommand,
     }
     optionList = (
@@ -128,12 +132,6 @@ class Command(pycommand.CommandBase):
         if command == 'scan':
             tfman.addPath(os.getcwd())
             tfman.scan()
-        elif command == 'add':
-            if arg:
-                tfman.addPath(os.path.expanduser(arg))
-                tfman.scan()
-            else:
-                print('error: command add requires argument')
         elif command == 'find':
             if arg:
                 tfman.find(arg)

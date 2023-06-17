@@ -39,7 +39,7 @@ import yaml
 
 __author__ = "Benjamin Althues"
 __copyright__ = "Copyright (C) 2015-2023  Benjamin Althues"
-__version__ = '0.2.0a2'
+__version__ = '0.2.0a3'
 versionStr = 'tagfile {}'.format(__version__)
 
 
