@@ -39,11 +39,10 @@ from tagfile.core import tfman
 
 class AddCommand(pycommand.CommandBase):
     '''Add a directory to paths (to be scanned later or right away)'''
-    usagestr = 'usage: tagfile add [options]'
+    usagestr = 'usage: tagfile add [options] <path>'
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),
-        # ('file', ('f', '<filename>', 'use specified file')),
         ('scan', ('', False, 'scan directory contents right after')),
     )
 
@@ -70,15 +69,11 @@ class AddCommand(pycommand.CommandBase):
                 return 3
 
             tfman.addPath(filepath)
-            print('Added {} to paths'.format(filepath))
+            print('Added path: {}'.format(filepath))
             if self.flags.scan:
                 tfman.scan()
         else:
             print('error: command add requires argument')
             print()
-            print('To add and scan current dir, use:')
-            print('tagfile add --scan .')
-
-
-if __name__ == '__main__':
-    pycommand.run_and_exit(AddCommand)
+            print('To add and scan current dir, use `tagfile add --scan .`')
+            print('See `tagfile help add` OR `tagfile add -h` for more info.')
