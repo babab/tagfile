@@ -33,6 +33,7 @@ NAME      = tagfile
 VERSION   = 0.2.0a3
 SCRIPT    = ./src/${NAME}/commands/main_cmd.py
 CODE_DIRS = src tests
+BIN_NAME  = ${NAME}
 
 # absolute path to system python (version)
 SYSPYTHON = /usr/bin/python3
@@ -77,6 +78,7 @@ help:
 	@printf 'BUILD AND TEST TARGETS (using venv at %s)\n' "${VENVDIR}"
 	@echo ' test         - make develop and run tests through Coverage.py'
 	@echo " develop      - install into venv with 'pip install --editable .'"
+	@echo ' install      - do a venv-install and link exe in .local/bin'
 	@echo ' exe          - build a single executable file with pyinstaller'
 	@echo ' test-pkg     - install pkg and run checks/tests without coverage'
 	@echo
@@ -135,6 +137,10 @@ dist: ${VENVDIR}
 	@printf '\n--- BUILD WITH FLIT ---\n'
 	${VENVDIR}/bin/flit build
 
+install: venv-install
+	@printf '\n--- CREATING SYMBOLIC LINK IN PATH ---\n'
+	ln -svf "$${PWD}/${VENVDIR}/bin/${BIN_NAME}" "$${HOME}/.local/bin/${BIN_NAME}"
+
 venv-install: ${VENVDIR}
 	@printf '\n--- INSTALL ALL DEPENDENCIES AND %s ITSELF ---\n' "${NAME}"
 	${VENVDIR}/bin/flit install
@@ -142,6 +148,8 @@ venv-install: ${VENVDIR}
 develop: ${VENVDIR}
 	@printf '\n--- INSTALL IN VENV WITH EDITABLE SOURCE ---\n'
 	${venv_pip} install --editable .
+	@printf '\n--- CREATING SYMBOLIC LINK IN PATH ---\n'
+	ln -svf "$${PWD}/${VENVDIR}/bin/${BIN_NAME}" "$${HOME}/.local/bin/${BIN_NAME}"
 
 test: ${VENVDIR} develop
 	@printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
