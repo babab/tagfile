@@ -148,6 +148,7 @@ class _TagFileManager:
         iall = 0
         inew = 0
         iignore = 0
+        iexisting = 0
         total = len(self.paths)
         try:
             for path in self.paths:
@@ -161,6 +162,7 @@ class _TagFileManager:
                         file_is_valid = False
                         iignore += 1
                         logging.debug('Ignored ' + path)
+                        break
 
                 if config['ignore-empty']:
                     try:
@@ -172,6 +174,7 @@ class _TagFileManager:
                 if file_is_valid:
                     try:
                         Index.get(Index.filepath == path)
+                        iexisting += 1
                     except Index.DoesNotExist:
                         inew += 1
                         Index.create(
@@ -180,10 +183,10 @@ class _TagFileManager:
                         )
                         logging.debug('Added ' + path)
         finally:
-            print(colors.green('\rAdded {} new files'.format(inew)))
-            print(colors.cyan('Ignored {} files'.format(iignore)))
-            if not inew and not iignore:
-                print('\r                         ')
+            print('\rTotal files     {:>12}'.format(total))
+            print('Already indexed {:>12}'.format(iexisting))
+            print('Ignored files   {:>12}'.format(iignore))
+            print(colors.green('Newly added     {:>12}'.format(inew)))
         return self
 
 
