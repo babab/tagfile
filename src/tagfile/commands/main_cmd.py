@@ -89,7 +89,7 @@ class Command(pycommand.CommandBase):
         '  add <directory>    scan <directory> and add to index\n'
         '  find <string>      find all filenames for <string>\n'
         '  same               show all indexed duplicate files\n'
-        '  stats              show statistics for index, repos and tags\n'
+        '  stats              show statistics for index and media paths\n'
         '  prune              remove entries from index if files are missing'
     )
 

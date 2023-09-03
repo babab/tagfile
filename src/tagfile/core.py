@@ -95,9 +95,8 @@ class _TagFileManager:
         files = colors.green(str(Index.select().count()))
         repos = colors.green(str(qrep.count()))
         duplos = colors.green(str(self.same(return_count=True)))
-        print('{}\tfiles indexed\n{}\trepositories (main paths)\n'
-              '{}\tduplicate files'.format(files, repos, duplos))
-        print('\nPATHS:')
+        print('{}\tfiles indexed\n{}\tduplicate files'.format(files, duplos))
+        print('\nMEDIA PATHS ({}):'.format(repos))
 
         for item in qrep:
             print(item.filepath)

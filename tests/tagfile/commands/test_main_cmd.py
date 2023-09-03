@@ -49,7 +49,7 @@ Commands:
   add <directory>    scan <directory> and add to index
   find <string>      find all filenames for <string>
   same               show all indexed duplicate files
-  stats              show statistics for index, repos and tags
+  stats              show statistics for index and media paths
   prune              remove entries from index if files are missing
 '''
 

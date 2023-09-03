@@ -38,12 +38,12 @@ from tagfile.core import tfman
 
 
 class AddCommand(pycommand.CommandBase):
-    '''Add a directory to paths (to be scanned later or right away)'''
-    usagestr = 'usage: tagfile add [options] <path>'
+    '''Add a directory to media paths (to be scanned later or right away)'''
+    usagestr = 'usage: tagfile add [options] <media-path>'
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),
-        ('scan', ('', False, 'scan directory contents right after')),
+        ('scan', ('', False, 'scan (all) media path(s) afterwards')),
     )
 
     def run(self):
@@ -65,11 +65,11 @@ class AddCommand(pycommand.CommandBase):
                     print('error: could not find PWD from shell environment')
                     return 2
             if not filepath:
-                print('error: could not determine path')
+                print('error: could not determine media path')
                 return 3
 
             tfman.addPath(filepath)
-            print('Added path: {}'.format(filepath))
+            print('Added media path: {}'.format(filepath))
             if self.flags.scan:
                 tfman.scan()
         else:
