@@ -180,10 +180,8 @@ class _TagFileManager:
                         )
                         logging.debug('Added ' + path)
         finally:
-            if inew:
-                print(colors.green('\rAdded {} new files'.format(inew)))
-            if iignore:
-                print(colors.cyan('\rIgnored {} files'.format(iignore)))
+            print(colors.green('\rAdded {} new files'.format(inew)))
+            print(colors.cyan('Ignored {} files'.format(iignore)))
             if not inew and not iignore:
                 print('\r                         ')
         return self
