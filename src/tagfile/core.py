@@ -149,6 +149,7 @@ class _TagFileManager:
         inew = 0
         iignore = 0
         iexisting = 0
+        ierrunicode = 0
         total = len(self.paths)
         try:
             for path in self.paths:
@@ -182,11 +183,16 @@ class _TagFileManager:
                             basename=os.path.basename(path)
                         )
                         logging.debug('Added ' + path)
+                    except UnicodeEncodeError:
+                        ierrunicode += 1
         finally:
             print('\rTotal files     {:>12}'.format(total))
             print('Already indexed {:>12}'.format(iexisting))
             print('Ignored files   {:>12}'.format(iignore))
             print(colors.green('Newly added     {:>12}'.format(inew)))
+            if ierrunicode:
+                print(colors.red('Files with unicode errors: {}'
+                                 .format(ierrunicode)))
         return self
 
 
