@@ -40,6 +40,7 @@ import yaml
 from tagfile import config, verboseVersionInfo, __doc__ as main_description
 from tagfile.core import tfman
 from tagfile.commands.add import AddCommand
+from tagfile.commands.updatedb import UpdateDbCommand
 
 
 def entry():
@@ -65,6 +66,8 @@ class HelpCommand(pycommand.CommandBase):
                 print(self.usage)
             elif self.args[0] == 'add':
                 print(AddCommand([]).usage)
+            elif self.args[0] == 'updatedb':
+                print(UpdateDbCommand([]).usage)
         else:
             print(Command([]).usage)
 
@@ -76,6 +79,7 @@ class Command(pycommand.CommandBase):
     commands = {
         'add': AddCommand,
         'help': HelpCommand,
+        'updatedb': UpdateDbCommand,
     }
     optionList = (
         ('help', ('h', False, 'show this help information')),
@@ -85,8 +89,8 @@ class Command(pycommand.CommandBase):
     usageTextExtra = (
         'Commands:\n'
         '  help               show help information\n'
-        '  scan               scan current directory and add to index\n'
-        '  add <directory>    scan <directory> and add to index\n'
+        '  updatedb           scan media paths and index newly added files\n'
+        '  add                add a directory to media paths\n'
         '  find <string>      find all filenames for <string>\n'
         '  same               show all indexed duplicate files\n'
         '  stats              show statistics for index and media paths\n'
@@ -130,8 +134,7 @@ class Command(pycommand.CommandBase):
             arg = None
 
         if command == 'scan':
-            tfman.addPath(os.getcwd())
-            tfman.scan()
+            print("Command 'scan' is removed. Please use 'updatedb' instead")
         elif command == 'find':
             if arg:
                 tfman.find(arg)

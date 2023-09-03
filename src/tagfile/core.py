@@ -73,11 +73,24 @@ class Files:
 class _TagFileManager:
     '''Private _TagFileManager class. Instance available as
        `tagfile.core.tfman`'''
+
+    paths = []
+    '''paths is empty on init. Use setter functions. Reading directly is fine.
+
+    Use `loadKnownRepos()` to populate with latest known media paths.
+    Use `addPath(path)` to add new media path (recursively adding files).
+    '''
+
     def __init__(self):
         DB.connect()
         if not Index.table_exists():
             DB.create_tables([Index, Repository])
-        self.paths = []
+
+    def loadKnownRepos(self):
+        '''Load known media paths into `self.paths`'''
+        qrep = Repository.select()
+        for item in qrep:
+            self.addPath(item.filepath)
 
     def addPath(self, path):
         '''Walk path and add all found files'''

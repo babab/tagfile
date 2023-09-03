@@ -40,7 +40,7 @@ Add a directory to media paths (to be scanned later or right away)
 
 Options:
 -h, --help  show this help information
---scan      scan (all) media path(s) afterwards
+--scan      scan path now (this may take a long time)
 
 '''
 
