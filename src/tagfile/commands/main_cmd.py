@@ -58,9 +58,16 @@ def entry():
 
 class HelpCommand(pycommand.CommandBase):
     usagestr = 'usage: tagfile help [<command>]'
-    description = 'Show help information'
+    description = 'Show usage information (for subcommands)'
+    optionList = (
+        ('help', ('h', False, 'show usage information for help command')),
+    )
 
     def run(self):
+        if self.flags['help']:
+            print(self.usage)
+            return 0
+
         if self.args:
             if self.args[0] == 'help':
                 print(self.usage)
@@ -70,8 +77,12 @@ class HelpCommand(pycommand.CommandBase):
                 print(AddCommand([]).usage)
             elif self.args[0] == 'updatedb':
                 print(UpdateDbCommand([]).usage)
+            else:
+                print('error: Unknown command')
+                return 1
         else:
             print(Command([]).usage)
+        return 0
 
 
 class VersionCommand(pycommand.CommandBase):
@@ -82,6 +93,10 @@ class VersionCommand(pycommand.CommandBase):
     )
 
     def run(self):
+        if self.flags['help']:
+            print(self.usage)
+            return 0
+
         print(verboseVersionInfo())
         return 0
 
