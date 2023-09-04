@@ -1,0 +1,169 @@
+# Copyright (c) 2023 Benjamin Althues <benjamin@babab.nl>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+# this list of conditions and the following disclaimer in the documentation
+# and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its
+# contributors may be used to endorse or promote products derived from this
+# software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+# EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# SPDX-License-Identifier: BSD-3-Clause
+
+import pycommand
+import pytest
+
+from tagfile.commands.main_cmd import HelpCommand as Command
+
+
+output_help_main = '''Usage: tagfile <options>
+
+Search, index and tag your files and find duplicates
+
+Options:
+-h, --help           show this help information
+-V, --version        show version and platform information
+--config=<filename>  use specified config file
+
+Commands:
+  help               show help information
+  updatedb           scan media paths and index newly added files
+  add                add a directory to media paths
+  find <string>      find all filenames for <string>
+  same               show all indexed duplicate files
+  stats              show statistics for index and media paths
+  prune              remove entries from index if files are missing
+  version            show version and platform information
+'''
+
+output_help_help = '''usage: tagfile help [<command>]
+
+Show usage information (for subcommands)
+
+Options:
+-h, --help  show usage information for help command
+
+'''
+
+output_help_version = '''usage: tagfile version
+
+Show version and platform information
+
+Options:
+-h, --help  show this help information
+
+'''
+
+output_help_add = '''usage: tagfile add [options] <media-path>
+
+Add a directory to media paths (to be scanned later or right away)
+
+Options:
+-h, --help  show this help information
+--scan      scan path now (this may take a long time)
+
+'''
+
+output_help_updatedb = '''usage: tagfile updatedb [options]
+
+Scan all media paths and index newly added files
+
+Options:
+-h, --help  show this help information
+
+'''
+
+
+def test_pycommand_flags_are_None_by_default():
+    cmd = Command([])
+    assert cmd.flags['help'] is None
+
+
+def test_pycommand_error_is_None_by_default():
+    cmd = Command(['-h'])
+    assert cmd.error is None
+
+
+def test_pycommand_help_bool_flag_is_True_or_None():
+    '''When a flag is given, it's value should be True, else None'''
+    cmd = Command(['-h'])
+    assert cmd.flags['help'] is True
+
+    cmd = Command([''])
+    assert cmd.flags['help'] is None
+
+
+def test_pycommand_bool_flags_with_1_option():
+    cmd = Command(['-h'])
+    assert cmd.flags['help'] is True
+
+
+def test_pycommand_flags_are_accessible_by_attribute():
+    cmd = Command(['-h'])
+    assert cmd.flags.help is True
+
+
+def test_pycommand_optionerror_on_unset_flags_attributes():
+    cmd = Command(['-h'])
+    with pytest.raises(pycommand.OptionError):
+        assert cmd.flags.doesnotexist is None
+
+
+def test_pycommand_command_shows_main_help_when_no_args(capfd):
+    cmd = Command([])
+    cmd.run()
+    cap = capfd.readouterr()
+    assert output_help_main == cap.out
+
+
+def test_pycommand_command_help_flag_shows_help_message(capfd):
+    cmd = Command(['-h'])
+    cmd.run()
+    cap = capfd.readouterr()
+    assert output_help_help == cap.out
+
+
+def test_pycommand_command_arg_help_shows_help_message(capfd):
+    cmd = Command(['help'])
+    cmd.run()
+    cap = capfd.readouterr()
+    assert output_help_help == cap.out
+
+
+def test_pycommand_command_arg_version_shows_help_message(capfd):
+    cmd = Command(['version'])
+    cmd.run()
+    cap = capfd.readouterr()
+    assert output_help_version == cap.out
+
+
+def test_pycommand_command_arg_add_shows_help_message(capfd):
+    cmd = Command(['add'])
+    cmd.run()
+    cap = capfd.readouterr()
+    assert output_help_add == cap.out
+
+
+def test_pycommand_command_arg_updatedb_shows_help_message(capfd):
+    cmd = Command(['updatedb'])
+    cmd.run()
+    cap = capfd.readouterr()
+    assert output_help_updatedb == cap.out
