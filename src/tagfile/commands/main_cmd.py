@@ -64,6 +64,8 @@ class HelpCommand(pycommand.CommandBase):
         if self.args:
             if self.args[0] == 'help':
                 print(self.usage)
+            elif self.args[0] == 'version':
+                print(VersionCommand([]).usage)
             elif self.args[0] == 'add':
                 print(AddCommand([]).usage)
             elif self.args[0] == 'updatedb':
@@ -72,18 +74,33 @@ class HelpCommand(pycommand.CommandBase):
             print(Command([]).usage)
 
 
+class VersionCommand(pycommand.CommandBase):
+    usagestr = 'usage: tagfile version'
+    description = 'Show version and platform information'
+    optionList = (
+        ('help', ('h', False, 'show this help information')),
+    )
+
+    def run(self):
+        print(verboseVersionInfo())
+        return 0
+
+
 class Command(pycommand.CommandBase):
     '''Argument handler based on pycommand'''
     usagestr = 'Usage: tagfile <options>'
     description = main_description
     commands = {
-        'add': AddCommand,
+        # from this module
         'help': HelpCommand,
+        'version': VersionCommand,
+        # from commands package
+        'add': AddCommand,
         'updatedb': UpdateDbCommand,
     }
     optionList = (
         ('help', ('h', False, 'show this help information')),
-        ('version', ('', False, 'show version information')),
+        ('version', ('V', False, 'show version and platform information')),
         ('config', ('', '<filename>', 'use specified config file')),
     )
     usageTextExtra = (
@@ -94,7 +111,8 @@ class Command(pycommand.CommandBase):
         '  find <string>      find all filenames for <string>\n'
         '  same               show all indexed duplicate files\n'
         '  stats              show statistics for index and media paths\n'
-        '  prune              remove entries from index if files are missing'
+        '  prune              remove entries from index if files are missing\n'
+        '  version            show version and platform information'
     )
 
     def run(self):
@@ -103,10 +121,10 @@ class Command(pycommand.CommandBase):
         # Flags that will print and exit
         if self.flags['help']:
             print(self.usage)
-            return
+            return 0
         elif self.flags['version']:
             print(verboseVersionInfo())
-            return
+            return 0
 
         # Update config with file
         if self.flags['config']:

@@ -40,7 +40,7 @@ Search, index and tag your files and find duplicates
 
 Options:
 -h, --help           show this help information
---version            show version information
+-V, --version        show version and platform information
 --config=<filename>  use specified config file
 
 Commands:
@@ -51,6 +51,7 @@ Commands:
   same               show all indexed duplicate files
   stats              show statistics for index and media paths
   prune              remove entries from index if files are missing
+  version            show version and platform information
 '''
 
 output_noargs = output_help
