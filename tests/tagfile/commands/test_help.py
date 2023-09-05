@@ -48,8 +48,8 @@ Commands:
   updatedb           scan media paths and index newly added files
   add                add a directory to media paths
   clones             show all indexed duplicate files
+  info               show statistics for index and media paths
   find <string>      find all filenames for <string>
-  stats              show statistics for index and media paths
   prune              remove entries from index if files are missing
   version            show version and platform information
 '''
@@ -85,6 +85,15 @@ Options:
 output_help_clones = '''usage: tagfile clones [options]
 
 Show all indexed duplicate files
+
+Options:
+-h, --help  show this help information
+
+'''
+
+output_help_info = '''usage: tagfile info [options]
+
+Show statistics for index and media paths
 
 Options:
 -h, --help  show this help information

@@ -41,6 +41,7 @@ from tagfile import config, verboseVersionInfo, __doc__ as main_description
 from tagfile.core import tfman
 from tagfile.commands.add import AddCommand
 from tagfile.commands.clones import ClonesCommand
+from tagfile.commands.info import InfoCommand
 from tagfile.commands.updatedb import UpdateDbCommand
 
 
@@ -78,6 +79,8 @@ class HelpCommand(pycommand.CommandBase):
                 print(AddCommand([]).usage)
             elif self.args[0] == 'clones':
                 print(ClonesCommand([]).usage)
+            elif self.args[0] == 'info':
+                print(InfoCommand([]).usage)
             elif self.args[0] == 'updatedb':
                 print(UpdateDbCommand([]).usage)
             else:
@@ -115,6 +118,7 @@ class Command(pycommand.CommandBase):
         # from commands package
         'add': AddCommand,
         'clones': ClonesCommand,
+        'info': InfoCommand,
         'updatedb': UpdateDbCommand,
     }
     optionList = (
@@ -128,8 +132,8 @@ class Command(pycommand.CommandBase):
         '  updatedb           scan media paths and index newly added files\n'
         '  add                add a directory to media paths\n'
         '  clones             show all indexed duplicate files\n'
+        '  info               show statistics for index and media paths\n'
         '  find <string>      find all filenames for <string>\n'
-        '  stats              show statistics for index and media paths\n'
         '  prune              remove entries from index if files are missing\n'
         '  version            show version and platform information'
     )
@@ -180,7 +184,7 @@ class Command(pycommand.CommandBase):
         elif command == 'same':
             print("Command 'same' is renamed. Please use 'clones' instead")
         elif command == 'stats':
-            tfman.stats()
+            print("Command 'stats' is renamed. Please use 'info' instead")
         elif command == 'prune':
             tfman.prune()
 

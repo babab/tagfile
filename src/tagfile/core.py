@@ -103,7 +103,7 @@ class _TagFileManager:
         for i in res:
             print(i.filepath)
 
-    def stats(self):
+    def info(self):
         qrep = Repository.select()
         files = colors.green(str(Index.select().count()))
         repos = colors.green(str(qrep.count()))

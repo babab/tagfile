@@ -31,30 +31,17 @@
 import pycommand
 import pytest
 
-from tagfile.commands.main_cmd import Command
+from tagfile.commands.info import InfoCommand as Command
 
 
-output_help = '''Usage: tagfile <options>
+output_help = '''usage: tagfile info [options]
 
-Search, index and tag your files and find duplicates
+Show statistics for index and media paths
 
 Options:
--h, --help           show this help information
--V, --version        show version and platform information
---config=<filename>  use specified config file
+-h, --help  show this help information
 
-Commands:
-  help               show help information
-  updatedb           scan media paths and index newly added files
-  add                add a directory to media paths
-  clones             show all indexed duplicate files
-  info               show statistics for index and media paths
-  find <string>      find all filenames for <string>
-  prune              remove entries from index if files are missing
-  version            show version and platform information
 '''
-
-output_noargs = output_help
 
 
 def test_pycommand_flags_are_None_by_default():
@@ -76,45 +63,20 @@ def test_pycommand_help_bool_flag_is_True_or_None():
     assert cmd.flags['help'] is None
 
 
-def test_pycommand_config_flag_argument():
-    cmd = Command(['--config', 'somefilename.yml'])
-    assert cmd.flags['config'] == 'somefilename.yml'
-
-    cmd = Command([''])
-    assert cmd.flags['config'] is None
-
-
 def test_pycommand_bool_flags_with_1_option():
     cmd = Command(['-h'])
-    assert cmd.flags['config'] is None
     assert cmd.flags['help'] is True
-    assert cmd.flags['version'] is None
-
-
-def test_pycommand_bool_flags_with_2_option():
-    cmd = Command(['-h', '--version'])
-    assert cmd.flags['config'] is None
-    assert cmd.flags['help'] is True
-    assert cmd.flags['version'] is True
 
 
 def test_pycommand_flags_are_accessible_by_attribute():
     cmd = Command(['-h'])
     assert cmd.flags.help is True
-    assert cmd.flags.version is None
 
 
 def test_pycommand_optionerror_on_unset_flags_attributes():
     cmd = Command(['-h'])
     with pytest.raises(pycommand.OptionError):
         assert cmd.flags.doesnotexist is None
-
-
-def test_pycommand_command_shows_message_when_no_args(capfd):
-    cmd = Command([])
-    cmd.run()
-    cap = capfd.readouterr()
-    assert output_noargs == cap.out
 
 
 def test_pycommand_command_help_flag_shows_help_message(capfd):
