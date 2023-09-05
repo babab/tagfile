@@ -107,7 +107,7 @@ class _TagFileManager:
         qrep = Repository.select()
         files = colors.green(str(Index.select().count()))
         repos = colors.green(str(qrep.count()))
-        duplos = colors.green(str(self.same(return_count=True)))
+        duplos = colors.green(str(self.clones(return_count=True)))
         print('{}\tfiles indexed\n{}\tduplicate files'.format(files, duplos))
         print('\nMEDIA PATHS ({}):'.format(repos))
 
@@ -131,7 +131,7 @@ class _TagFileManager:
                 npruned += 1
         print('DONE. {} files were removed from the index'.format(npruned))
 
-    def same(self, return_count=False):
+    def clones(self, return_count=False):
         res = Index.raw('''SELECT *, COUNT(filehash) FROM `index`
                         GROUP BY filehash HAVING ( COUNT(filehash) > 1 )''')
         hashes = []
