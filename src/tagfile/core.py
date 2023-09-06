@@ -86,8 +86,10 @@ class _TagFileManager:
         if not Index.table_exists():
             DB.create_tables([Index, Repository])
 
-    def loadKnownRepos(self):
+    def loadKnownRepos(self, silent=False):
         '''Load known media paths into `self.paths`'''
+        if not silent:
+            print('Browsing media paths for files, please wait...')
         qrep = Repository.select()
         for item in qrep:
             self.addPath(item.filepath)
@@ -121,7 +123,8 @@ class _TagFileManager:
         self.scan()
 
     def prune(self):
-        print('Scanning index for entries with missing files')
+        print(colors.bold('\nPRUNING STARTS'))
+        print('Checking index for entries with missing files...')
         res = Index.raw('''SELECT * FROM `index`''')
         npruned = 0
         for i in res:
@@ -164,6 +167,7 @@ class _TagFileManager:
         ierrunicode = 0
         total = len(self.paths)
         try:
+            print(colors.bold('\nSCANNING STARTS'))
             for path in self.paths:
                 file_is_valid = True
                 iall += 1

@@ -50,8 +50,10 @@ Commands:
   clones             show all indexed duplicate files
   info               show statistics for index and media paths
   find <string>      find all filenames for <string>
-  prune              remove entries from index if files are missing
   version            show version and platform information
+
+See 'tagfile help <command>' for more information on a
+specific command, before using it.
 '''
 
 output_noargs = output_help

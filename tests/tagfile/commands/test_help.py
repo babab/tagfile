@@ -50,8 +50,10 @@ Commands:
   clones             show all indexed duplicate files
   info               show statistics for index and media paths
   find <string>      find all filenames for <string>
-  prune              remove entries from index if files are missing
   version            show version and platform information
+
+See 'tagfile help <command>' for more information on a
+specific command, before using it.
 '''
 
 output_help_help = '''usage: tagfile help [<command>]
@@ -102,11 +104,19 @@ Options:
 
 output_help_updatedb = '''usage: tagfile updatedb [options]
 
-Scan all media paths and index newly added files
+Scan all media paths. Index added files and prune removed files.
+
+Use the option `--prune` if you only want to remove entries
+from the index if files are missing. Use the option `--scan`
+to only scan for newly added files without pruning.
 
 Options:
 -h, --help  show this help information
+--prune     prune removed files only; don't scan
+--scan      scan for new files only; don't prune
 
+When no options are specified, updatedb will both scan and prune.
+It will always prune deleted files before scanning for new files.
 '''
 
 

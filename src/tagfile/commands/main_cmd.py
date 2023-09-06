@@ -134,8 +134,10 @@ class Command(pycommand.CommandBase):
         '  clones             show all indexed duplicate files\n'
         '  info               show statistics for index and media paths\n'
         '  find <string>      find all filenames for <string>\n'
-        '  prune              remove entries from index if files are missing\n'
-        '  version            show version and platform information'
+        '  version            show version and platform information\n'
+
+        "\nSee 'tagfile help <command>' for more information on a\n"
+        'specific command, before using it.'
     )
 
     def run(self):
@@ -175,7 +177,11 @@ class Command(pycommand.CommandBase):
             arg = None
 
         if command == 'scan':
-            print("Command 'scan' is removed. Please use 'updatedb' instead")
+            print(
+                "Command 'scan' is removed. The equivalent to `scan` is\n'"
+                'now `tagfile add --scan .`. Use `tagfile updatedb --scan`\n'
+                ' to scan all known media-paths regardless of current dir.\n'
+            )
         elif command == 'find':
             if arg:
                 tfman.find(arg)
@@ -186,7 +192,10 @@ class Command(pycommand.CommandBase):
         elif command == 'stats':
             print("Command 'stats' is renamed. Please use 'info' instead")
         elif command == 'prune':
-            tfman.prune()
+            print(
+                "Command 'prune' is removed. 'The equivalent to `prune` is\n"
+                'now `tagfile updatedb --prune`.\n'
+            )
 
         # parse commands in pycommand style
         try:

@@ -36,11 +36,19 @@ from tagfile.commands.updatedb import UpdateDbCommand as Command
 
 output_help = '''usage: tagfile updatedb [options]
 
-Scan all media paths and index newly added files
+Scan all media paths. Index added files and prune removed files.
+
+Use the option `--prune` if you only want to remove entries
+from the index if files are missing. Use the option `--scan`
+to only scan for newly added files without pruning.
 
 Options:
 -h, --help  show this help information
+--prune     prune removed files only; don't scan
+--scan      scan for new files only; don't prune
 
+When no options are specified, updatedb will both scan and prune.
+It will always prune deleted files before scanning for new files.
 '''
 
 
@@ -66,11 +74,29 @@ def test_pycommand_help_bool_flag_is_True_or_None():
 def test_pycommand_bool_flags_with_1_option():
     cmd = Command(['-h'])
     assert cmd.flags['help'] is True
+    assert cmd.flags['scan'] is None
+    assert cmd.flags['prune'] is None
+
+
+def test_pycommand_bool_flags_with_2_option():
+    cmd = Command(['-h', '--scan'])
+    assert cmd.flags['help'] is True
+    assert cmd.flags['scan'] is True
+    assert cmd.flags['prune'] is None
+
+
+def test_pycommand_bool_flags_with_3_option():
+    cmd = Command(['--prune', '-h', '--scan'])
+    assert cmd.flags['help'] is True
+    assert cmd.flags['scan'] is True
+    assert cmd.flags['prune'] is True
 
 
 def test_pycommand_flags_are_accessible_by_attribute():
-    cmd = Command(['-h'])
+    cmd = Command(['--scan', '--prune', '-h'])
     assert cmd.flags.help is True
+    assert cmd.flags.prune is True
+    assert cmd.flags.scan is True
 
 
 def test_pycommand_optionerror_on_unset_flags_attributes():

@@ -36,16 +36,42 @@ from tagfile.core import tfman
 
 
 class UpdateDbCommand(pycommand.CommandBase):
-    '''Scan all media paths and index newly added files'''
+    '''Scan all media paths. Index added files and prune removed files.'''
     usagestr = 'usage: tagfile updatedb [options]'
-    description = __doc__
+    description = (
+        '{}\n\n'
+        'Use the option `--prune` if you only want to remove entries\n'
+        'from the index if files are missing. Use the option `--scan`\n'
+        'to only scan for newly added files without pruning.'
+    ).format(__doc__)
     optionList = (
         ('help', ('h', False, 'show this help information')),
+        ('prune', ('', False, "prune removed files only; don't scan")),
+        ('scan', ('', False, "scan for new files only; don't prune")),
+    )
+    usageTextExtra = (
+        'When no options are specified, updatedb will both scan and prune.\n'
+        'It will always prune deleted files before scanning for new files.'
     )
 
     def run(self):
         if self.flags.help:
             print(self.usage)
             return 0
+
+        # All options that reach here are valid. We need the repos for
+        # everything that follows.
         tfman.loadKnownRepos()
+
+        # support flagging of both options; don't skip or exit early with elif
+        if self.flags.prune or self.flags.scan:
+            if self.flags.prune:
+                tfman.prune()
+            if self.flags.scan:
+                tfman.scan()
+            return 0
+
+        # default, without options
+        tfman.prune()
         tfman.scan()
+        return 0
