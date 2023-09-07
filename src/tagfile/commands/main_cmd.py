@@ -38,9 +38,9 @@ import pycommand
 import yaml
 
 from tagfile import config, verboseVersionInfo, __doc__ as main_description
-from tagfile.core import tfman
 from tagfile.commands.add import AddCommand
 from tagfile.commands.clones import ClonesCommand
+from tagfile.commands.find import FindCommand
 from tagfile.commands.info import InfoCommand
 from tagfile.commands.updatedb import UpdateDbCommand
 
@@ -79,6 +79,8 @@ class HelpCommand(pycommand.CommandBase):
                 print(AddCommand([]).usage)
             elif self.args[0] == 'clones':
                 print(ClonesCommand([]).usage)
+            elif self.args[0] == 'find':
+                print(FindCommand([]).usage)
             elif self.args[0] == 'info':
                 print(InfoCommand([]).usage)
             elif self.args[0] == 'updatedb':
@@ -118,6 +120,7 @@ class Command(pycommand.CommandBase):
         # from commands package
         'add': AddCommand,
         'clones': ClonesCommand,
+        'find': FindCommand,
         'info': InfoCommand,
         'updatedb': UpdateDbCommand,
     }
@@ -132,8 +135,8 @@ class Command(pycommand.CommandBase):
         '  updatedb           scan media paths and index newly added files\n'
         '  add                add a directory to media paths\n'
         '  clones             show all indexed duplicate files\n'
+        '  find <string>      find files according to certain criterias\n'
         '  info               show statistics for index and media paths\n'
-        '  find <string>      find all filenames for <string>\n'
         '  version            show version and platform information\n'
 
         "\nSee 'tagfile help <command>' for more information on a\n"
@@ -167,26 +170,18 @@ class Command(pycommand.CommandBase):
             format='{asctime}:{levelname}: {message}'
         )
 
+        # temporary handling of old commands, the super call will catch
+        # and handle these further with 'error: unknown command'
         try:
             command = self.args[0]
         except IndexError:
             command = None
-        try:
-            arg = self.args[1]
-        except IndexError:
-            arg = None
-
         if command == 'scan':
             print(
                 "Command 'scan' is removed. The equivalent to `scan` is\n'"
                 'now `tagfile add --scan .`. Use `tagfile updatedb --scan`\n'
                 ' to scan all known media-paths regardless of current dir.\n'
             )
-        elif command == 'find':
-            if arg:
-                tfman.find(arg)
-            else:
-                print('error: command find requires argument')
         elif command == 'same':
             print("Command 'same' is renamed. Please use 'clones' instead")
         elif command == 'stats':

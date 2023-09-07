@@ -48,8 +48,8 @@ Commands:
   updatedb           scan media paths and index newly added files
   add                add a directory to media paths
   clones             show all indexed duplicate files
+  find <string>      find files according to certain criterias
   info               show statistics for index and media paths
-  find <string>      find all filenames for <string>
   version            show version and platform information
 
 See 'tagfile help <command>' for more information on a
@@ -87,6 +87,15 @@ Options:
 output_help_clones = '''usage: tagfile clones [options]
 
 Show all indexed duplicate files
+
+Options:
+-h, --help  show this help information
+
+'''
+
+output_help_find = '''usage: tagfile find [options] <string>
+
+Find files according to certain criterias
 
 Options:
 -h, --help  show this help information
@@ -195,6 +204,13 @@ def test_pycommand_command_arg_clones_shows_help_message(capfd):
     cmd.run()
     cap = capfd.readouterr()
     assert output_help_clones == cap.out
+
+
+def test_pycommand_command_arg_find_shows_help_message(capfd):
+    cmd = Command(['find'])
+    cmd.run()
+    cap = capfd.readouterr()
+    assert output_help_find == cap.out
 
 
 def test_pycommand_command_arg_updatedb_shows_help_message(capfd):
