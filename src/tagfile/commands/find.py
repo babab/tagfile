@@ -37,7 +37,10 @@ from tagfile.core import tfman
 
 class FindCommand(pycommand.CommandBase):
     '''Find files according to certain criterias'''
-    usagestr = 'usage: tagfile find [options] <string>'
+    usagestr = (
+        'usage: tagfile find <string>\n'
+        '   or: tagfile [-h | --help]'
+    )
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),

@@ -34,26 +34,28 @@ import pytest
 from tagfile.commands.main_cmd import HelpCommand as Command
 
 
-output_help_main = '''Usage: tagfile <options>
+output_help_main = '''Usage: tagfile [--config <filename>] <command>
+   or: tagfile [-h | --help] | [-V | --version]
 
 Search, index and tag your files and find duplicates
 
 Options:
+--config=<filename>  use specified config file
 -h, --help           show this help information
 -V, --version        show version and platform information
---config=<filename>  use specified config file
 
 Commands:
-  help               show help information
-  updatedb           scan media paths and index newly added files
-  add                add a directory to media paths
-  clones             show all indexed duplicate files
-  find <string>      find files according to certain criterias
-  info               show statistics for index and media paths
-  version            show version and platform information
+  add        add a directory to media paths
+  clones     show all indexed duplicate files
+  find       find files according to certain criterias
+  help       show help information
+  info       show statistics for index and media paths
+  updatedb   scan media paths and index newly added files
+  version    show version and platform information
 
 See 'tagfile help <command>' for more information on a
 specific command, before using it.
+
 '''
 
 output_help_help = '''usage: tagfile help [<command>]
@@ -65,7 +67,7 @@ Options:
 
 '''
 
-output_help_version = '''usage: tagfile version
+output_help_version = '''usage: tagfile version [-h | --help]
 
 Show version and platform information
 
@@ -74,7 +76,8 @@ Options:
 
 '''
 
-output_help_add = '''usage: tagfile add [options] <media-path>
+output_help_add = '''usage: tagfile add [--scan] <media-path>
+   or: tagfile add [-h | --help]
 
 Add a directory to media paths (to be scanned later or right away)
 
@@ -84,7 +87,7 @@ Options:
 
 '''
 
-output_help_clones = '''usage: tagfile clones [options]
+output_help_clones = '''usage: tagfile clones [-h | --help]
 
 Show all indexed duplicate files
 
@@ -93,7 +96,8 @@ Options:
 
 '''
 
-output_help_find = '''usage: tagfile find [options] <string>
+output_help_find = '''usage: tagfile find <string>
+   or: tagfile [-h | --help]
 
 Find files according to certain criterias
 
@@ -102,7 +106,7 @@ Options:
 
 '''
 
-output_help_info = '''usage: tagfile info [options]
+output_help_info = '''usage: tagfile info [-h | --help]
 
 Show statistics for index and media paths
 
@@ -111,7 +115,8 @@ Options:
 
 '''
 
-output_help_updatedb = '''usage: tagfile updatedb [options]
+output_help_updatedb = '''usage: tagfile updatedb [--prune] [--scan]
+   or: tagfile updatedb [-h | --help]
 
 Scan all media paths. Index added files and prune removed files.
 
@@ -126,6 +131,7 @@ Options:
 
 When no options are specified, updatedb will both scan and prune.
 It will always prune deleted files before scanning for new files.
+
 '''
 
 

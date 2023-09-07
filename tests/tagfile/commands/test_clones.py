@@ -34,7 +34,7 @@ import pytest
 from tagfile.commands.clones import ClonesCommand as Command
 
 
-output_help = '''usage: tagfile clones [options]
+output_help = '''usage: tagfile clones [-h | --help]
 
 Show all indexed duplicate files
 

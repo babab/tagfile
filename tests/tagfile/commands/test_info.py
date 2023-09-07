@@ -34,7 +34,7 @@ import pytest
 from tagfile.commands.info import InfoCommand as Command
 
 
-output_help = '''usage: tagfile info [options]
+output_help = '''usage: tagfile info [-h | --help]
 
 Show statistics for index and media paths
 

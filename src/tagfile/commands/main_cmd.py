@@ -94,7 +94,7 @@ class HelpCommand(pycommand.CommandBase):
 
 
 class VersionCommand(pycommand.CommandBase):
-    usagestr = 'usage: tagfile version'
+    usagestr = 'usage: tagfile version [-h | --help]'
     description = 'Show version and platform information'
     optionList = (
         ('help', ('h', False, 'show this help information')),
@@ -111,7 +111,10 @@ class VersionCommand(pycommand.CommandBase):
 
 class Command(pycommand.CommandBase):
     '''Argument handler based on pycommand'''
-    usagestr = 'Usage: tagfile <options>'
+    usagestr = (
+        'Usage: tagfile [--config <filename>] <command>\n'
+        '   or: tagfile [-h | --help] | [-V | --version]'
+    )
     description = main_description
     commands = {
         # from this module
@@ -125,22 +128,22 @@ class Command(pycommand.CommandBase):
         'updatedb': UpdateDbCommand,
     }
     optionList = (
+        ('config', ('', '<filename>', 'use specified config file')),
         ('help', ('h', False, 'show this help information')),
         ('version', ('V', False, 'show version and platform information')),
-        ('config', ('', '<filename>', 'use specified config file')),
     )
     usageTextExtra = (
         'Commands:\n'
-        '  help               show help information\n'
-        '  updatedb           scan media paths and index newly added files\n'
-        '  add                add a directory to media paths\n'
-        '  clones             show all indexed duplicate files\n'
-        '  find <string>      find files according to certain criterias\n'
-        '  info               show statistics for index and media paths\n'
-        '  version            show version and platform information\n'
+        '  add        add a directory to media paths\n'
+        '  clones     show all indexed duplicate files\n'
+        '  find       find files according to certain criterias\n'
+        '  help       show help information\n'
+        '  info       show statistics for index and media paths\n'
+        '  updatedb   scan media paths and index newly added files\n'
+        '  version    show version and platform information\n'
 
         "\nSee 'tagfile help <command>' for more information on a\n"
-        'specific command, before using it.'
+        'specific command, before using it.\n'
     )
 
     def run(self):

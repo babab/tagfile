@@ -37,7 +37,10 @@ from tagfile.core import tfman
 
 class UpdateDbCommand(pycommand.CommandBase):
     '''Scan all media paths. Index added files and prune removed files.'''
-    usagestr = 'usage: tagfile updatedb [options]'
+    usagestr = (
+        'usage: tagfile updatedb [--prune] [--scan]\n'
+        '   or: tagfile updatedb [-h | --help]'
+    )
     description = (
         '{}\n\n'
         'Use the option `--prune` if you only want to remove entries\n'
@@ -51,7 +54,7 @@ class UpdateDbCommand(pycommand.CommandBase):
     )
     usageTextExtra = (
         'When no options are specified, updatedb will both scan and prune.\n'
-        'It will always prune deleted files before scanning for new files.'
+        'It will always prune deleted files before scanning for new files.\n'
     )
 
     def run(self):

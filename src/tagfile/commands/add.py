@@ -39,7 +39,10 @@ from tagfile.core import tfman
 
 class AddCommand(pycommand.CommandBase):
     '''Add a directory to media paths (to be scanned later or right away)'''
-    usagestr = 'usage: tagfile add [options] <media-path>'
+    usagestr = (
+        'usage: tagfile add [--scan] <media-path>\n'
+        '   or: tagfile add [-h | --help]'
+    )
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),

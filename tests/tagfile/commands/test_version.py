@@ -34,7 +34,7 @@ import pytest
 from tagfile.commands.main_cmd import VersionCommand as Command
 
 
-output_help = '''usage: tagfile version
+output_help = '''usage: tagfile version [-h | --help]
 
 Show version and platform information
 

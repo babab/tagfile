@@ -34,7 +34,8 @@ import pytest
 from tagfile.commands.updatedb import UpdateDbCommand as Command
 
 
-output_help = '''usage: tagfile updatedb [options]
+output_help = '''usage: tagfile updatedb [--prune] [--scan]
+   or: tagfile updatedb [-h | --help]
 
 Scan all media paths. Index added files and prune removed files.
 
@@ -49,6 +50,7 @@ Options:
 
 When no options are specified, updatedb will both scan and prune.
 It will always prune deleted files before scanning for new files.
+
 '''
 
 

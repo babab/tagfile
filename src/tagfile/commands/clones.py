@@ -37,7 +37,7 @@ from tagfile.core import tfman
 
 class ClonesCommand(pycommand.CommandBase):
     '''Show all indexed duplicate files'''
-    usagestr = 'usage: tagfile clones [options]'
+    usagestr = 'usage: tagfile clones [-h | --help]'
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),

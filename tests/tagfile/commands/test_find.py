@@ -34,7 +34,8 @@ import pytest
 from tagfile.commands.find import FindCommand as Command
 
 
-output_help = '''usage: tagfile find [options] <string>
+output_help = '''usage: tagfile find <string>
+   or: tagfile [-h | --help]
 
 Find files according to certain criterias
 

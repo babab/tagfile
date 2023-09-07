@@ -37,7 +37,7 @@ from tagfile.core import tfman
 
 class InfoCommand(pycommand.CommandBase):
     '''Show statistics for index and media paths'''
-    usagestr = 'usage: tagfile info [options]'
+    usagestr = 'usage: tagfile info [-h | --help]'
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),

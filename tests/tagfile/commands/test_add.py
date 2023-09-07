@@ -34,7 +34,8 @@ import pytest
 from tagfile.commands.add import AddCommand as Command
 
 
-output_help = '''usage: tagfile add [options] <media-path>
+output_help = '''usage: tagfile add [--scan] <media-path>
+   or: tagfile add [-h | --help]
 
 Add a directory to media paths (to be scanned later or right away)
 

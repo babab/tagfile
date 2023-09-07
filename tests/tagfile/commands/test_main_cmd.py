@@ -34,26 +34,28 @@ import pytest
 from tagfile.commands.main_cmd import Command
 
 
-output_help = '''Usage: tagfile <options>
+output_help = '''Usage: tagfile [--config <filename>] <command>
+   or: tagfile [-h | --help] | [-V | --version]
 
 Search, index and tag your files and find duplicates
 
 Options:
+--config=<filename>  use specified config file
 -h, --help           show this help information
 -V, --version        show version and platform information
---config=<filename>  use specified config file
 
 Commands:
-  help               show help information
-  updatedb           scan media paths and index newly added files
-  add                add a directory to media paths
-  clones             show all indexed duplicate files
-  find <string>      find files according to certain criterias
-  info               show statistics for index and media paths
-  version            show version and platform information
+  add        add a directory to media paths
+  clones     show all indexed duplicate files
+  find       find files according to certain criterias
+  help       show help information
+  info       show statistics for index and media paths
+  updatedb   scan media paths and index newly added files
+  version    show version and platform information
 
 See 'tagfile help <command>' for more information on a
 specific command, before using it.
+
 '''
 
 output_noargs = output_help
