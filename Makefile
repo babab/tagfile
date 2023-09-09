@@ -47,6 +47,10 @@ sys_pip   = ${SYSPYTHON} -m pip
 venv_pip  = ${VENVDIR}/bin/python -m pip
 dist_whl  = dist/${NAME}-${VERSION}-py3-none-any.whl
 
+### ENV vars for usage in testing environment
+export TAGFILE_DATA_HOME = /tmp/tagfiletests/data
+export TAGFILE_CONFIG_HOME = /tmp/tagfiletests/config
+
 # Include any local configuration overrides
 sinclude config.mk
 

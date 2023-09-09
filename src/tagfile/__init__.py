@@ -77,26 +77,34 @@ hash-buf-size:  1024
 
 config = yaml.safe_load(defaultconfig)
 
-# Set base paths
-TAGFILE_DATA_HOME = os.path.expanduser('~/.local/share/tagfile')
-TAGFILE_CONFIG_HOME = os.path.expanduser('~/.config/tagfile')
+# Set base paths, overridable using ENV vars
+TAGFILE_DATA_HOME = os.environ.get(
+    'TAGFILE_DATA_HOME',
+    os.path.expanduser('~/.local/share/tagfile')
+)
+TAGFILE_CONFIG_HOME = os.environ.get(
+    'TAGFILE_CONFIG_HOME',
+    os.path.expanduser('~/.config/tagfile')
+)
 
 # initialize data path
 if not os.path.exists(TAGFILE_DATA_HOME):
-    os.mkdir(TAGFILE_DATA_HOME)
+    os.makedirs(TAGFILE_DATA_HOME)
 
 # initialize config path and create config.yaml file
 if not os.path.exists(TAGFILE_CONFIG_HOME):
-    os.mkdir(TAGFILE_CONFIG_HOME)
-    fn = os.path.join(TAGFILE_CONFIG_HOME, 'config.yaml')
-    with open(fn, 'w') as f:
-        f.write(defaultconfig[1:])
-    print(colors.green('Created config file in {}\n'.format(fn)))
+    os.makedirs(TAGFILE_CONFIG_HOME)
+    _filepath = os.path.join(TAGFILE_CONFIG_HOME, 'config.yaml')
+    with open(_filepath, 'w') as _fconf:
+        _fconf.write(defaultconfig[1:])
+        print(colors.green(
+            'Copied default config into file "{}"\n'.format(_filepath)
+        ))
 
-# Read from default user config file
-fn = os.path.join(TAGFILE_CONFIG_HOME, 'config.yaml')
-if os.path.exists(fn):
-    config.update(yaml.safe_load(open(fn).read()))
+# Read user config file
+_filepath = os.path.join(TAGFILE_CONFIG_HOME, 'config.yaml')
+if os.path.exists(_filepath):
+    config.update(yaml.safe_load(open(_filepath).read()))
 
 # Init sqlite database - used in peewee models
 DB = pw.SqliteDatabase(os.path.join(TAGFILE_DATA_HOME, 'index.db'))
