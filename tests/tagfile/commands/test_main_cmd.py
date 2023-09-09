@@ -1,3 +1,5 @@
+# file: tests/tagfile/commands/test_main_cmd.py
+
 # Copyright (c) 2023 Benjamin Althues <benjamin@babab.nl>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -95,15 +97,37 @@ def test_pycommand_bool_flags_with_1_option():
     assert cmd.flags['version'] is None
 
 
-def test_pycommand_bool_flags_with_2_option():
+def test_pycommand_bool_flags_with_2_options():
     cmd = Command(['-h', '--version'])
     assert cmd.flags['config'] is None
     assert cmd.flags['help'] is True
     assert cmd.flags['version'] is True
 
 
+def test_pycommand_bool_flags_with_3_options():
+    cmd = Command(['-h', '-V', '--config=/tmp/tagfiledevtest-config.yml'])
+    assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.yml'
+    assert cmd.flags['help'] is True
+    assert cmd.flags['version'] is True
+
+
+def test_pycommand_config_option_string_as_2_args():
+    cmd = Command(['--config', '/tmp/tagfiledevtest-config.yml'])
+    assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.yml'
+    assert cmd.flags['help'] is None
+    assert cmd.flags['version'] is None
+
+
+def test_pycommand_config_option_string_as_1_arg_with_equals_sign():
+    cmd = Command(['--config=/tmp/tagfiledevtest-config.yml'])
+    assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.yml'
+    assert cmd.flags['help'] is None
+    assert cmd.flags['version'] is None
+
+
 def test_pycommand_flags_are_accessible_by_attribute():
-    cmd = Command(['-h'])
+    cmd = Command(['-h', '--config=/tmp/tagfiledevtest-config.yml'])
+    assert cmd.flags.config == '/tmp/tagfiledevtest-config.yml'
     assert cmd.flags.help is True
     assert cmd.flags.version is None
 

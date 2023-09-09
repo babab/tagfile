@@ -1,3 +1,5 @@
+# file: tests/tagfile/commands/test_add.py
+
 # Copyright (c) 2023 Benjamin Althues <benjamin@babab.nl>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -77,7 +79,7 @@ def test_pycommand_bool_flags_with_1_option():
     assert cmd.flags['scan'] is None
 
 
-def test_pycommand_bool_flags_with_2_option():
+def test_pycommand_bool_flags_with_2_options():
     cmd = Command(['-h', '--scan'])
     assert cmd.flags['help'] is True
     assert cmd.flags['scan'] is True
