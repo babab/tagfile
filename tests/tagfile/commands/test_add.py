@@ -53,6 +53,9 @@ To add and scan current dir, use `tagfile add --scan .`
 See `tagfile help add` OR `tagfile add -h` for more info.
 '''
 
+output_add_tmp_tagfiletests = '''Added media path: /tmp/tagfiletests
+'''
+
 
 def test_pycommand_flags_are_None_by_default():
     cmd = Command([])
@@ -109,3 +112,12 @@ def test_pycommand_command_help_flag_shows_help_message(capfd):
     cmd.run()
     cap = capfd.readouterr()
     assert output_help == cap.out
+
+
+def test_media_path_arg_will_add_path_to_repos_if_valid(capfd):
+    import tagfile
+    cmd = Command(['/tmp/tagfiletests'])
+    cmd.run()
+    cap = capfd.readouterr()
+    assert output_add_tmp_tagfiletests == cap.out
+    assert tagfile.core.tfman.paths[0].startswith('/tmp/tagfiletests')
