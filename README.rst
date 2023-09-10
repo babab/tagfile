@@ -107,7 +107,7 @@ Show duplicate files using the following commands:
 Installing tagfile
 ------------------
 
-.. note:: All commands should be run as a regular user (not root).
+**All commands should be run as a regular user (not root).**
 
 Tagfile is a command-line end-user application written in Python that
 is dependant on packages from PyPI. You can install it using pip. But
