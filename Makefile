@@ -30,7 +30,7 @@
 
 ### Settings #################################################################
 NAME      = tagfile
-VERSION   = 0.2.0a3
+VERSION   = 0.2.0a5
 SCRIPT    = ./src/${NAME}/commands/main_cmd.py
 CODE_DIRS = src tests
 BIN_NAME  = ${NAME}
@@ -41,15 +41,19 @@ SYSPYTHON = /usr/bin/python3
 # directory name, will be created next to Makefile
 VENVDIR   = .virtualenv
 
+### Settings for testing, using ENV vars #####################################
+# Without these envvars, pytest will try to use your real data/config
+# and fail. The directories (including the cache dir) will be
+# automatically created by tagfile.
+export TAGFILE_CONFIG_HOME = ${PWD}/cache/config_home
+export TAGFILE_DATA_HOME = ${PWD}/cache/data_home
+export TAGFILE_TESTING_MEDIA_PATH = ${PWD}/cache/media
 
 ### Variables - changing these is not advised ################################
 sys_pip   = ${SYSPYTHON} -m pip
 venv_pip  = ${VENVDIR}/bin/python -m pip
 dist_whl  = dist/${NAME}-${VERSION}-py3-none-any.whl
 
-### ENV vars for usage in testing environment
-export TAGFILE_DATA_HOME = /tmp/tagfiletests/data
-export TAGFILE_CONFIG_HOME = /tmp/tagfiletests/config
 
 # Include any local configuration overrides
 sinclude config.mk
@@ -155,7 +159,15 @@ develop: ${VENVDIR}
 	@printf '\n--- CREATING SYMBOLIC LINK IN PATH ---\n'
 	ln -svf "$${PWD}/${VENVDIR}/bin/${BIN_NAME}" "$${HOME}/.local/bin/${BIN_NAME}"
 
+test-data: #custom
+	@printf '\n--- CREATING DIRECTORY FOR HOLDING MEDIA FILES FOR TESTING ---\n'
+	mkdir -vp "$${TAGFILE_TESTING_MEDIA_PATH}/video"
+	@printf '\n--- Downloading MEDIA FILES FOR TESTING ---\n'
+	wget -P "$${TAGFILE_TESTING_MEDIA_PATH}/video" "https://getsamplefiles.com/download/mp4/sample-3.mp4"
+
 test: ${VENVDIR} develop
+	@printf '\n--- CHECKING IF TESTDATA IS ALREADY AVAILABLE ---\n' #custom
+	test -d "$${TAGFILE_TESTING_MEDIA_PATH}" || make test-data #custom
 	@printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
 	${VENVDIR}/bin/flake8 -v --max-complexity=20 ${CODE_DIRS}
 	@printf '\n--- RUN PYTEST THROUGH COVERAGE ---\n'
@@ -175,6 +187,7 @@ clean:
 	rm -rf build dist htmlcov ${VENVDIR}
 	rm -f ${NAME}.spec
 	find -type d -name __pycache__ -print0 | xargs -0 rm -rf
+	@printf '\nWarning: The cache dir must be manually removed if needed!\n' #custom
 
 
 ### pipx targets / user packages #############################################
