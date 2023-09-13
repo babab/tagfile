@@ -164,6 +164,7 @@ test-data: #custom
 	mkdir -vp "$${TAGFILE_TESTING_MEDIA_PATH}/video"
 	@printf '\n--- Downloading MEDIA FILES FOR TESTING ---\n'
 	wget -P "$${TAGFILE_TESTING_MEDIA_PATH}/video" "https://getsamplefiles.com/download/mp4/sample-3.mp4"
+	cp -v "$${TAGFILE_TESTING_MEDIA_PATH}/video/sample-3.mp4" "$${TAGFILE_TESTING_MEDIA_PATH}/video/sample-3b.mp4"
 
 test: ${VENVDIR} develop
 	@printf '\n--- CHECKING IF TESTDATA IS ALREADY AVAILABLE ---\n' #custom

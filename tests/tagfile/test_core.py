@@ -30,7 +30,18 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
+import os
+
 import tagfile
+
+
+def test_core_Files_staticmethod_walkdir():
+    _path = os.environ['TAGFILE_TESTING_MEDIA_PATH']
+    paths = tagfile.core.Files.walkdir(_path)
+    assert paths == [
+        '{}/video/sample-3.mp4'.format(_path),
+        '{}/video/sample-3b.mp4'.format(_path),
+    ]
 
 
 def test_core_tfman_paths_is_not_None():
