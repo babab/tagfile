@@ -176,19 +176,25 @@ test: ${VENVDIR} develop
 	@printf '\n--- COVERAGE REPORT ---\n'
 	${VENVDIR}/bin/coverage report
 	${VENVDIR}/bin/coverage html
+	make clean-after-tests #custom
 
 test-pkg: ${VENVDIR} venv-install
 	@printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
 	${VENVDIR}/bin/flake8 -v --max-complexity=20 ${CODE_DIRS}
 	@printf '\n--- RUN PYTEST ---\n'
 	${VENVDIR}/bin/pytest  # uses config section in pyproject.toml
+	make clean-after-tests #custom
 
-clean:
+clean-after-tests: #custom
+	test -n "$${TAGFILE_CONFIG_HOME}" && rm -vrf "$${TAGFILE_CONFIG_HOME}"
+	test -n "$${TAGFILE_DATA_HOME}" && rm -vrf "$${TAGFILE_DATA_HOME}"
+
+clean: clean-after-tests
 	@printf '\n--- CLEANING UP FILES AND VIRTUAL ENV ---\n'
 	rm -rf build dist htmlcov ${VENVDIR}
 	rm -f ${NAME}.spec
 	find -type d -name __pycache__ -print0 | xargs -0 rm -rf
-	@printf '\nWarning: The cache dir must be manually removed if needed!\n' #custom
+	@printf '\nWarning: The cache/media dir must be manually removed if needed!\n' #custom
 
 
 ### pipx targets / user packages #############################################
