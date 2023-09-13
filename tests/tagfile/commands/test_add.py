@@ -39,7 +39,7 @@ from tagfile.commands.add import AddCommand as Command
 
 TAGFILE_CONFIG_HOME = os.environ['TAGFILE_CONFIG_HOME']
 TAGFILE_DATA_HOME = os.environ['TAGFILE_DATA_HOME']
-TAGFILE_TESTING_MEDIA_PATH = os.environ['TAGFILE_TESTING_MEDIA_PATH']
+TAGFILEDEV_MEDIA_PATH = os.environ['TAGFILEDEV_MEDIA_PATH']
 
 
 output_help = '''usage: tagfile add [--scan] <media-path>
@@ -60,7 +60,7 @@ See `tagfile help add` OR `tagfile add -h` for more info.
 '''
 
 output_add_tmp_tagfiletests = '''Added media path: {}
-'''.format(TAGFILE_TESTING_MEDIA_PATH)
+'''.format(TAGFILEDEV_MEDIA_PATH)
 
 
 def test_pycommand_flags_are_None_by_default():
@@ -122,8 +122,8 @@ def test_pycommand_command_help_flag_shows_help_message(capfd):
 
 def test_media_path_arg_will_add_path_to_repos_if_valid(capfd):
     import tagfile
-    cmd = Command([TAGFILE_TESTING_MEDIA_PATH])
+    cmd = Command([TAGFILEDEV_MEDIA_PATH])
     cmd.run()
     cap = capfd.readouterr()
     assert output_add_tmp_tagfiletests == cap.out
-    assert tagfile.core.tfman.paths[0].startswith(TAGFILE_TESTING_MEDIA_PATH)
+    assert tagfile.core.tfman.paths[0].startswith(TAGFILEDEV_MEDIA_PATH)

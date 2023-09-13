@@ -36,7 +36,7 @@ import tagfile
 
 
 def test_core_Files_staticmethod_walkdir():
-    _path = os.environ['TAGFILE_TESTING_MEDIA_PATH']
+    _path = os.environ['TAGFILEDEV_MEDIA_PATH']
     paths = tagfile.core.Files.walkdir(_path)
     assert paths == [
         '{}/video/sample-3.mp4'.format(_path),

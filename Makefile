@@ -47,7 +47,7 @@ VENVDIR   = .virtualenv
 # automatically created by tagfile.
 export TAGFILE_CONFIG_HOME = ${PWD}/cache/config_home
 export TAGFILE_DATA_HOME = ${PWD}/cache/data_home
-export TAGFILE_TESTING_MEDIA_PATH = ${PWD}/cache/media
+export TAGFILEDEV_MEDIA_PATH = ${PWD}/cache/media
 
 ### Variables - changing these is not advised ################################
 sys_pip   = ${SYSPYTHON} -m pip
@@ -161,14 +161,14 @@ develop: ${VENVDIR}
 
 test-data: #custom
 	@printf '\n--- CREATING DIRECTORY FOR HOLDING MEDIA FILES FOR TESTING ---\n'
-	mkdir -vp "$${TAGFILE_TESTING_MEDIA_PATH}/video"
+	mkdir -vp "$${TAGFILEDEV_MEDIA_PATH}/video"
 	@printf '\n--- Downloading MEDIA FILES FOR TESTING ---\n'
-	wget -P "$${TAGFILE_TESTING_MEDIA_PATH}/video" "https://getsamplefiles.com/download/mp4/sample-3.mp4"
-	cp -v "$${TAGFILE_TESTING_MEDIA_PATH}/video/sample-3.mp4" "$${TAGFILE_TESTING_MEDIA_PATH}/video/sample-3b.mp4"
+	wget -P "$${TAGFILEDEV_MEDIA_PATH}/video" "https://getsamplefiles.com/download/mp4/sample-3.mp4"
+	cp -v "$${TAGFILEDEV_MEDIA_PATH}/video/sample-3.mp4" "$${TAGFILEDEV_MEDIA_PATH}/video/sample-3b.mp4"
 
 test: ${VENVDIR} develop
 	@printf '\n--- CHECKING IF TESTDATA IS ALREADY AVAILABLE ---\n' #custom
-	test -d "$${TAGFILE_TESTING_MEDIA_PATH}" || make test-data #custom
+	test -d "$${TAGFILEDEV_MEDIA_PATH}" || make test-data #custom
 	@printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
 	${VENVDIR}/bin/flake8 -v --max-complexity=20 ${CODE_DIRS}
 	@printf '\n--- RUN PYTEST THROUGH COVERAGE ---\n'
