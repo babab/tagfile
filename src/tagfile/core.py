@@ -165,6 +165,7 @@ class _TagFileManager:
         iignore = 0
         iexisting = 0
         ierrunicode = 0
+        ierrpermission = 0
         total = len(self.paths)
         try:
             print(colors.bold('\nSCANNING STARTS'))
@@ -187,17 +188,28 @@ class _TagFileManager:
                             file_is_valid = False
                     except FileNotFoundError:
                         file_is_valid = False
+                    except PermissionError:
+                        file_is_valid = False
+                        ierrpermission += 1
+                        logging.error('PermissionError(getsize) for: ' + path)
 
                 if file_is_valid:
                     try:
                         Index.get(Index.filepath == path)
                         iexisting += 1
                     except Index.DoesNotExist:
+                        try:
+                            Index.create(
+                                filehash=Files.hashfile(path), filepath=path,
+                                basename=os.path.basename(path)
+                            )
+                        except PermissionError:
+                            ierrpermission += 1
+                            logging.error(
+                                'PermissionError(hashfile) for: ' + path
+                            )
+                            break
                         inew += 1
-                        Index.create(
-                            filehash=Files.hashfile(path), filepath=path,
-                            basename=os.path.basename(path)
-                        )
                         logging.debug('Added ' + path)
                     except UnicodeEncodeError:
                         ierrunicode += 1
@@ -206,9 +218,15 @@ class _TagFileManager:
             print('Already indexed {:>12}'.format(iexisting))
             print('Ignored files   {:>12}'.format(iignore))
             print(colors.green('Newly added     {:>12}'.format(inew)))
+
+            if ierrunicode or ierrpermission:
+                print(colors.bold('\nERRORS'))
             if ierrunicode:
-                print(colors.red('Files with unicode errors: {}'
+                print(colors.red('Filenames with unicode errors: {}'
                                  .format(ierrunicode)))
+            if ierrpermission:
+                print(colors.red('File locations with permission errors: {}'
+                                 .format(ierrpermission)))
         return self
 
 
