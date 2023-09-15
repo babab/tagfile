@@ -35,6 +35,20 @@ import os
 import tagfile
 
 
+def test_invertexpanduser_helper_function_if_path_startswith_home():
+    original = '~/.local'
+    expanded = os.path.expanduser(original)
+    assert expanded != original
+    assert tagfile.invertexpanduser(expanded) == original
+
+
+def test_invertexpanduser_helper_function_if_path_not_startswith_home():
+    original = '/tmp/~user/somedir/~/someotherdir'
+    expanded = os.path.expanduser(original)
+    assert expanded == original
+    assert tagfile.invertexpanduser(expanded) == original
+
+
 def test_config_and_data_home_envvars_are_altered_for_testenvironment():
     assert os.environ.get('TAGFILE_DATA_HOME') is not None
     assert os.environ.get('TAGFILE_CONFIG_HOME') is not None
@@ -46,6 +60,5 @@ def test_config_and_data_home_values_are_set_to_those_of_envvars():
 
 
 def test_defaultconfig_logfile_is_altered_according_to_TAGFILE_DATA_HOME():
-    assert tagfile.config['log-file'] == '{}/tagfile.log'.format(
-        tagfile.TAGFILE_DATA_HOME
-    )
+    tildepath = tagfile.invertexpanduser(tagfile.TAGFILE_DATA_HOME)
+    assert tagfile.config['log-file'] == '{}/tagfile.log'.format(tildepath)

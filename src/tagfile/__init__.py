@@ -30,6 +30,7 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
+import datetime
 import os
 import sys
 
@@ -57,6 +58,14 @@ def verboseVersionInfo():
     )
 
 
+def invertexpanduser(path):
+    '''Replaces a substring of `os.path.expanduser(path)` with ``~``.'''
+    home_abspath = os.path.expanduser('~')
+    if path.startswith(home_abspath):
+        return path.replace(home_abspath, '~')
+    return path
+
+
 # Set base paths, overridable using ENV vars
 TAGFILE_DATA_HOME = os.environ.get(
     'TAGFILE_DATA_HOME',
@@ -67,7 +76,11 @@ TAGFILE_CONFIG_HOME = os.environ.get(
     os.path.expanduser('~/.config/tagfile')
 )
 
-defaultconfig = '''
+defaultconfig = '''# config created by {versionStr} at {date}
+
+# A tilde `~` in filepaths will expand to $HOME on *BSD/Linux/MacOS/Unix
+# or %USERPROFILE% on Windows.
+
 log-file:   {data_home}/tagfile.log
 load-bar:   yes
 ignore:
@@ -83,7 +96,11 @@ ignore-empty:   yes
 # hash-algo can be 'md5' or 'sha1'
 hash-algo:      sha1
 hash-buf-size:  1024
-'''.format(data_home=TAGFILE_DATA_HOME)
+'''.format(
+    data_home=invertexpanduser(TAGFILE_DATA_HOME),
+    date=datetime.datetime.now(),
+    versionStr=versionStr
+)
 
 config = yaml.safe_load(defaultconfig)
 
@@ -96,7 +113,7 @@ if not os.path.exists(TAGFILE_CONFIG_HOME):
     os.makedirs(TAGFILE_CONFIG_HOME)
     _filepath = os.path.join(TAGFILE_CONFIG_HOME, 'config.yaml')
     with open(_filepath, 'w') as _fconf:
-        _fconf.write(defaultconfig[1:])
+        _fconf.write(defaultconfig)
         print(colors.green(
             'Copied default config into file "{}"\n'.format(_filepath)
         ))
