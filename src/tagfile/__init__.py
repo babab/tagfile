@@ -57,8 +57,18 @@ def verboseVersionInfo():
     )
 
 
+# Set base paths, overridable using ENV vars
+TAGFILE_DATA_HOME = os.environ.get(
+    'TAGFILE_DATA_HOME',
+    os.path.expanduser('~/.local/share/tagfile')
+)
+TAGFILE_CONFIG_HOME = os.environ.get(
+    'TAGFILE_CONFIG_HOME',
+    os.path.expanduser('~/.config/tagfile')
+)
+
 defaultconfig = '''
-log-file:   ~/.local/share/tagfile/tagfile.log
+log-file:   {data_home}/tagfile.log
 load-bar:   yes
 ignore:
     - .git
@@ -73,19 +83,9 @@ ignore-empty:   yes
 # hash-algo can be 'md5' or 'sha1'
 hash-algo:      sha1
 hash-buf-size:  1024
-'''
+'''.format(data_home=TAGFILE_DATA_HOME)
 
 config = yaml.safe_load(defaultconfig)
-
-# Set base paths, overridable using ENV vars
-TAGFILE_DATA_HOME = os.environ.get(
-    'TAGFILE_DATA_HOME',
-    os.path.expanduser('~/.local/share/tagfile')
-)
-TAGFILE_CONFIG_HOME = os.environ.get(
-    'TAGFILE_CONFIG_HOME',
-    os.path.expanduser('~/.config/tagfile')
-)
 
 # initialize data path
 if not os.path.exists(TAGFILE_DATA_HOME):

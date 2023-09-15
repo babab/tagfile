@@ -43,3 +43,9 @@ def test_config_and_data_home_envvars_are_altered_for_testenvironment():
 def test_config_and_data_home_values_are_set_to_those_of_envvars():
     assert tagfile.TAGFILE_DATA_HOME == os.environ.get('TAGFILE_DATA_HOME')
     assert tagfile.TAGFILE_CONFIG_HOME == os.environ.get('TAGFILE_CONFIG_HOME')
+
+
+def test_defaultconfig_logfile_is_altered_according_to_TAGFILE_DATA_HOME():
+    assert tagfile.config['log-file'] == '{}/tagfile.log'.format(
+        tagfile.TAGFILE_DATA_HOME
+    )
