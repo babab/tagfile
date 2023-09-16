@@ -62,6 +62,11 @@ See `tagfile help add` OR `tagfile add -h` for more info.
 output_add_tmp_tagfiletests = '''Added media path: {}
 '''.format(TAGFILEDEV_MEDIA_PATH)
 
+output_doesnotexist = '''Could not add media path: /tagfile/OhhcJ11KPwWqfLb4
+
+error: media path does not exist
+'''
+
 
 def test_pycommand_flags_are_None_by_default():
     cmd = Command([])
@@ -127,3 +132,11 @@ def test_media_path_arg_will_add_path_to_repos_if_valid(capfd):
     cap = capfd.readouterr()
     assert output_add_tmp_tagfiletests == cap.out
     assert tagfile.core.tfman.paths[0].startswith(TAGFILEDEV_MEDIA_PATH)
+
+
+def test_media_path_arg_will_show_error_if_not_exists(capfd):
+    cmd = Command(['/tagfile/OhhcJ11KPwWqfLb4'])
+    returncode = cmd.run()
+    cap = capfd.readouterr()
+    assert output_doesnotexist == cap.out
+    assert returncode == 4

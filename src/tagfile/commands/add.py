@@ -64,7 +64,10 @@ class AddCommand(pycommand.CommandBase):
             if not filepath:
                 print('error: could not determine media path')
                 return 3
-
+            if not os.path.exists(filepath):
+                print('Could not add media path: {}'.format(filepath))
+                print('\nerror: media path does not exist')
+                return 4
             tfman.addPath(filepath)
             print('Added media path: {}'.format(filepath))
             if self.flags.scan:
