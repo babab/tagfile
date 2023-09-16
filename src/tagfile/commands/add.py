@@ -60,13 +60,7 @@ class AddCommand(pycommand.CommandBase):
             arg = None
 
         if arg:
-            filepath = os.path.expanduser(arg)
-            if filepath == '.':
-                try:
-                    filepath = os.environ['PWD']
-                except KeyError:
-                    print('error: could not find PWD from shell environment')
-                    return 2
+            filepath = os.path.abspath(os.path.expanduser(arg))
             if not filepath:
                 print('error: could not determine media path')
                 return 3

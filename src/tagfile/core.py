@@ -44,9 +44,9 @@ from tagfile.models import Index, Repository
 class Files:
     '''Filesystem functions'''
     @staticmethod
-    def walkdir(directory):
+    def walkdir(filepath):
         paths = []
-        for root, directories, files in os.walk(os.path.expanduser(directory)):
+        for root, directories, files in os.walk(filepath):
             for filename in files:
                 filepath = os.path.join(root, filename)
                 paths.append(filepath)
