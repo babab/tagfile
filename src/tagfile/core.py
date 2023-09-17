@@ -37,8 +37,16 @@ import sys
 
 import colors
 
-from tagfile import DB, config
+from tagfile import config, DB
 from tagfile.models import Index, Repository
+
+
+class ConfigError(Exception):
+    pass
+
+
+class ProgrammingError(Exception):
+    pass
 
 
 class Files:
@@ -59,7 +67,7 @@ class Files:
         elif config['hash-algo'] == 'sha1':
             h = hashlib.sha1()
         else:
-            raise Exception('Invalid "hash-algo" in configuration')
+            raise ConfigError('Invalid "hash-algo" in configuration')
 
         with open(filepath, 'rb') as f:
             while True:
@@ -81,13 +89,28 @@ class _TagFileManager:
     Use `addPath(path)` to add new media path (recursively adding files).
     '''
 
-    def __init__(self):
+    _initialized = False
+
+    def init(self):
+        '''Connect the `tagfile.DB` database handler and setup tables.
+
+        This is to make sure the database is only initialized once, and
+        can receive arguments in the future. It can be called multiple
+        times without a problem and since it returns self, you can
+        directly chain any of the other methods.
+        '''
+        if self._initialized:
+            return self
         DB.connect()
         if not Index.table_exists():
             DB.create_tables([Index, Repository])
+        self._initialized = True
+        return self
 
     def loadKnownRepos(self, silent=False):
         '''Load known media paths into `self.paths`'''
+        if not self._initialized:
+            raise ProgrammingError("_TagFileManager was not initialized")
         if not silent:
             print('Browsing media paths for files, please wait...')
         qrep = Repository.select()
@@ -96,16 +119,21 @@ class _TagFileManager:
 
     def addPath(self, path):
         '''Walk path and add all found files'''
+        if not self._initialized:
+            raise ProgrammingError("_TagFileManager was not initialized")
         self.paths.extend(Files.walkdir(path))
         Repository.get_or_create(filepath=path)
-        return self
 
     def find(self, substring):
+        if not self._initialized:
+            raise ProgrammingError("_TagFileManager was not initialized")
         res = Index.select().where(Index.basename.contains(substring))
         for i in res:
             print(i.filepath)
 
     def info(self):
+        if not self._initialized:
+            raise ProgrammingError("_TagFileManager was not initialized")
         qrep = Repository.select()
         files = colors.green(str(Index.select().count()))
         repos = colors.green(str(qrep.count()))
@@ -117,12 +145,16 @@ class _TagFileManager:
             print(item.filepath)
 
     def re_index(self):
+        if not self._initialized:
+            raise ProgrammingError("_TagFileManager was not initialized")
         Index.delete().execute()
         for i in Repository.select():
             self.addPath(i.filepath)
         self.scan()
 
     def prune(self):
+        if not self._initialized:
+            raise ProgrammingError("_TagFileManager was not initialized")
         print(colors.bold('\nPRUNING STARTS'))
         print('Checking index for entries with missing files...')
         res = Index.raw('''SELECT * FROM `index`''')
@@ -135,6 +167,8 @@ class _TagFileManager:
         print('DONE. {} files were removed from the index'.format(npruned))
 
     def clones(self, return_count=False):
+        if not self._initialized:
+            raise ProgrammingError("_TagFileManager was not initialized")
         res = Index.raw('''SELECT *, COUNT(filehash) FROM `index`
                         GROUP BY filehash HAVING ( COUNT(filehash) > 1 )''')
         hashes = []
@@ -160,6 +194,8 @@ class _TagFileManager:
 
     def scan(self):
         '''Check if filepaths are in database, otherwise hash file and save'''
+        if not self._initialized:
+            raise ProgrammingError("_TagFileManager was not initialized")
         iall = 0
         inew = 0
         iignore = 0
@@ -227,7 +263,6 @@ class _TagFileManager:
             if ierrpermission:
                 print(colors.red('File locations with permission errors: {}'
                                  .format(ierrpermission)))
-        return self
 
 
 tfman = _TagFileManager()

@@ -64,6 +64,7 @@ class UpdateDbCommand(pycommand.CommandBase):
 
         # All options that reach here are valid. We need the repos for
         # everything that follows.
+        tfman.init()
         tfman.loadKnownRepos()
 
         # support flagging of both options; don't skip or exit early with elif

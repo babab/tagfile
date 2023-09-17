@@ -35,7 +35,7 @@ import os
 import sys
 
 import colors
-import peewee as pw
+import peewee
 import yaml
 
 __author__ = "Benjamin Althues"
@@ -123,5 +123,10 @@ _filepath = os.path.join(TAGFILE_CONFIG_HOME, 'config.yaml')
 if os.path.exists(_filepath):
     config.update(yaml.safe_load(open(_filepath).read()))
 
-# Init sqlite database - used in peewee models
-DB = pw.SqliteDatabase(os.path.join(TAGFILE_DATA_HOME, 'index.db'))
+DB = peewee.SqliteDatabase(os.path.join(TAGFILE_DATA_HOME, 'index.db'))
+'''Database handler for Peewee ORM / sqlite database.
+
+The database gets connected in `tagfile.core.tfman.init()`, which is
+called at the last appropiate time, in the shellcommands, after parsing
+all options and arguments.
+'''

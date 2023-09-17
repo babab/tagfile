@@ -47,4 +47,4 @@ class InfoCommand(pycommand.CommandBase):
         if self.flags.help:
             print(self.usage)
             return 0
-        tfman.info()
+        tfman.init().info()

@@ -47,5 +47,5 @@ class ClonesCommand(pycommand.CommandBase):
         if self.flags.help:
             print(self.usage)
             return 0
-        tfman.clones()
+        tfman.init().clones()
         return 0

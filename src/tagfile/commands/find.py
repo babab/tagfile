@@ -57,6 +57,7 @@ class FindCommand(pycommand.CommandBase):
             arg = None
 
         if arg:
+            tfman.init()
             tfman.find(arg)
         else:
             print('error: command find requires argument\n')

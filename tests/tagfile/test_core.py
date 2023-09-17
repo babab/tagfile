@@ -32,8 +32,14 @@
 
 import os
 
-import tagfile
+import pytest
 
+import tagfile
+import tagfile.core
+
+
+# testing workings before init() step
+##############################################################################
 
 def test_core_Files_staticmethod_walkdir():
     _path = os.environ['TAGFILEDEV_MEDIA_PATH']
@@ -44,6 +50,68 @@ def test_core_Files_staticmethod_walkdir():
     ]
 
 
+def test_core_Files_hashfile_raises_error_on_unknown_algo():
+    tagfile.config['hash-algo'] = 'not-a-valid-algo'
+    _path = os.environ['TAGFILEDEV_MEDIA_PATH']
+    paths = tagfile.core.Files.walkdir(_path)
+    sample_3_mp4 = paths[0]
+    with pytest.raises(tagfile.core.ConfigError):
+        tagfile.core.Files.hashfile(sample_3_mp4)
+
+
 def test_core_tfman_paths_is_not_None():
     tfman = tagfile.core.tfman
     assert tfman.paths is not None
+
+
+def test_core_tfman_error_when_not_initialized_loadKnownRepos():
+    with pytest.raises(tagfile.core.ProgrammingError):
+        tagfile.core.tfman.loadKnownRepos()
+
+
+def test_core_tfman_error_when_not_initialized_addPath():
+    _path = os.environ['TAGFILEDEV_MEDIA_PATH']
+    paths = tagfile.core.Files.walkdir(_path)
+    sample_3_mp4 = paths[0]
+    with pytest.raises(tagfile.core.ProgrammingError):
+        tagfile.core.tfman.addPath(sample_3_mp4)
+
+
+def test_core_tfman_error_when_not_initialized_find():
+    with pytest.raises(tagfile.core.ProgrammingError):
+        tagfile.core.tfman.find('sampl')
+
+
+def test_core_tfman_error_when_not_initialized_info():
+    with pytest.raises(tagfile.core.ProgrammingError):
+        tagfile.core.tfman.info()
+
+
+def test_core_tfman_error_when_not_initialized_re_index():
+    with pytest.raises(tagfile.core.ProgrammingError):
+        tagfile.core.tfman.re_index()
+
+
+def test_core_tfman_error_when_not_initialized_prune():
+    with pytest.raises(tagfile.core.ProgrammingError):
+        tagfile.core.tfman.prune()
+
+
+def test_core_tfman_error_when_not_initialized_clones():
+    with pytest.raises(tagfile.core.ProgrammingError):
+        tagfile.core.tfman.clones()
+
+
+def test_core_tfman_error_when_not_initialized_scan():
+    with pytest.raises(tagfile.core.ProgrammingError):
+        tagfile.core.tfman.scan()
+
+
+# testing init() step
+##############################################################################
+
+def test_core_tfman_before_and_after_init():
+    tfman = tagfile.core.tfman
+    assert tfman._initialized is False
+    tfman.init()
+    assert tfman._initialized is True
