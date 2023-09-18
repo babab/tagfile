@@ -31,8 +31,34 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import os
+import sys
 
 import tagfile
+
+TFVERSION = '0.2.0a6'
+
+
+def test_tagfile_version():
+    assert tagfile.__version__ == TFVERSION
+    assert tagfile.versionStr == 'tagfile {}'.format(TFVERSION)
+    assert tagfile.__author__ == "Benjamin Althues"
+    assert tagfile.__copyright__ == "Copyright (C) 2015-2023  Benjamin Althues"
+
+
+def test_tagfile_verboseVersionInfo():
+    valid_output = '''{0}
+{1}
+
+Python {2}
+Interpreter is at {3}
+Platform is {4}'''.format(
+        tagfile.versionStr,
+        tagfile.__copyright__,
+        sys.version.replace('\n', ''),
+        sys.executable or 'unknown',
+        os.name,
+    )
+    assert tagfile.verboseVersionInfo() == valid_output
 
 
 def test_invertexpanduser_helper_function_if_path_startswith_home():
