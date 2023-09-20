@@ -34,6 +34,7 @@ VERSION   = 0.2.0a6
 SCRIPT    = ./src/${NAME}/commands/main_cmd.py
 CODE_DIRS = src tests
 BIN_NAME  = ${NAME}
+BADGESDIR = docs/badges
 
 # absolute path to system python (version)
 SYSPYTHON = /usr/bin/python3
@@ -89,6 +90,7 @@ help:
 	@echo ' install      - do a venv-install and link exe in .local/bin'
 	@echo ' exe          - build a single executable file with pyinstaller'
 	@echo ' test-pkg     - install pkg and run checks/tests without coverage'
+	@echo ' badges       - make test and create svg badges using shields.io'
 	@echo
 	@printf 'PIPX TARGETS (using ~/.local/pipx/venvs/%s)\n' "${NAME}"
 	@echo ' pipx-install - flit build and install with pipx install'
@@ -167,6 +169,8 @@ test-data: #custom
 	cp -v "$${TAGFILEDEV_MEDIA_PATH}/video/sample-3.mp4" "$${TAGFILEDEV_MEDIA_PATH}/video/sample-3b.mp4"
 
 test: ${VENVDIR} develop
+	@printf '\n--- CREATING DIRECTORY FOR REPORTS ---\n'
+	mkdir -vp reports/htmlcov
 	@printf '\n--- CHECKING IF TESTDATA IS ALREADY AVAILABLE ---\n' #custom
 	test -d "$${TAGFILEDEV_MEDIA_PATH}" || make test-data #custom
 	@printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
@@ -175,7 +179,8 @@ test: ${VENVDIR} develop
 	${VENVDIR}/bin/coverage run -m pytest
 	@printf '\n--- COVERAGE REPORT ---\n'
 	${VENVDIR}/bin/coverage report
-	${VENVDIR}/bin/coverage html
+	${VENVDIR}/bin/coverage xml -o reports/coverage.xml
+	${VENVDIR}/bin/coverage html -d reports/htmlcov
 	make clean-after-tests #custom
 
 test-pkg: ${VENVDIR} venv-install
@@ -185,13 +190,20 @@ test-pkg: ${VENVDIR} venv-install
 	${VENVDIR}/bin/pytest  # uses config section in pyproject.toml
 	make clean-after-tests #custom
 
+badges: test
+	@printf '\n--- CREATING DIRECTORY FOR BADGES ---\n'
+	mkdir -vp ${BADGESDIR}
+	@printf '\n--- CREATING BADGES ---\n'
+	${VENVDIR}/bin/genbadge tests -i reports/junit.xml -o ${BADGESDIR}/tests.svg
+	${VENVDIR}/bin/genbadge coverage -i reports/coverage.xml -o ${BADGESDIR}/coverage.svg
+
 clean-after-tests: #custom
 	test -n "$${TAGFILE_CONFIG_HOME}" && rm -vrf "$${TAGFILE_CONFIG_HOME}"
 	test -n "$${TAGFILE_DATA_HOME}" && rm -vrf "$${TAGFILE_DATA_HOME}"
 
 clean: clean-after-tests
 	@printf '\n--- CLEANING UP FILES AND VIRTUAL ENV ---\n'
-	rm -rf build dist htmlcov ${VENVDIR}
+	rm -rf build dist reports ${VENVDIR}
 	rm -f ${NAME}.spec
 	find -type d -name __pycache__ -print0 | xargs -0 rm -rf
 	@printf '\nWarning: The cache/media dir must be manually removed if needed!\n' #custom

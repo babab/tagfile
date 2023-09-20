@@ -53,6 +53,7 @@ dev = [
 test = [
     "coverage >=7.2.7,<8.0",
     "flake8 >=6.0.0,<7.0",
+    "genbadge[tests,coverage] >=1.1.0,<2.0",
     "pytest >=7.2.0,<8.0",
     "pytest-cov >=4.1.0,<5.0",
 ]
@@ -71,4 +72,4 @@ exclude = [".circleci", ".gitignore"]
 
 
 [tool.pytest.ini_options]
-addopts = "-vv -p no:cacheprovider"
+addopts = "-vv -p no:cacheprovider --junitxml=reports/junit.xml"

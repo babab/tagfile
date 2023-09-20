@@ -9,5 +9,5 @@ config.mk
 /build/
 /cache/
 /dist/
-/htmlcov/
+/reports/
 /.virtualenv/
