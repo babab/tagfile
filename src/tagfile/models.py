@@ -30,7 +30,7 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
-import peewee as pw
+import peewee
 
 from tagfile import DB
 
@@ -38,17 +38,17 @@ __author__ = "Benjamin Althues"
 __copyright__ = "Copyright (C) 2015-2023  Benjamin Althues"
 
 
-class Model(pw.Model):
+class Model(peewee.Model):
     '''Database model for peewee ORM'''
     class Meta:
         database = DB
 
 
 class Index(Model):
-    filehash = pw.CharField()
-    filepath = pw.CharField()
-    basename = pw.CharField()
+    filehash = peewee.CharField()
+    filepath = peewee.CharField()
+    basename = peewee.CharField()
 
 
 class Repository(Model):
-    filepath = pw.CharField()
+    filepath = peewee.CharField()
