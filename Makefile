@@ -168,7 +168,7 @@ test-data: #custom
 	wget -P "$${TAGFILEDEV_MEDIA_PATH}/video" "https://getsamplefiles.com/download/mp4/sample-3.mp4"
 	cp -v "$${TAGFILEDEV_MEDIA_PATH}/video/sample-3.mp4" "$${TAGFILEDEV_MEDIA_PATH}/video/sample-3b.mp4"
 
-test: ${VENVDIR} develop
+test: ${VENVDIR} develop clean-config-data #custom
 	@printf '\n--- CREATING DIRECTORY FOR REPORTS ---\n'
 	mkdir -vp reports/htmlcov
 	@printf '\n--- CHECKING IF TESTDATA IS ALREADY AVAILABLE ---\n' #custom
@@ -181,14 +181,12 @@ test: ${VENVDIR} develop
 	${VENVDIR}/bin/coverage report
 	${VENVDIR}/bin/coverage xml -o reports/coverage.xml
 	${VENVDIR}/bin/coverage html -d reports/htmlcov
-	make clean-after-tests #custom
 
-test-pkg: ${VENVDIR} venv-install
+test-pkg: ${VENVDIR} venv-install clean-config-data #custom
 	@printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
 	${VENVDIR}/bin/flake8 -v --max-complexity=20 ${CODE_DIRS}
 	@printf '\n--- RUN PYTEST ---\n'
 	${VENVDIR}/bin/pytest  # uses config section in pyproject.toml
-	make clean-after-tests #custom
 
 badges: test
 	@printf '\n--- CREATING DIRECTORY FOR BADGES ---\n'
@@ -197,11 +195,12 @@ badges: test
 	${VENVDIR}/bin/genbadge tests -i reports/junit.xml -o ${BADGESDIR}/tests.svg
 	${VENVDIR}/bin/genbadge coverage -i reports/coverage.xml -o ${BADGESDIR}/coverage.svg
 
-clean-after-tests: #custom
+clean-config-data: #custom
+	@printf '\n--- CLEANING UP TESTING CONFIG/DATA HOMES ---\n'
 	test -n "$${TAGFILE_CONFIG_HOME}" && rm -vrf "$${TAGFILE_CONFIG_HOME}"
 	test -n "$${TAGFILE_DATA_HOME}" && rm -vrf "$${TAGFILE_DATA_HOME}"
 
-clean: clean-after-tests
+clean:
 	@printf '\n--- CLEANING UP FILES AND VIRTUAL ENV ---\n'
 	rm -rf build dist reports ${VENVDIR}
 	rm -f ${NAME}.spec
