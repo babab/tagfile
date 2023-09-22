@@ -38,18 +38,19 @@ from tagfile.core import tfman
 class ClonesCommand(pycommand.CommandBase):
     '''Show all indexed duplicate files'''
     usagestr = (
-        'usage: tagfile clones [-s | --size]\n'
+        'usage: tagfile clones [-sm] [--size] [--mime]\n'
         '   or: tagfile clones [-h | --help]'
     )
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),
         ('size', ('s', False, 'display column with filesizes')),
+        ('mime', ('m', False, 'display column with mimetypes')),
     )
 
     def run(self):
         if self.flags.help:
             print(self.usage)
             return 0
-        tfman.init().clones(show_size=self.flags.size)
+        tfman.init().clones(sizes=self.flags.size, mimetypes=self.flags.mime)
         return 0

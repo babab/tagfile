@@ -36,6 +36,7 @@ import os
 import sys
 
 import colors
+import magic
 
 from tagfile import config, DB
 from tagfile.models import Index, Repository
@@ -178,7 +179,7 @@ class _TagFileManager:
                 npruned += 1
         print('DONE. {} files were removed from the index'.format(npruned))
 
-    def clones(self, return_count=False, show_size=False):
+    def clones(self, return_count=False, sizes=False, mimetypes=False):
         if not self._initialized:
             raise ProgrammingError("_TagFileManager was not initialized")
         res = Index.raw('''SELECT *, COUNT(filehash) FROM `index`
@@ -197,30 +198,20 @@ class _TagFileManager:
         for i in res:
             if changed != i.filehash:
                 toggler = False if toggler else True
+
+            _size = ' {}'.format(Files.sizefmt(i.filesize)) if sizes else ''
+            _mime = ' {}'.format(i.mime) if mimetypes else ''
             if toggler:
-                if show_size:
-                    print('{} {} {}'.format(
-                        colors.green(i.filehash[:5]),
-                        Files.sizefmt(i.filesize),
-                        i.filepath
-                    ))
-                else:
-                    print('{} {}'.format(
-                        colors.green(i.filehash[:5]),
-                        i.filepath
-                    ))
+                print('{}{}{} {}'.format(
+                    colors.green(i.filehash[:5]), _size, _mime, i.filepath
+                ))
             else:
-                if show_size:
-                    print('{} {} {}'.format(
-                        colors.magenta(i.filehash[:5]),
-                        colors.bold(Files.sizefmt(i.filesize)),
-                        colors.bold(i.filepath)
-                    ))
-                else:
-                    print('{} {}'.format(
-                        colors.magenta(i.filehash[:5]),
-                        colors.bold(i.filepath)
-                    ))
+                print('{}{}{} {}'.format(
+                    colors.magenta(i.filehash[:5]),
+                    colors.bold(_size),
+                    colors.bold(_mime),
+                    colors.bold(i.filepath)
+                ))
             changed = i.filehash
 
     def scan(self):
@@ -268,10 +259,12 @@ class _TagFileManager:
                         iexisting += 1
                     except Index.DoesNotExist:
                         try:
+                            _mimetype = magic.from_file(path, mime=True)
+                            _cat = _mimetype[:_mimetype.index('/')]
                             Index.create(
                                 filehash=Files.hashfile(path), filepath=path,
                                 basename=os.path.basename(path),
-                                filesize=filesize,
+                                filesize=filesize, cat=_cat, mime=_mimetype
                             )
                         except PermissionError:
                             ierrpermission += 1
