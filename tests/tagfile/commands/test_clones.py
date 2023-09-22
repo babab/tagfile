@@ -36,12 +36,14 @@ import pytest
 from tagfile.commands.clones import ClonesCommand as Command
 
 
-output_help = '''usage: tagfile clones [-h | --help]
+output_help = '''usage: tagfile clones [-s | --size]
+   or: tagfile clones [-h | --help]
 
 Show all indexed duplicate files
 
 Options:
 -h, --help  show this help information
+-s, --size  display column with filesizes
 
 '''
 

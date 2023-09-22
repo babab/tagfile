@@ -89,12 +89,14 @@ Options:
 
 '''
 
-output_help_clones = '''usage: tagfile clones [-h | --help]
+output_help_clones = '''usage: tagfile clones [-s | --size]
+   or: tagfile clones [-h | --help]
 
 Show all indexed duplicate files
 
 Options:
 -h, --help  show this help information
+-s, --size  display column with filesizes
 
 '''
 

@@ -48,6 +48,7 @@ class Index(Model):
     filehash = peewee.CharField()
     filepath = peewee.CharField()
     basename = peewee.CharField()
+    filesize = peewee.IntegerField()
 
 
 class Repository(Model):

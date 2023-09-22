@@ -77,6 +77,18 @@ class Files:
                 h.update(data)
         return h.hexdigest()
 
+    @staticmethod
+    def sizefmt(value, padding=6):
+        nbytes = float(value)
+        if nbytes < 1024:
+            return '{0:>{pad}}'.format('{:.0f}B'.format(nbytes), pad=padding)
+        for i, suffix in enumerate('KMGTPEZY'):
+            factor = 1024 ** (i + 2)
+            if nbytes < factor:
+                break
+        num = 1024 * nbytes / factor
+        return '{0:>{pad}}'.format('{:.1f}{}'.format(num, suffix), pad=padding)
+
 
 class _TagFileManager:
     '''Private _TagFileManager class. Instance available as
@@ -166,7 +178,7 @@ class _TagFileManager:
                 npruned += 1
         print('DONE. {} files were removed from the index'.format(npruned))
 
-    def clones(self, return_count=False):
+    def clones(self, return_count=False, show_size=False):
         if not self._initialized:
             raise ProgrammingError("_TagFileManager was not initialized")
         res = Index.raw('''SELECT *, COUNT(filehash) FROM `index`
@@ -186,10 +198,29 @@ class _TagFileManager:
             if changed != i.filehash:
                 toggler = False if toggler else True
             if toggler:
-                print('{} {}'.format(colors.green(i.filehash[:5]), i.filepath))
+                if show_size:
+                    print('{} {} {}'.format(
+                        colors.green(i.filehash[:5]),
+                        Files.sizefmt(i.filesize),
+                        i.filepath
+                    ))
+                else:
+                    print('{} {}'.format(
+                        colors.green(i.filehash[:5]),
+                        i.filepath
+                    ))
             else:
-                print('{} {}'.format(colors.magenta(i.filehash[:5]),
-                                     colors.bold(i.filepath)))
+                if show_size:
+                    print('{} {} {}'.format(
+                        colors.magenta(i.filehash[:5]),
+                        colors.bold(Files.sizefmt(i.filesize)),
+                        colors.bold(i.filepath)
+                    ))
+                else:
+                    print('{} {}'.format(
+                        colors.magenta(i.filehash[:5]),
+                        colors.bold(i.filepath)
+                    ))
             changed = i.filehash
 
     def scan(self):
@@ -211,6 +242,7 @@ class _TagFileManager:
                 if config['load-bar']:
                     sys.stdout.write('\r  {} / {}'.format(iall, total))
 
+                # see if filename matches any configured ignore patterns
                 for ignorepatt in config['ignore']:
                     if ignorepatt in path:
                         file_is_valid = False
@@ -218,16 +250,17 @@ class _TagFileManager:
                         logging.debug('Ignored ' + path)
                         break
 
-                if config['ignore-empty']:
-                    try:
-                        if not os.path.getsize(path):
-                            file_is_valid = False
-                    except FileNotFoundError:
+                # get filesize, this might raise a few exceptions
+                try:
+                    filesize = os.path.getsize(path)
+                    if config['ignore-empty'] and not filesize:
                         file_is_valid = False
-                    except PermissionError:
-                        file_is_valid = False
-                        ierrpermission += 1
-                        logging.error('PermissionError(getsize) for: ' + path)
+                except FileNotFoundError:
+                    file_is_valid = False
+                except PermissionError:
+                    file_is_valid = False
+                    ierrpermission += 1
+                    logging.error('PermissionError(getsize) for: ' + path)
 
                 if file_is_valid:
                     try:
@@ -237,7 +270,8 @@ class _TagFileManager:
                         try:
                             Index.create(
                                 filehash=Files.hashfile(path), filepath=path,
-                                basename=os.path.basename(path)
+                                basename=os.path.basename(path),
+                                filesize=filesize,
                             )
                         except PermissionError:
                             ierrpermission += 1

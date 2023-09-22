@@ -59,6 +59,41 @@ def test_core_Files_hashfile_raises_error_on_unknown_algo():
         tagfile.core.Files.hashfile(sample_3_mp4)
 
 
+def test_core_Files_staticmethod_sizefmt():
+    lib = tagfile.core.Files
+    assert lib.sizefmt(0) == '    0B'
+    assert lib.sizefmt(1) == '    1B'
+    assert lib.sizefmt(34) == '   34B'
+    assert lib.sizefmt(267) == '  267B'
+    assert lib.sizefmt(1234) == '  1.2K'
+    assert lib.sizefmt(12345) == ' 12.1K'
+    assert lib.sizefmt(123456) == '120.6K'
+    assert lib.sizefmt(1234567) == '  1.2M'
+    assert lib.sizefmt(12345678) == ' 11.8M'
+    assert lib.sizefmt(123456789) == '117.7M'
+    assert lib.sizefmt(1234567890) == '  1.1G'
+    assert lib.sizefmt(12345678901) == ' 11.5G'
+    assert lib.sizefmt(123456789012) == '115.0G'
+    assert lib.sizefmt(1234567890123) == '  1.1T'
+    assert lib.sizefmt(12345678901234) == ' 11.2T'
+    assert lib.sizefmt(123456789012345) == '112.3T'
+    assert lib.sizefmt(1234567890123456) == '  1.1P'
+    assert lib.sizefmt(12345678901234567) == ' 11.0P'
+    assert lib.sizefmt(123456789012345678) == '109.7P'
+    assert lib.sizefmt(1234567890123456789) == '  1.1E'
+    assert lib.sizefmt(12345678901234567890) == ' 10.7E'
+    assert lib.sizefmt(123456789012345678901) == '107.1E'
+    assert lib.sizefmt(1234567890123456789012) == '  1.0Z'
+    assert lib.sizefmt(12345678901234567890123) == ' 10.5Z'
+    assert lib.sizefmt(123456789012345678901234) == '104.6Z'
+    assert lib.sizefmt(1234567890123456789012345) == '  1.0Y'
+    assert lib.sizefmt(12345678901234567890123456) == ' 10.2Y'
+    assert lib.sizefmt(123456789012345678901234567) == '102.1Y'
+    assert lib.sizefmt(1234567890123456789012345678) == '1021.2Y'
+    assert lib.sizefmt(12345678901234567890123456789) == '10212.1Y'
+    assert lib.sizefmt(123456789012345678901234567890) == '102121.1Y'
+
+
 def test_core_tfman_paths_is_not_None():
     tfman = tagfile.core.tfman
     assert tfman.paths is not None
