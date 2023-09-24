@@ -151,7 +151,7 @@ without offering migrations.** Tagfile adheres to `Semantic Versioning
 <https://semver.org>`_.
 
 - Current stable release: **v0.1.0**
-- Current dev/git version: *v0.2.0a7*
+- Current dev/git version: *v0.2.0a8*
 
 Tagfile has been written in a short time and used by me sporadically for
 8 years after that. All code was contained in a single file script in

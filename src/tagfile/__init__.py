@@ -40,7 +40,7 @@ import yaml
 
 __author__ = "Benjamin Althues"
 __copyright__ = "Copyright (C) 2015-2023  Benjamin Althues"
-__version__ = '0.2.0a7'
+__version__ = '0.2.0a8'
 versionStr = 'tagfile {}'.format(__version__)
 
 
@@ -81,8 +81,18 @@ defaultconfig = '''# config created by {versionStr} at {date}
 # A tilde `~` in filepaths will expand to $HOME on *BSD/Linux/MacOS/Unix
 # or %USERPROFILE% on Windows.
 
-log-file:   {data_home}/tagfile.log
-load-bar:   yes
+logging:
+    enabled: yes
+    file: {data_home}/tagfile.log
+
+    # Valid levels are: 'debug', 'info', 'warning', 'error' or 'fatal'.
+    # The recommended level is 'warning'. Use 'info' to log most actions.
+    # Level 'debug' will log all database queries, impacting performance
+    # and should only be used when absolutely needed.
+    level: warning
+
+load-bar: yes
+
 ignore:
     - .git
     - .hg

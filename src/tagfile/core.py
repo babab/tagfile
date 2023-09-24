@@ -38,7 +38,11 @@ import sys
 import colors
 import magic
 
-from tagfile import config, DB
+from tagfile import (
+    config,
+    DB,
+    output,
+)
 from tagfile.models import Index, Repository
 
 
@@ -114,6 +118,11 @@ class _TagFileManager:
         '''
         if self._initialized:
             return self
+        logging.basicConfig(
+            filename=os.path.expanduser(config['logging']['file']),
+            level=output.configlvl(), style='{',
+            format='{asctime}:{levelname}: {message}'
+        )
         DB.connect()
         if not Index.table_exists():
             DB.create_tables([Index, Repository])
@@ -230,7 +239,7 @@ class _TagFileManager:
             for path in self.paths:
                 file_is_valid = True
                 iall += 1
-                if config['load-bar']:
+                if config['load-bar'] and not output.VERBOSE:
                     sys.stdout.write('\r  {} / {}'.format(iall, total))
 
                 # see if filename matches any configured ignore patterns
@@ -238,7 +247,7 @@ class _TagFileManager:
                     if ignorepatt in path:
                         file_is_valid = False
                         iignore += 1
-                        logging.debug('Ignored ' + path)
+                        output.info('scan: Ignored path ' + path)
                         break
 
                 # get filesize, this might raise a few exceptions
@@ -251,7 +260,7 @@ class _TagFileManager:
                 except PermissionError:
                     file_is_valid = False
                     ierrpermission += 1
-                    logging.error('PermissionError(getsize) for: ' + path)
+                    output.error('PermissionError(getsize) for: ' + path)
 
                 if file_is_valid:
                     try:
@@ -268,15 +277,17 @@ class _TagFileManager:
                             )
                         except PermissionError:
                             ierrpermission += 1
-                            logging.error(
+                            output.error(
                                 'PermissionError(hashfile) for: ' + path
                             )
                             break
                         inew += 1
-                        logging.debug('Added ' + path)
+                        output.info('scan: Added ' + path)
                     except UnicodeEncodeError:
                         ierrunicode += 1
         finally:
+            if output.VERBOSE:
+                print('')
             print('\rTotal files     {:>12}'.format(total))
             print('Already indexed {:>12}'.format(iexisting))
             print('Ignored files   {:>12}'.format(iignore))

@@ -30,14 +30,17 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
-import logging
 import os
 import sys
 
 import pycommand
 import yaml
 
-from tagfile import config, verboseVersionInfo, __doc__ as main_description
+from tagfile import (
+    __doc__ as main_description,
+    config,
+    verboseVersionInfo,
+)
 from tagfile.commands.add import AddCommand
 from tagfile.commands.clones import ClonesCommand
 from tagfile.commands.find import FindCommand
@@ -165,13 +168,6 @@ class Command(pycommand.CommandBase):
             else:
                 print('ERROR: file does not exist')
                 return 2
-
-        # Setup logging
-        logging.basicConfig(
-            filename=os.path.expanduser(config['log-file']),
-            level=logging.INFO, style='{',
-            format='{asctime}:{levelname}: {message}'
-        )
 
         # temporary handling of old commands, the super call will catch
         # and handle these further with 'error: unknown command'
