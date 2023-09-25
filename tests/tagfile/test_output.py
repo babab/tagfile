@@ -35,56 +35,55 @@ import logging
 import pytest
 
 import tagfile
-from tagfile import config, output
 
 DEFAULT_CONFIG_LOGLEVEL = logging.WARNING
 
 
 def test_var_VERBOSE():
-    assert output.VERBOSE is False
+    assert tagfile.output.VERBOSE is False
 
 
 # mappings for strings to values of logging.* constants ######################
 
 def test_function_lvlstr2int():
-    assert output.lvlstr2int('debug') == logging.DEBUG
-    assert output.lvlstr2int('info') == logging.INFO
-    assert output.lvlstr2int('warn') == logging.WARNING
-    assert output.lvlstr2int('warning') == logging.WARNING
-    assert output.lvlstr2int('error') == logging.ERROR
-    assert output.lvlstr2int('fatal') == logging.FATAL
-    assert output.lvlstr2int('critical') == logging.FATAL
-    assert output.lvlstr2int('abcdef') == logging.WARNING
-    assert output.lvlstr2int('banana') == logging.WARNING
+    assert tagfile.output.lvlstr2int('debug') == logging.DEBUG
+    assert tagfile.output.lvlstr2int('info') == logging.INFO
+    assert tagfile.output.lvlstr2int('warn') == logging.WARNING
+    assert tagfile.output.lvlstr2int('warning') == logging.WARNING
+    assert tagfile.output.lvlstr2int('error') == logging.ERROR
+    assert tagfile.output.lvlstr2int('fatal') == logging.FATAL
+    assert tagfile.output.lvlstr2int('critical') == logging.FATAL
+    assert tagfile.output.lvlstr2int('abcdef') == logging.WARNING
+    assert tagfile.output.lvlstr2int('banana') == logging.WARNING
 
 
 def test_function_get_logfunc_for():
-    assert output.get_logfunc_for('debug') == logging.debug
-    assert output.get_logfunc_for('info') == logging.info
-    assert output.get_logfunc_for('warn') == logging.warning
-    assert output.get_logfunc_for('warning') == logging.warning
-    assert output.get_logfunc_for('error') == logging.error
-    assert output.get_logfunc_for('fatal') == logging.fatal
-    assert output.get_logfunc_for('critical') == logging.fatal
-    assert output.get_logfunc_for('abcdef') == logging.warning
-    assert output.get_logfunc_for('banana') == logging.warning
+    assert tagfile.output.get_logfunc_for('debug') == logging.debug
+    assert tagfile.output.get_logfunc_for('info') == logging.info
+    assert tagfile.output.get_logfunc_for('warn') == logging.warning
+    assert tagfile.output.get_logfunc_for('warning') == logging.warning
+    assert tagfile.output.get_logfunc_for('error') == logging.error
+    assert tagfile.output.get_logfunc_for('fatal') == logging.fatal
+    assert tagfile.output.get_logfunc_for('critical') == logging.fatal
+    assert tagfile.output.get_logfunc_for('abcdef') == logging.warning
+    assert tagfile.output.get_logfunc_for('banana') == logging.warning
 
 
 def test_function_configlvl():
-    assert output.configlvl() == DEFAULT_CONFIG_LOGLEVEL
-    _logging_bak = config['logging']  # save section
-    del config['logging']  # delete section
+    assert tagfile.output.configlvl() == DEFAULT_CONFIG_LOGLEVEL
+    _logging_bak = tagfile.config['logging']  # save section
+    del tagfile.config['logging']  # delete section
     with pytest.raises(tagfile.ConfigError):
-        assert output.configlvl() == DEFAULT_CONFIG_LOGLEVEL
-    config['logging'] = _logging_bak  # re-insert section
-    assert output.configlvl() == DEFAULT_CONFIG_LOGLEVEL
+        assert tagfile.output.configlvl() == DEFAULT_CONFIG_LOGLEVEL
+    tagfile.config['logging'] = _logging_bak  # re-insert section
+    assert tagfile.output.configlvl() == DEFAULT_CONFIG_LOGLEVEL
 
 
 # generic functions for verbose echo and logging #############################
 
 def test_function_vecho_fatal_level(capfd):
     '''Always output regardless of verbose'''
-    output.vecho('fatal', 'some fatal thing happened')
+    tagfile.output.vecho('fatal', 'some fatal thing happened')
     cap = capfd.readouterr()
     assert cap.out == ''
     assert cap.err == 'fatal error: some fatal thing happened\n'
@@ -92,22 +91,22 @@ def test_function_vecho_fatal_level(capfd):
 
 def test_function_vecho_other_levels_not_verbose(capfd):
     '''No output when not verbose'''
-    output.vecho('debug', 'some debug thing happened')
+    tagfile.output.vecho('debug', 'some debug thing happened')
     cap = capfd.readouterr()
     assert cap.out == ''
     assert cap.err == ''
 
-    output.vecho('info', 'some info thing happened')
+    tagfile.output.vecho('info', 'some info thing happened')
     cap = capfd.readouterr()
     assert cap.out == ''
     assert cap.err == ''
 
-    output.vecho('warning', 'some warning thing happened')
+    tagfile.output.vecho('warning', 'some warning thing happened')
     cap = capfd.readouterr()
     assert cap.out == ''
     assert cap.err == ''
 
-    output.vecho('error', 'some error thing happened')
+    tagfile.output.vecho('error', 'some error thing happened')
     cap = capfd.readouterr()
     assert cap.out == ''
     assert cap.err == ''
@@ -115,26 +114,26 @@ def test_function_vecho_other_levels_not_verbose(capfd):
 
 def test_function_vecho_other_levels_verbose(capfd):
     '''Output when verbose'''
-    output.VERBOSE = True
+    tagfile.output.VERBOSE = True
 
-    output.vecho('debug', 'some debug thing happened')
+    tagfile.output.vecho('debug', 'some debug thing happened')
     cap = capfd.readouterr()
     assert cap.out == 'some debug thing happened\n'
     assert cap.err == ''
 
-    output.vecho('info', 'some info thing happened')
+    tagfile.output.vecho('info', 'some info thing happened')
     cap = capfd.readouterr()
     assert cap.out == 'some info thing happened\n'
     assert cap.err == ''
 
-    output.vecho('warning', 'some warning thing happened')
+    tagfile.output.vecho('warning', 'some warning thing happened')
     cap = capfd.readouterr()
     assert cap.out == ''
     assert cap.err == 'warning: some warning thing happened\n'
 
-    output.vecho('error', 'some error thing happened')
+    tagfile.output.vecho('error', 'some error thing happened')
     cap = capfd.readouterr()
     assert cap.out == ''
     assert cap.err == 'error: some error thing happened\n'
 
-    output.VERBOSE = False
+    tagfile.output.VERBOSE = False

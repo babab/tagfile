@@ -34,8 +34,6 @@ import logging
 import sys
 
 import tagfile
-from tagfile import config
-
 
 VERBOSE = False
 '''Used to set state of verbose output when using -v command flags'''
@@ -83,7 +81,7 @@ def configlvl():
     '''Get numerical value for configured log level string'''
     ret = lvlstr2int('warning')
     try:
-        ret = lvlstr2int(config['logging']['level'])
+        ret = lvlstr2int(tagfile.config['logging']['level'])
     except KeyError:
         raise tagfile.ConfigError('No "logging.level" section found in config')
     return ret
@@ -112,7 +110,7 @@ def vecho(level_string, text):
 
 def log(level_string, text):
     '''Generic function for logging using correct level'''
-    if config['logging']['enabled']:
+    if tagfile.config['logging']['enabled']:
         func = get_logfunc_for(level_string)
         func(text)
 
