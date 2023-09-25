@@ -39,19 +39,13 @@ import colors
 import magic
 
 from tagfile import (
-    config,
+    ConfigError,
     DB,
+    ProgrammingError,
+    config,
     output,
 )
 from tagfile.models import Index, Repository
-
-
-class ConfigError(Exception):
-    pass
-
-
-class ProgrammingError(Exception):
-    pass
 
 
 class Files:

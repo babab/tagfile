@@ -44,6 +44,14 @@ __version__ = '0.2.0a8'
 versionStr = 'tagfile {}'.format(__version__)
 
 
+class ConfigError(Exception):
+    pass
+
+
+class ProgrammingError(Exception):
+    pass
+
+
 def verboseVersionInfo():
     '''Returns a string with verbose version information
     The string shows the version of tagfile and that of Python.

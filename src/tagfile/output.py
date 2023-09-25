@@ -33,7 +33,8 @@
 import logging
 import sys
 
-from tagfile import core, config
+import tagfile
+from tagfile import config
 
 
 VERBOSE = False
@@ -84,7 +85,7 @@ def configlvl():
     try:
         ret = lvlstr2int(config['logging']['level'])
     except KeyError:
-        raise core.ConfigError('No "logging.level" section found in config')
+        raise tagfile.ConfigError('No "logging.level" section found in config')
     return ret
 
 

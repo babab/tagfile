@@ -34,7 +34,8 @@ import logging
 
 import pytest
 
-from tagfile import config, core, output
+import tagfile
+from tagfile import config, output
 
 DEFAULT_CONFIG_LOGLEVEL = logging.WARNING
 
@@ -73,7 +74,7 @@ def test_function_configlvl():
     assert output.configlvl() == DEFAULT_CONFIG_LOGLEVEL
     _logging_bak = config['logging']  # save section
     del config['logging']  # delete section
-    with pytest.raises(core.ConfigError):
+    with pytest.raises(tagfile.ConfigError):
         assert output.configlvl() == DEFAULT_CONFIG_LOGLEVEL
     config['logging'] = _logging_bak  # re-insert section
     assert output.configlvl() == DEFAULT_CONFIG_LOGLEVEL
