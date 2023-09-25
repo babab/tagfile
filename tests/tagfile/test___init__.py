@@ -35,7 +35,7 @@ import sys
 
 import tagfile
 
-TFVERSION = '0.2.0a8'
+TFVERSION = '0.2.0a9'
 
 
 def test_tagfile_version():

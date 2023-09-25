@@ -30,7 +30,6 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
-import hashlib
 import logging
 import os
 import sys
@@ -39,54 +38,13 @@ import colors
 import magic
 
 from tagfile import (
-    ConfigError,
     DB,
     ProgrammingError,
     config,
+    files,
     output,
 )
 from tagfile.models import Index, Repository
-
-
-class Files:
-    '''Filesystem functions'''
-    @staticmethod
-    def walkdir(filepath):
-        paths = []
-        for root, directories, files in os.walk(filepath):
-            for filename in files:
-                filepath = os.path.join(root, filename)
-                paths.append(filepath)
-        return paths
-
-    @staticmethod
-    def hashfile(filepath):
-        if config['hash-algo'] == 'md5':
-            h = hashlib.md5()
-        elif config['hash-algo'] == 'sha1':
-            h = hashlib.sha1()
-        else:
-            raise ConfigError('Invalid "hash-algo" in configuration')
-
-        with open(filepath, 'rb') as f:
-            while True:
-                data = f.read(config['hash-buf-size'])
-                if not data:
-                    break
-                h.update(data)
-        return h.hexdigest()
-
-    @staticmethod
-    def sizefmt(value, padding=6):
-        nbytes = float(value)
-        if nbytes < 1024:
-            return '{0:>{pad}}'.format('{:.0f}B'.format(nbytes), pad=padding)
-        for i, suffix in enumerate('KMGTPEZY'):
-            factor = 1024 ** (i + 2)
-            if nbytes < factor:
-                break
-        num = 1024 * nbytes / factor
-        return '{0:>{pad}}'.format('{:.1f}{}'.format(num, suffix), pad=padding)
 
 
 class _TagFileManager:
@@ -137,7 +95,7 @@ class _TagFileManager:
         '''Walk path and add all found files'''
         if not self._initialized:
             raise ProgrammingError("_TagFileManager was not initialized")
-        self.paths.extend(Files.walkdir(path))
+        self.paths.extend(files.walkdir(path))
         Repository.get_or_create(filepath=path)
 
     def find(self, substring):
@@ -202,7 +160,7 @@ class _TagFileManager:
             if changed != i.filehash:
                 toggler = False if toggler else True
 
-            _size = ' {}'.format(Files.sizefmt(i.filesize)) if sizes else ''
+            _size = ' {}'.format(files.sizefmt(i.filesize)) if sizes else ''
             _mime = ' {}'.format(i.mime) if mimetypes else ''
             if toggler:
                 print('{}{}{} {}'.format(
@@ -265,7 +223,7 @@ class _TagFileManager:
                             _mimetype = magic.from_file(path, mime=True)
                             _cat = _mimetype[:_mimetype.index('/')]
                             Index.create(
-                                filehash=Files.hashfile(path), filepath=path,
+                                filehash=files.hashfile(path), filepath=path,
                                 basename=os.path.basename(path),
                                 filesize=filesize, cat=_cat, mime=_mimetype
                             )

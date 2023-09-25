@@ -30,7 +30,7 @@
 
 ### Settings #################################################################
 NAME      = tagfile
-VERSION   = 0.2.0a8
+VERSION   = 0.2.0a9
 SCRIPT    = ./src/${NAME}/commands/main_cmd.py
 CODE_DIRS = src tests
 BIN_NAME  = ${NAME}
