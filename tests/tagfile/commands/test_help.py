@@ -89,7 +89,7 @@ Options:
 
 '''
 
-output_help_clones = '''usage: tagfile clones [-sm] [--size] [--mime]
+output_help_clones = '''usage: tagfile clones [-scm] [--size] [--cat] [--mime]
    or: tagfile clones [-h | --help]
 
 Show all indexed duplicate files
@@ -97,7 +97,8 @@ Show all indexed duplicate files
 Options:
 -h, --help  show this help information
 -s, --size  display column with filesizes
--m, --mime  display column with mimetypes
+-c, --cat   display column with media categories
+-m, --mime  display column with full mimetypes
 
 '''
 

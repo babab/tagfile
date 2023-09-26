@@ -140,7 +140,8 @@ class _TagFileManager:
                 npruned += 1
         print('DONE. {} files were removed from the index'.format(npruned))
 
-    def clones(self, return_count=False, sizes=False, mimetypes=False):
+    def clones(self, return_count=False, sizes=False, categories=False,
+               mimetypes=False):
         if not self._initialized:
             raise ProgrammingError("_TagFileManager was not initialized")
         res = Index.raw('''SELECT *, COUNT(filehash) FROM `index`
@@ -160,16 +161,19 @@ class _TagFileManager:
             if changed != i.filehash:
                 toggler = False if toggler else True
 
+            _hash = i.filehash[:5]
             _size = ' {}'.format(files.sizefmt(i.filesize)) if sizes else ''
+            _cat = ' {}'.format(i.cat) if categories else ''
             _mime = ' {}'.format(i.mime) if mimetypes else ''
             if toggler:
-                print('{}{}{} {}'.format(
-                    colors.green(i.filehash[:5]), _size, _mime, i.filepath
+                print('{}{}{}{} {}'.format(
+                    colors.green(_hash), _size, _cat, _mime, i.filepath
                 ))
             else:
-                print('{}{}{} {}'.format(
-                    colors.magenta(i.filehash[:5]),
+                print('{}{}{}{} {}'.format(
+                    colors.magenta(_hash),
                     colors.bold(_size),
+                    colors.bold(_cat),
                     colors.bold(_mime),
                     colors.bold(i.filepath)
                 ))
