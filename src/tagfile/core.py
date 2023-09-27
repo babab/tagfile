@@ -38,11 +38,11 @@ import colors
 import magic
 
 from tagfile import (
+    cfg,
     DB,
-    ProgrammingError,
-    config,
     files,
     output,
+    ProgrammingError,
 )
 from tagfile.models import Index, Repository
 
@@ -71,7 +71,7 @@ class _TagFileManager:
         if self._initialized:
             return self
         logging.basicConfig(
-            filename=os.path.expanduser(config['logging']['file']),
+            filename=os.path.expanduser(cfg['logging']['file']),
             level=output.configlvl(), style='{',
             format='{asctime}:{levelname}: {message}'
         )
@@ -195,11 +195,11 @@ class _TagFileManager:
             for path in self.paths:
                 file_is_valid = True
                 iall += 1
-                if config['load-bar'] and not output.VERBOSE:
+                if cfg['load-bar'] and not output.VERBOSE:
                     sys.stdout.write('\r  {} / {}'.format(iall, total))
 
                 # see if filename matches any configured ignore patterns
-                for ignorepatt in config['ignore']:
+                for ignorepatt in cfg['ignore']:
                     if ignorepatt in path:
                         file_is_valid = False
                         iignore += 1
@@ -209,7 +209,7 @@ class _TagFileManager:
                 # get filesize, this might raise a few exceptions
                 try:
                     filesize = os.path.getsize(path)
-                    if config['ignore-empty'] and not filesize:
+                    if cfg['ignore-empty'] and not filesize:
                         file_is_valid = False
                 except FileNotFoundError:
                     file_is_valid = False

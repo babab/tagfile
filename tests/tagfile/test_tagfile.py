@@ -35,14 +35,14 @@ import os
 import tagfile
 
 
-def test_default_config_structure():
-    config = tagfile.config
-    assert config['logging']['enabled'] is True
-    assert config['logging']['file']
-    assert config['logging']['level'] == 'warning'
-    assert config['load-bar'] is True
-    assert config['ignore']
-    assert config['ignore-empty'] is True
+def test_default_cfg_structure():
+    cfg = tagfile.cfg
+    assert cfg['logging']['enabled'] is True
+    assert cfg['logging']['file']
+    assert cfg['logging']['level'] == 'warning'
+    assert cfg['load-bar'] is True
+    assert cfg['ignore']
+    assert cfg['ignore-empty'] is True
 
 
 def test_location_variables():

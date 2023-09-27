@@ -48,16 +48,16 @@ def walkdir(filepath):
 
 
 def hashfile(filepath):
-    if tagfile.config['hash-algo'] == 'md5':
+    if tagfile.cfg['hash-algo'] == 'md5':
         h = hashlib.md5()
-    elif tagfile.config['hash-algo'] == 'sha1':
+    elif tagfile.cfg['hash-algo'] == 'sha1':
         h = hashlib.sha1()
     else:
         raise tagfile.ConfigError('Invalid "hash-algo" in configuration')
 
     with open(filepath, 'rb') as f:
         while True:
-            data = f.read(tagfile.config['hash-buf-size'])
+            data = f.read(tagfile.cfg['hash-buf-size'])
             if not data:
                 break
             h.update(data)

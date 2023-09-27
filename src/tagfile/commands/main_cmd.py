@@ -34,13 +34,9 @@ import os
 import sys
 
 import pycommand
-import yaml
 
-from tagfile import (
-    __doc__ as main_description,
-    config,
-    verboseVersionInfo,
-)
+import tagfile
+from tagfile import __doc__ as main_description
 from tagfile.commands.add import AddCommand
 from tagfile.commands.clones import ClonesCommand
 from tagfile.commands.find import FindCommand
@@ -108,7 +104,7 @@ class VersionCommand(pycommand.CommandBase):
             print(self.usage)
             return 0
 
-        print(verboseVersionInfo())
+        print(tagfile.verboseVersionInfo())
         return 0
 
 
@@ -157,14 +153,14 @@ class Command(pycommand.CommandBase):
             print(self.usage)
             return 0
         elif self.flags['version']:
-            print(verboseVersionInfo())
+            print(tagfile.verboseVersionInfo())
             return 0
 
-        # Update config with file
+        # Update cfg with file
         if self.flags['config']:
             fn = self.flags['config']
             if os.path.exists(fn):
-                config.update(yaml.safe_load(open(fn).read()))
+                tagfile.load_configfile(tagfile.cfg, fn)
             else:
                 print('ERROR: file does not exist')
                 return 2

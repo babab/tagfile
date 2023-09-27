@@ -86,12 +86,12 @@ def test_config_and_data_home_values_are_set_to_those_of_envvars():
 
 
 def test_defaultconfig_logging_settings():
-    cfg = tagfile.config
+    cfg = tagfile.cfg
     assert cfg['logging']['enabled'] is True
     assert cfg['logging']['level'] == 'warning'
 
 
 def test_defaultconfig_logfile_is_altered_according_to_TAGFILE_DATA_HOME():
     tildepath = tagfile.invertexpanduser(tagfile.TAGFILE_DATA_HOME)
-    cfg = tagfile.config
+    cfg = tagfile.cfg
     assert cfg['logging']['file'] == '{}/tagfile.log'.format(tildepath)

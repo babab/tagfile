@@ -52,20 +52,6 @@ class ProgrammingError(Exception):
     pass
 
 
-def verboseVersionInfo():
-    '''Returns a string with verbose version information
-    The string shows the version of tagfile and that of Python.
-    It also displays the name of the operating system/platform name.
-    '''
-    return '{}\n{}\n\nPython {}\nInterpreter is at {}\nPlatform is {}'.format(
-        versionStr,
-        __copyright__,
-        sys.version.replace('\n', ''),
-        sys.executable or 'unknown',
-        os.name,
-    )
-
-
 def invertexpanduser(path):
     '''Replaces a substring of `os.path.expanduser(path)` with ``~``.'''
     home_abspath = os.path.expanduser('~')
@@ -120,26 +106,53 @@ hash-buf-size:  1024
     versionStr=versionStr
 )
 
-config = yaml.safe_load(defaultconfig)
 
-# initialize data path
+def verboseVersionInfo():
+    '''Returns a string with verbose version information
+    The string shows the version of tagfile and that of Python.
+    It also displays the name of the operating system/platform name.
+    '''
+    return '{}\n{}\n\nPython {}\nInterpreter is at {}\nPlatform is {}'.format(
+        versionStr,
+        __copyright__,
+        sys.version.replace('\n', ''),
+        sys.executable or 'unknown',
+        os.name,
+    )
+
+
+def write_defaultconfig(dirpath=TAGFILE_CONFIG_HOME, basename='config.yaml',
+                        makedirs=True):
+    '''Initialize config path and create config.yaml file'''
+    if not os.path.exists(dirpath):
+        if makedirs:
+            os.makedirs(dirpath)
+        else:
+            raise ConfigError('dirpath "{}" does not exist'.format(dirpath))
+        _filepath = os.path.join(dirpath, basename)
+        with open(_filepath, 'w') as _fconf:
+            _fconf.write(defaultconfig)
+            print(colors.green(
+                'Copied default config into file "{}"\n'.format(_filepath)
+            ))
+
+
+def load_configfile(cfgvar, filepath=os.path.join(TAGFILE_CONFIG_HOME,
+                                                  'config.yaml')):
+    '''Load user config file into memory at cfgvar'''
+
+    if os.path.exists(filepath):
+        cfgvar.update(yaml.safe_load(open(filepath).read()))
+    else:
+        raise ConfigError('File "{}" does not exist'.format(filepath))
+
+
+cfg = yaml.safe_load(defaultconfig)  # Init config with defaults
+write_defaultconfig()  # Create config home dirs and config.yaml at first run
+load_configfile(cfg)  # Load the user (edited) configfile into config
+
 if not os.path.exists(TAGFILE_DATA_HOME):
     os.makedirs(TAGFILE_DATA_HOME)
-
-# initialize config path and create config.yaml file
-if not os.path.exists(TAGFILE_CONFIG_HOME):
-    os.makedirs(TAGFILE_CONFIG_HOME)
-    _filepath = os.path.join(TAGFILE_CONFIG_HOME, 'config.yaml')
-    with open(_filepath, 'w') as _fconf:
-        _fconf.write(defaultconfig)
-        print(colors.green(
-            'Copied default config into file "{}"\n'.format(_filepath)
-        ))
-
-# Read user config file
-_filepath = os.path.join(TAGFILE_CONFIG_HOME, 'config.yaml')
-if os.path.exists(_filepath):
-    config.update(yaml.safe_load(open(_filepath).read()))
 
 DB = peewee.SqliteDatabase(os.path.join(TAGFILE_DATA_HOME, 'index.db'))
 '''Database handler for Peewee ORM / sqlite database.

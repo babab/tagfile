@@ -71,11 +71,11 @@ def test_function_get_logfunc_for():
 
 def test_function_configlvl():
     assert tagfile.output.configlvl() == DEFAULT_CONFIG_LOGLEVEL
-    _logging_bak = tagfile.config['logging']  # save section
-    del tagfile.config['logging']  # delete section
+    _logging_bak = tagfile.cfg['logging']  # save section
+    del tagfile.cfg['logging']  # delete section
     with pytest.raises(tagfile.ConfigError):
         assert tagfile.output.configlvl() == DEFAULT_CONFIG_LOGLEVEL
-    tagfile.config['logging'] = _logging_bak  # re-insert section
+    tagfile.cfg['logging'] = _logging_bak  # re-insert section
     assert tagfile.output.configlvl() == DEFAULT_CONFIG_LOGLEVEL
 
 
