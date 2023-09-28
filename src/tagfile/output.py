@@ -34,6 +34,7 @@ import logging
 import sys
 
 import tagfile
+from tagfile.common import ConfigError
 
 VERBOSE = False
 '''Used to set state of verbose output when using -v command flags'''
@@ -83,7 +84,7 @@ def configlvl():
     try:
         ret = lvlstr2int(tagfile.cfg['logging']['level'])
     except KeyError:
-        raise tagfile.ConfigError('No "logging.level" section found in config')
+        raise ConfigError('No "logging.level" section found in config')
     return ret
 
 

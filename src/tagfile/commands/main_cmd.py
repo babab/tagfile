@@ -158,9 +158,10 @@ class Command(pycommand.CommandBase):
 
         # Update cfg with file
         if self.flags['config']:
-            fn = self.flags['config']
-            if os.path.exists(fn):
-                tagfile.load_configfile(tagfile.cfg, fn)
+            _fpath = os.path.abspath(self.flags['config'])
+            if os.path.exists(_fpath):
+                tagfile._configuration.set_paths(_fpath)
+                tagfile._configuration.load_configfile()
             else:
                 print('ERROR: file does not exist')
                 return 2

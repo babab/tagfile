@@ -1,4 +1,4 @@
-# file: tests/tagfile/test_tagfile.py
+# file: tests/tagfile/test_common.py
 
 # Copyright (c) 2015-2023 Benjamin Althues <benjamin@babab.nl>
 #
@@ -32,25 +32,23 @@
 
 import os
 
-import tagfile
 from tagfile import common
 
 
-def test_default_cfg_structure():
-    cfg = tagfile.cfg
-    assert cfg['logging']['enabled'] is True
-    assert cfg['logging']['file']
-    assert cfg['logging']['level'] == 'warning'
-    assert cfg['load-bar'] is True
-    assert cfg['ignore']
-    assert cfg['ignore-empty'] is True
+def test_invertexpanduser_helper_function_if_path_startswith_home():
+    original = '~/.local'
+    expanded = os.path.expanduser(original)
+    assert expanded != original
+    assert common.invertexpanduser(expanded) == original
 
 
-def test_location_variables():
-    assert common.TAGFILE_DATA_HOME is not None
-    assert common.TAGFILE_CONFIG_HOME is not None
+def test_invertexpanduser_helper_function_if_path_not_startswith_home():
+    original = '/tmp/~user/somedir/~/someotherdir'
+    expanded = os.path.expanduser(original)
+    assert expanded == original
+    assert common.invertexpanduser(expanded) == original
 
 
-def test_location_paths_have_been_created():
-    assert os.path.exists(common.TAGFILE_DATA_HOME)
-    assert os.path.exists(common.TAGFILE_CONFIG_HOME)
+def test_config_and_data_home_values_are_set_to_those_of_envvars():
+    assert common.TAGFILE_DATA_HOME == os.environ.get('TAGFILE_DATA_HOME')
+    assert common.TAGFILE_CONFIG_HOME == os.environ.get('TAGFILE_CONFIG_HOME')

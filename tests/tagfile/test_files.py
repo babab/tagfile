@@ -35,6 +35,7 @@ import os
 import pytest
 
 import tagfile
+from tagfile.common import ConfigError
 import tagfile.files
 
 
@@ -52,7 +53,7 @@ def test_files_function_hashfile_raises_error_on_unknown_algo():
     _path = os.environ['TAGFILEDEV_MEDIA_PATH']
     paths = tagfile.files.walkdir(_path)
     sample_3_mp4 = paths[0]
-    with pytest.raises(tagfile.ConfigError):
+    with pytest.raises(ConfigError):
         tagfile.files.hashfile(sample_3_mp4)
 
 

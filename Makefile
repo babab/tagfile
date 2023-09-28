@@ -49,6 +49,7 @@ VENVDIR   = .virtualenv
 export TAGFILE_CONFIG_HOME = ${PWD}/cache/config_home
 export TAGFILE_DATA_HOME = ${PWD}/cache/data_home
 export TAGFILEDEV_MEDIA_PATH = ${PWD}/cache/media
+export TAGFILEDEV_TESTS_CACHE = ${PWD}/cache/tests
 
 ### Variables - changing these is not advised ################################
 sys_pip   = ${SYSPYTHON} -m pip
@@ -199,6 +200,7 @@ clean-config-data: #custom
 	@printf '\n--- CLEANING UP TESTING CONFIG/DATA HOMES ---\n'
 	test -n "$${TAGFILE_CONFIG_HOME}" && rm -vrf "$${TAGFILE_CONFIG_HOME}"
 	test -n "$${TAGFILE_DATA_HOME}" && rm -vrf "$${TAGFILE_DATA_HOME}"
+	test -n "$${TAGFILEDEV_TESTS_CACHE}" && rm -vrf "$${TAGFILEDEV_TESTS_CACHE}"
 
 clean:
 	@printf '\n--- CLEANING UP FILES AND VIRTUAL ENV ---\n'

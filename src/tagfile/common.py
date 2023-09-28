@@ -1,4 +1,4 @@
-# file: tests/tagfile/test_tagfile.py
+# file: src/tagfile/common.py
 
 # Copyright (c) 2015-2023 Benjamin Althues <benjamin@babab.nl>
 #
@@ -32,25 +32,29 @@
 
 import os
 
-import tagfile
-from tagfile import common
+
+class ConfigError(Exception):
+    pass
 
 
-def test_default_cfg_structure():
-    cfg = tagfile.cfg
-    assert cfg['logging']['enabled'] is True
-    assert cfg['logging']['file']
-    assert cfg['logging']['level'] == 'warning'
-    assert cfg['load-bar'] is True
-    assert cfg['ignore']
-    assert cfg['ignore-empty'] is True
+class ProgrammingError(Exception):
+    pass
 
 
-def test_location_variables():
-    assert common.TAGFILE_DATA_HOME is not None
-    assert common.TAGFILE_CONFIG_HOME is not None
+def invertexpanduser(path):
+    '''Replaces a substring of `os.path.expanduser(path)` with ``~``.'''
+    home_abspath = os.path.expanduser('~')
+    if path.startswith(home_abspath):
+        return path.replace(home_abspath, '~')
+    return path
 
 
-def test_location_paths_have_been_created():
-    assert os.path.exists(common.TAGFILE_DATA_HOME)
-    assert os.path.exists(common.TAGFILE_CONFIG_HOME)
+# Set base paths, overridable using ENV vars
+TAGFILE_DATA_HOME = os.environ.get(
+    'TAGFILE_DATA_HOME',
+    os.path.expanduser('~/.local/share/tagfile')
+)
+TAGFILE_CONFIG_HOME = os.environ.get(
+    'TAGFILE_CONFIG_HOME',
+    os.path.expanduser('~/.config/tagfile')
+)

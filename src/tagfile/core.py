@@ -42,8 +42,8 @@ from tagfile import (
     DB,
     files,
     output,
-    ProgrammingError,
 )
+from tagfile.common import ProgrammingError
 from tagfile.models import Index, Repository
 
 

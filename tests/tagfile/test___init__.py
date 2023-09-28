@@ -34,18 +34,19 @@ import os
 import sys
 
 import tagfile
+from tagfile import common
 
 TFVERSION = '0.2.0a9'
 
 
-def test_tagfile_version():
+def test_tagfile_package_version_author_copyright_in_namespace():
     assert tagfile.__version__ == TFVERSION
     assert tagfile.versionStr == 'tagfile {}'.format(TFVERSION)
     assert tagfile.__author__ == "Benjamin Althues"
     assert tagfile.__copyright__ == "Copyright (C) 2015-2023  Benjamin Althues"
 
 
-def test_tagfile_verboseVersionInfo():
+def test_verboseVersionInfo():
     valid_output = '''{0}
 {1}
 
@@ -61,28 +62,9 @@ Platform is {4}'''.format(
     assert tagfile.verboseVersionInfo() == valid_output
 
 
-def test_invertexpanduser_helper_function_if_path_startswith_home():
-    original = '~/.local'
-    expanded = os.path.expanduser(original)
-    assert expanded != original
-    assert tagfile.invertexpanduser(expanded) == original
-
-
-def test_invertexpanduser_helper_function_if_path_not_startswith_home():
-    original = '/tmp/~user/somedir/~/someotherdir'
-    expanded = os.path.expanduser(original)
-    assert expanded == original
-    assert tagfile.invertexpanduser(expanded) == original
-
-
 def test_config_and_data_home_envvars_are_altered_for_testenvironment():
     assert os.environ.get('TAGFILE_DATA_HOME') is not None
     assert os.environ.get('TAGFILE_CONFIG_HOME') is not None
-
-
-def test_config_and_data_home_values_are_set_to_those_of_envvars():
-    assert tagfile.TAGFILE_DATA_HOME == os.environ.get('TAGFILE_DATA_HOME')
-    assert tagfile.TAGFILE_CONFIG_HOME == os.environ.get('TAGFILE_CONFIG_HOME')
 
 
 def test_defaultconfig_logging_settings():
@@ -92,6 +74,6 @@ def test_defaultconfig_logging_settings():
 
 
 def test_defaultconfig_logfile_is_altered_according_to_TAGFILE_DATA_HOME():
-    tildepath = tagfile.invertexpanduser(tagfile.TAGFILE_DATA_HOME)
+    tildepath = common.invertexpanduser(common.TAGFILE_DATA_HOME)
     cfg = tagfile.cfg
     assert cfg['logging']['file'] == '{}/tagfile.log'.format(tildepath)

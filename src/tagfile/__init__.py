@@ -30,81 +30,18 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
-import datetime
 import os
 import sys
 
-import colors
 import peewee
-import yaml
+
+import tagfile.config
+import tagfile.common
 
 __author__ = "Benjamin Althues"
 __copyright__ = "Copyright (C) 2015-2023  Benjamin Althues"
 __version__ = '0.2.0a9'
 versionStr = 'tagfile {}'.format(__version__)
-
-
-class ConfigError(Exception):
-    pass
-
-
-class ProgrammingError(Exception):
-    pass
-
-
-def invertexpanduser(path):
-    '''Replaces a substring of `os.path.expanduser(path)` with ``~``.'''
-    home_abspath = os.path.expanduser('~')
-    if path.startswith(home_abspath):
-        return path.replace(home_abspath, '~')
-    return path
-
-
-# Set base paths, overridable using ENV vars
-TAGFILE_DATA_HOME = os.environ.get(
-    'TAGFILE_DATA_HOME',
-    os.path.expanduser('~/.local/share/tagfile')
-)
-TAGFILE_CONFIG_HOME = os.environ.get(
-    'TAGFILE_CONFIG_HOME',
-    os.path.expanduser('~/.config/tagfile')
-)
-
-defaultconfig = '''# config created by {versionStr} at {date}
-
-# A tilde `~` in filepaths will expand to $HOME on *BSD/Linux/MacOS/Unix
-# or %USERPROFILE% on Windows.
-
-logging:
-    enabled: yes
-    file: {data_home}/tagfile.log
-
-    # Valid levels are: 'debug', 'info', 'warning', 'error' or 'fatal'.
-    # The recommended level is 'warning'. Use 'info' to log most actions.
-    # Level 'debug' will log all database queries, impacting performance
-    # and should only be used when absolutely needed.
-    level: warning
-
-load-bar: yes
-
-ignore:
-    - .git
-    - .hg
-    - .svn
-    - .pyc
-    - .virtualenv
-    - __pycache__
-    - node_modules
-ignore-empty:   yes
-
-# hash-algo can be 'md5' or 'sha1'
-hash-algo:      sha1
-hash-buf-size:  1024
-'''.format(
-    data_home=invertexpanduser(TAGFILE_DATA_HOME),
-    date=datetime.datetime.now(),
-    versionStr=versionStr
-)
 
 
 def verboseVersionInfo():
@@ -121,40 +58,14 @@ def verboseVersionInfo():
     )
 
 
-def write_defaultconfig(dirpath=TAGFILE_CONFIG_HOME, basename='config.yaml',
-                        makedirs=True):
-    '''Initialize config path and create config.yaml file'''
-    if not os.path.exists(dirpath):
-        if makedirs:
-            os.makedirs(dirpath)
-        else:
-            raise ConfigError('dirpath "{}" does not exist'.format(dirpath))
-        _filepath = os.path.join(dirpath, basename)
-        with open(_filepath, 'w') as _fconf:
-            _fconf.write(defaultconfig)
-            print(colors.green(
-                'Copied default config into file "{}"\n'.format(_filepath)
-            ))
+_configuration = tagfile.config.Configuration()
+cfg = _configuration.cfg
 
+_data_home = tagfile.common.TAGFILE_DATA_HOME
+if not os.path.exists(_data_home):
+    os.makedirs(_data_home)
 
-def load_configfile(cfgvar, filepath=os.path.join(TAGFILE_CONFIG_HOME,
-                                                  'config.yaml')):
-    '''Load user config file into memory at cfgvar'''
-
-    if os.path.exists(filepath):
-        cfgvar.update(yaml.safe_load(open(filepath).read()))
-    else:
-        raise ConfigError('File "{}" does not exist'.format(filepath))
-
-
-cfg = yaml.safe_load(defaultconfig)  # Init config with defaults
-write_defaultconfig()  # Create config home dirs and config.yaml at first run
-load_configfile(cfg)  # Load the user (edited) configfile into config
-
-if not os.path.exists(TAGFILE_DATA_HOME):
-    os.makedirs(TAGFILE_DATA_HOME)
-
-DB = peewee.SqliteDatabase(os.path.join(TAGFILE_DATA_HOME, 'index.db'))
+DB = peewee.SqliteDatabase(os.path.join(_data_home, 'index.db'))
 '''Database handler for Peewee ORM / sqlite database.
 
 The database gets connected in `tagfile.core.tfman.init()`, which is

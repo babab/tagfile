@@ -35,6 +35,7 @@ import os
 import pytest
 
 import tagfile
+import tagfile.common
 import tagfile.core
 import tagfile.files
 
@@ -48,7 +49,7 @@ def test_core_tfman_paths_is_not_None():
 
 
 def test_core_tfman_error_when_not_initialized_loadKnownRepos():
-    with pytest.raises(tagfile.ProgrammingError):
+    with pytest.raises(tagfile.common.ProgrammingError):
         tagfile.core.tfman.loadKnownRepos()
 
 
@@ -56,37 +57,37 @@ def test_core_tfman_error_when_not_initialized_addPath():
     _path = os.environ['TAGFILEDEV_MEDIA_PATH']
     paths = tagfile.files.walkdir(_path)
     sample_3_mp4 = paths[0]
-    with pytest.raises(tagfile.ProgrammingError):
+    with pytest.raises(tagfile.common.ProgrammingError):
         tagfile.core.tfman.addPath(sample_3_mp4)
 
 
 def test_core_tfman_error_when_not_initialized_find():
-    with pytest.raises(tagfile.ProgrammingError):
+    with pytest.raises(tagfile.common.ProgrammingError):
         tagfile.core.tfman.find('sampl')
 
 
 def test_core_tfman_error_when_not_initialized_info():
-    with pytest.raises(tagfile.ProgrammingError):
+    with pytest.raises(tagfile.common.ProgrammingError):
         tagfile.core.tfman.info()
 
 
 def test_core_tfman_error_when_not_initialized_re_index():
-    with pytest.raises(tagfile.ProgrammingError):
+    with pytest.raises(tagfile.common.ProgrammingError):
         tagfile.core.tfman.re_index()
 
 
 def test_core_tfman_error_when_not_initialized_prune():
-    with pytest.raises(tagfile.ProgrammingError):
+    with pytest.raises(tagfile.common.ProgrammingError):
         tagfile.core.tfman.prune()
 
 
 def test_core_tfman_error_when_not_initialized_clones():
-    with pytest.raises(tagfile.ProgrammingError):
+    with pytest.raises(tagfile.common.ProgrammingError):
         tagfile.core.tfman.clones()
 
 
 def test_core_tfman_error_when_not_initialized_scan():
-    with pytest.raises(tagfile.ProgrammingError):
+    with pytest.raises(tagfile.common.ProgrammingError):
         tagfile.core.tfman.scan()
 
 

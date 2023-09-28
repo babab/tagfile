@@ -36,6 +36,7 @@ import hashlib
 import os
 
 import tagfile
+from tagfile.common import ConfigError
 
 
 def walkdir(filepath):
@@ -53,7 +54,7 @@ def hashfile(filepath):
     elif tagfile.cfg['hash-algo'] == 'sha1':
         h = hashlib.sha1()
     else:
-        raise tagfile.ConfigError('Invalid "hash-algo" in configuration')
+        raise ConfigError('Invalid "hash-algo" in configuration')
 
     with open(filepath, 'rb') as f:
         while True:
