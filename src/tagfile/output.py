@@ -31,13 +31,73 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import logging
-import sys
+
+from rich import console
+from rich.theme import Theme
 
 import tagfile
 from tagfile.common import ConfigError
 
-VERBOSE = False
-'''Used to set state of verbose output when using -v command flags'''
+
+class OutputFlags:
+    verbose = False
+    '''Used to set state of verbose output when using -v command flags'''
+
+    def __init__(self):
+        self._quiet_bool = False
+
+    @property
+    def quiet(self):
+        '''Used to supress all output, except fatal errors.'''
+        return self._quiet_bool
+
+    @quiet.setter
+    def quiet(self, yesno):
+        self._quiet_bool = bool(yesno)
+        self.update_consoles()
+
+    def update_consoles(self):
+        '''Set properties of rich consoles to {en,dis}able progessbars etc.'''
+        consout.quiet = self.quiet
+        conserr.quiet = self.quiet
+
+    def update_consoles_for_testing(self, force_term=None):
+        '''Override console instances for unit and integration testing.
+
+        - Use ``force_term=True`` to update the consoles.
+        - Use ``force_term=False`` to reset the consoles after test is done.
+
+        This is the only funtion in tagfile as a whole where the global
+        keyword is used. It is essentially only ever used to force override
+        colored output in `consout` and `conserr` for testing the prescence
+        of ANSI escape sequences in the output with pytest. This is not to
+        be used in regular program flow. Use `update_consoles()` instead.
+        '''
+        global consout, conserr
+        if force_term is not None:
+            terminal = True if force_term else None
+            interactive = False if force_term else None
+            consout = console.Console(theme=theme, force_terminal=terminal,
+                                      force_interactive=interactive)
+            conserr = console.Console(theme=theme, stderr=True,
+                                      force_terminal=terminal,
+                                      force_interactive=interactive)
+        self.update_consoles()
+
+
+theme = Theme({
+    'repr.path': 'dark_khaki',
+    'repr.filename': 'khaki3',
+})
+'''Theme overrides for rich console output'''
+
+consout = console.Console(theme=theme)
+'''Rich text console API for stdout'''
+
+conserr = console.Console(theme=theme, stderr=True)
+'''Rich text console API for stderr'''
+
+flags = OutputFlags()
 
 
 # mappings for strings to values of logging.* constants ######################
@@ -54,7 +114,7 @@ def lvlstr2int(level_string):
         'critical': logging.FATAL,
     }
     try:
-        ret = levels[level_string]
+        ret = levels[level_string.lower()]
     except KeyError:
         ret = logging.WARNING
     return ret
@@ -72,7 +132,7 @@ def get_logfunc_for(level_string):
         'critical': logging.fatal,
     }
     try:
-        ret = levels[level_string]
+        ret = levels[level_string.lower()]
     except KeyError:
         ret = logging.warning
     return ret
@@ -88,25 +148,63 @@ def configlvl():
     return ret
 
 
+# generic functions for printing to console without logging  #################
+
+def sout(text, hl=True):
+    if not flags.quiet:
+        consout.print(text, end='', soft_wrap=True, highlight=hl)
+
+
+def lnout(text, hl=True):
+    if not flags.quiet:
+        consout.print(text, soft_wrap=True, highlight=hl)
+
+
+def serr(text, hl=True, ignore_quiet=False):
+    if ignore_quiet:
+        origval = flags.quiet
+        flags.quiet = False
+        conserr.print(text, end='', soft_wrap=True, highlight=hl)
+        flags.quiet = origval
+    else:
+        if not flags.quiet:
+            conserr.print(text, end='', soft_wrap=True, highlight=hl)
+
+
+def lnerr(text, hl=True, ignore_quiet=False):
+    if ignore_quiet:
+        origval = flags.quiet
+        flags.quiet = False
+        conserr.print(text, soft_wrap=True, highlight=hl)
+        flags.quiet = origval
+    else:
+        if not flags.quiet:
+            conserr.print(text, soft_wrap=True, highlight=hl)
+
+
 # generic functions for verbose echo and logging #############################
 
 def vecho(level_string, text):
-    '''Print to std{out,err} or not based on level_string and `VERBOSE` var'''
+    '''Print to std{out,err} based on level_string and `flags.verbose` var.
+
+    Always print fatal errors, but print other levels (info, warning,
+    error) only when not flags.quiet and flags.verbose is trueish.
+    Messages with the *debug* level print nothing here. They are
+    exclusively logged.
+    '''
     lvl = lvlstr2int(level_string)
     if lvl >= logging.FATAL:
-        # always print fatal errors
-        sys.stderr.write('fatal error: {}\n'.format(text))
+        lnerr('fatal error: {}'.format(text), ignore_quiet=True)
         return
-    if not VERBOSE:
-        # print other levels only when VERBOSE is trueish
+    if flags.quiet or not flags.verbose:
         return
 
-    if lvl <= logging.INFO:
-        print(text)
+    if lvl == logging.INFO:
+        lnout(text)
     elif lvl == logging.WARNING:
-        sys.stderr.write('warning: {}\n'.format(text))
+        lnerr('warning: {}'.format(text))
     elif lvl == logging.ERROR:
-        sys.stderr.write('error: {}\n'.format(text))
+        lnerr('error: {}'.format(text))
 
 
 def log(level_string, text):
@@ -125,20 +223,20 @@ def logvecho(level_string, text):
 # level specific shortcuts for logging and verbose echo ######################
 
 def info(text):
-    '''Log info level message and print if VERBOSE is True'''
+    '''Log info level message and print if flags.verbose is True'''
     logvecho('info', text)
 
 
 def warning(text):
-    '''Log warning level message and print if VERBOSE is True'''
+    '''Log warning level message and print if flags.verbose is True'''
     logvecho('warning', text)
 
 
 def error(text):
-    '''Log error level message and print if VERBOSE is True'''
+    '''Log error level message and print if flags.verbose is True'''
     logvecho('error', text)
 
 
 def fatal(text):
-    '''Log fatal level message and print regardless of VERBOSE value'''
+    '''Log fatal level message and print regardless of flags.verbose value'''
     logvecho('fatal', text)
