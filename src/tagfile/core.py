@@ -32,19 +32,27 @@
 
 import logging
 import os
-import sys
 
-import colors
 import magic
+from rich.progress import track
 
 from tagfile import (
-    cfg,
-    DB,
-    files,
-    output,
+    cfg,     # dict - from `tagfile.config.Configuration().cfg`
+    DB,      # var - Database handler for Peewee
+    files,   # module
+    output,  # module
+)
+from tagfile.output import (
+    consout as c,  # instance - from `rich.console.Console()`
+    lnout,         # function
 )
 from tagfile.common import ProgrammingError
 from tagfile.models import Index, Repository
+
+# NAMESPACE SHORTCUTS
+# output = tagfile.output
+# c      = tagfile.output.consout
+# lnout  = tagfile.output.lnout
 
 
 class _TagFileManager:
@@ -79,17 +87,20 @@ class _TagFileManager:
         if not Index.table_exists():
             DB.create_tables([Index, Repository])
         self._initialized = True
+
+        output.log('debug', 'tfman initialized')
+        output.log('debug', 'color_system = {}'.format(c.color_system))
         return self
 
-    def loadKnownRepos(self, silent=False):
+    def loadKnownRepos(self):
         '''Load known media paths into `self.paths`'''
         if not self._initialized:
             raise ProgrammingError("_TagFileManager was not initialized")
-        if not silent:
-            print('Browsing media paths for files, please wait...')
-        qrep = Repository.select()
-        for item in qrep:
-            self.addPath(item.filepath)
+        text = 'Browsing media paths for files... '
+        with c.status(text, spinner='dqpb'):
+            qrep = Repository.select()
+            for item in qrep:
+                self.addPath(item.filepath)
 
     def addPath(self, path):
         '''Walk path and add all found files'''
@@ -108,15 +119,19 @@ class _TagFileManager:
     def info(self):
         if not self._initialized:
             raise ProgrammingError("_TagFileManager was not initialized")
+        lnout('[bold]INDEX STATS[/bold]')
+        lnout(f'files indexed\t{Index.select().count()}')
+        lnout(f'duplicate files\t{self.clones(return_count=True)}')
+
         qrep = Repository.select()
-        files = colors.green(str(Index.select().count()))
-        repos = colors.green(str(qrep.count()))
-        duplos = colors.green(str(self.clones(return_count=True)))
-        print('{}\tfiles indexed\n{}\tduplicate files'.format(files, duplos))
-        print('\nMEDIA PATHS ({}):'.format(repos))
+        repos = f'[green]{qrep.count()}[/green]'
+        lnout(f'\n[bold]MEDIA PATHS ({repos}):[/bold]')
 
         for item in qrep:
-            print(item.filepath)
+            lnout(f'- {item.filepath}')
+
+        lnout('\n[bold]USER CONFIG[/]')
+        lnout(cfg)
 
     def re_index(self):
         if not self._initialized:
@@ -129,16 +144,20 @@ class _TagFileManager:
     def prune(self):
         if not self._initialized:
             raise ProgrammingError("_TagFileManager was not initialized")
-        print(colors.bold('\nPRUNING STARTS'))
-        print('Checking index for entries with missing files...')
-        res = Index.raw('''SELECT * FROM `index`''')
-        npruned = 0
-        for i in res:
+        lnout('\n[bold]PRUNING[/bold]')
+        text = 'Checking index for entries with missing files... '
+        with c.status(text, spinner='dqpb'):
+            res = Index.raw('''SELECT * FROM `index`''')
+            npruned = 0
+
+        for i in track(res, console=output.consout,
+                       disable=False if cfg['load-bar'] else True,
+                       description=''):
             if not os.path.exists(i.filepath):
                 Index.delete().where(Index.id == i.id).execute()
-                print('Removed {}'.format(i.filepath))
+                output.info('prune: Removed {}'.format(i.filepath))
                 npruned += 1
-        print('DONE. {} files were removed from the index'.format(npruned))
+        lnout(f'DONE. {npruned} files were removed from the index.', hl=False)
 
     def clones(self, return_count=False, sizes=False, categories=False,
                mimetypes=False):
@@ -155,29 +174,30 @@ class _TagFileManager:
         res = (Index.select()
                     .where(Index.filehash << hashes)
                     .order_by(Index.filehash))
+        count = 0
         changed = ''
         toggler = False
         for i in res:
             if changed != i.filehash:
                 toggler = False if toggler else True
+                lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')
+                count = 0
 
             _hash = i.filehash[:5]
             _size = ' {}'.format(files.sizefmt(i.filesize)) if sizes else ''
             _cat = ' {}'.format(i.cat) if categories else ''
             _mime = ' {}'.format(i.mime) if mimetypes else ''
             if toggler:
-                print('{}{}{}{} {}'.format(
-                    colors.green(_hash), _size, _cat, _mime, i.filepath
+                lnout('[green]{}{}[/green]{}{} {}'.format(
+                    _hash, _size, _cat, _mime, i.filepath
                 ))
             else:
-                print('{}{}{}{} {}'.format(
-                    colors.magenta(_hash),
-                    colors.bold(_size),
-                    colors.bold(_cat),
-                    colors.bold(_mime),
-                    colors.bold(i.filepath)
+                lnout('[magenta]{}{}[/magenta]{}{} {}'.format(
+                    _hash, _size, _cat, _mime, i.filepath
                 ))
             changed = i.filehash
+            count += 1
+        lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')
 
     def scan(self):
         '''Check if filepaths are in database, otherwise hash file and save'''
@@ -191,19 +211,20 @@ class _TagFileManager:
         ierrpermission = 0
         total = len(self.paths)
         try:
-            print(colors.bold('\nSCANNING STARTS'))
-            for path in self.paths:
+            lnout('\n[bold]SCANNING[/bold]')
+
+            for path in track(self.paths, console=output.consout,
+                              disable=False if cfg['load-bar'] else True,
+                              description=''):
                 file_is_valid = True
                 iall += 1
-                if cfg['load-bar'] and not output.VERBOSE:
-                    sys.stdout.write('\r  {} / {}'.format(iall, total))
 
                 # see if filename matches any configured ignore patterns
                 for ignorepatt in cfg['ignore']:
                     if ignorepatt in path:
                         file_is_valid = False
                         iignore += 1
-                        output.info('scan: Ignored path ' + path)
+                        output.info('scan: path ignored: ' + path)
                         break
 
                 # get filesize, this might raise a few exceptions
@@ -238,25 +259,25 @@ class _TagFileManager:
                             )
                             break
                         inew += 1
-                        output.info('scan: Added ' + path)
+                        output.info('scan: added ' + path)
                     except UnicodeEncodeError:
                         ierrunicode += 1
         finally:
-            if output.VERBOSE:
-                print('')
-            print('\rTotal files     {:>12}'.format(total))
-            print('Already indexed {:>12}'.format(iexisting))
-            print('Ignored files   {:>12}'.format(iignore))
-            print(colors.green('Newly added     {:>12}'.format(inew)))
+            lnout('DONE.\n\n[bold]STATISTICS[/bold]')
+            lnout('Already indexed {:>12}'.format(iexisting))
+            lnout('Ignored files   {:>12}'.format(iignore))
+            lnout('[green]Newly added[/]     {:>12}'.format(inew))
+            lnout('-' * 28)
+            lnout('Total files     {:>12}'.format(total))
 
             if ierrunicode or ierrpermission:
-                print(colors.bold('\nERRORS'))
+                lnout('\n[bold]ERRORS[/]')
             if ierrunicode:
-                print(colors.red('Filenames with unicode errors: {}'
-                                 .format(ierrunicode)))
+                lnout('[red]Filenames with unicode errors:[/] {}'
+                      .format(ierrunicode))
             if ierrpermission:
-                print(colors.red('File locations with permission errors: {}'
-                                 .format(ierrpermission)))
+                lnout('[red]File locations with permission errors:[/] {}'
+                      .format(ierrpermission))
 
 
 tfman = _TagFileManager()
