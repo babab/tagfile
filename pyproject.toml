@@ -39,12 +39,11 @@ keywords = [
 ]
 dynamic = ["version", "description"]
 dependencies = [
-    "ansicolors >=1.1.8,<2.0",
-    "peewee >=3.15.4,<4.0",
+    "peewee >=3.16.3,<4.0",
     "pycommand >=0.4.0,<0.5",
     "python-magic >=0.4.27,<0.5",
     "PyYAML >=6.0,<7.0",
-    "rich >=13.5.3,<14.0",
+    "rich >=13.6.0,<14.0",
 ]
 
 

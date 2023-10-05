@@ -170,7 +170,7 @@ Dependencies (automatically installed with pipx / pip):
 
 - Peewee ORM (https://peewee.readthedocs.org/en/latest/)
 - PyYAML (https://pyyaml.org/)
-- ansicolors (https://pypi.python.org/pypi/ansicolors/)
+- rich (https://pypi.python.org/pypi/rich/)
 - pycommand (https://babab.github.io/pycommand/)
 
 
