@@ -37,6 +37,10 @@ import pycommand
 
 import tagfile
 from tagfile import __doc__ as main_description
+from tagfile.output import (
+    lnerr,
+    lnout,
+)
 from tagfile.commands.add import AddCommand
 from tagfile.commands.clones import ClonesCommand
 from tagfile.commands.find import FindCommand
@@ -48,12 +52,12 @@ def entry():
     try:
         cmd = Command(sys.argv[1:])
         if cmd.error:
-            print('error: {0}'.format(cmd.error))
+            lnerr('error: {0}'.format(cmd.error))
             return 1
         else:
             return cmd.run()
     except KeyboardInterrupt:
-        print('\nTagfile successfully exited.')
+        lnerr('\nUser interrupted. Tagfile successfully exited.')
         return 0
 
 
@@ -85,7 +89,7 @@ class HelpCommand(pycommand.CommandBase):
             elif self.args[0] == 'updatedb':
                 print(UpdateDbCommand([]).usage)
             else:
-                print('error: Unknown command')
+                lnerr('error: Unknown command')
                 return 1
         else:
             print(Command([]).usage)
@@ -163,7 +167,7 @@ class Command(pycommand.CommandBase):
                 tagfile._configuration.set_paths(_fpath)
                 tagfile._configuration.load_configfile()
             else:
-                print('ERROR: file does not exist')
+                lnerr(f'error: file {_fpath} does not exist.')
                 return 2
 
         # temporary handling of old commands, the super call will catch
@@ -173,19 +177,19 @@ class Command(pycommand.CommandBase):
         except IndexError:
             command = None
         if command == 'scan':
-            print(
-                "Command 'scan' is removed. The equivalent to `scan` is\n'"
-                'now `tagfile add --scan .`. Use `tagfile updatedb --scan`\n'
-                ' to scan all known media-paths regardless of current dir.\n'
+            lnout(
+                "Command 'scan' is removed. The equivalent to 'scan' is\n"
+                "now 'tagfile add --scan .'. Use 'tagfile updatedb --scan'\n"
+                'to scan all known media-paths regardless of current dir.\n'
             )
         elif command == 'same':
-            print("Command 'same' is renamed. Please use 'clones' instead")
+            lnout("Command 'same' is renamed. Please use 'clones' instead.")
         elif command == 'stats':
-            print("Command 'stats' is renamed. Please use 'info' instead")
+            lnout("Command 'stats' is renamed. Please use 'info' instead.")
         elif command == 'prune':
-            print(
-                "Command 'prune' is removed. 'The equivalent to `prune` is\n"
-                'now `tagfile updatedb --prune`.\n'
+            lnout(
+                "Command 'prune' is removed. The equivalent to 'prune' is\n"
+                "now 'tagfile updatedb --prune'.\n"
             )
 
         # parse commands in pycommand style
@@ -197,7 +201,7 @@ class Command(pycommand.CommandBase):
         cmd.registerParentFlag('config', self.flags.config)
 
         if cmd.error:
-            print('tagfile {cmd}: {error}'
+            lnerr('tagfile {cmd}: {error}'
                   .format(cmd=self.args[0], error=cmd.error))
             return 1
         else:

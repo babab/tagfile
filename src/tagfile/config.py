@@ -35,7 +35,6 @@
 import datetime
 import os
 
-import colors
 import yaml
 
 from tagfile import common
@@ -108,9 +107,6 @@ class Configuration:
                 )
             with open(self.fullpath, 'w') as _fconf:
                 _fconf.write(defaultconfig)
-                print(colors.green('Saved config to "{}"\n'.format(
-                    self.fullpath
-                )))
 
     def load_configfile(self):
         '''Load user config file into memory'''
