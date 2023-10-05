@@ -39,7 +39,8 @@ from tagfile.core import tfman
 class UpdateDbCommand(pycommand.CommandBase):
     '''Scan all media paths. Index added files and prune removed files.'''
     usagestr = (
-        'usage: tagfile updatedb [--prune] [--scan] [-v | --verbose]\n'
+        'usage: tagfile updatedb [--prune] [--scan] [-v, --verbose]'
+        ' [-q, --quiet]\n'
         '   or: tagfile updatedb [-h | --help]'
     )
     description = (
@@ -53,6 +54,7 @@ class UpdateDbCommand(pycommand.CommandBase):
         ('prune', ('', False, "prune removed files only; don't scan")),
         ('scan', ('', False, "scan for new files only; don't prune")),
         ('verbose', ('v', False, 'print message for all actions')),
+        ('quiet', ('q', False, 'print nothing except fatal errors')),
     )
     usageTextExtra = (
         'When no options are specified, updatedb will both scan and prune.\n'
@@ -64,7 +66,8 @@ class UpdateDbCommand(pycommand.CommandBase):
             print(self.usage)
             return 0
 
-        tagfile.output.VERBOSE = self.flags.verbose
+        tagfile.output.flags.quiet = self.flags.quiet
+        tagfile.output.flags.verbose = self.flags.verbose
 
         # All options that reach here are valid. We need the repos for
         # everything that follows.

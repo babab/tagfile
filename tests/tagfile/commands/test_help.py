@@ -122,7 +122,7 @@ Options:
 '''
 
 output_help_updatedb = (
-    '''usage: tagfile updatedb [--prune] [--scan] [-v | --verbose]
+    '''usage: tagfile updatedb [--prune] [--scan] [-v, --verbose] [-q, --quiet]
    or: tagfile updatedb [-h | --help]
 
 Scan all media paths. Index added files and prune removed files.
@@ -136,6 +136,7 @@ Options:
 --prune        prune removed files only; don't scan
 --scan         scan for new files only; don't prune
 -v, --verbose  print message for all actions
+-q, --quiet    print nothing except fatal errors
 
 When no options are specified, updatedb will both scan and prune.
 It will always prune deleted files before scanning for new files.

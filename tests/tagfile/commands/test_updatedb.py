@@ -33,10 +33,12 @@
 import pycommand
 import pytest
 
+import tagfile.output
 from tagfile.commands.updatedb import UpdateDbCommand as Command
 
 
-output_help = '''usage: tagfile updatedb [--prune] [--scan] [-v | --verbose]
+output_help = (
+    '''usage: tagfile updatedb [--prune] [--scan] [-v, --verbose] [-q, --quiet]
    or: tagfile updatedb [-h | --help]
 
 Scan all media paths. Index added files and prune removed files.
@@ -50,11 +52,12 @@ Options:
 --prune        prune removed files only; don't scan
 --scan         scan for new files only; don't prune
 -v, --verbose  print message for all actions
+-q, --quiet    print nothing except fatal errors
 
 When no options are specified, updatedb will both scan and prune.
 It will always prune deleted files before scanning for new files.
 
-'''
+''')
 
 
 def test_pycommand_flags_are_None_by_default():
@@ -102,6 +105,8 @@ def test_pycommand_flags_are_accessible_by_attribute():
     assert cmd.flags.help is True
     assert cmd.flags.prune is True
     assert cmd.flags.scan is True
+    assert cmd.flags.quiet is None
+    assert cmd.flags.verbose is None
 
 
 def test_pycommand_optionerror_on_unset_flags_attributes():
@@ -115,3 +120,36 @@ def test_pycommand_command_help_flag_shows_help_message(capfd):
     cmd.run()
     cap = capfd.readouterr()
     assert output_help == cap.out
+
+
+def test_setting_quiet_flag_cascades_to_consoles_correctly():
+    assert tagfile.output.flags.quiet is False
+    assert tagfile.output.consout.quiet is False
+    assert tagfile.output.conserr.quiet is False
+    cmd = Command(['--prune', '-q'])
+    exitcode = cmd.run()
+    assert cmd.flags.quiet is True
+    assert exitcode == 0
+    assert tagfile.output.flags.quiet is True
+    assert tagfile.output.consout.quiet is True
+    assert tagfile.output.conserr.quiet is True
+    cmd = Command(['--prune', '--quiet'])
+    exitcode = cmd.run()
+    assert cmd.flags.quiet is True
+    assert exitcode == 0
+    assert tagfile.output.flags.quiet is True
+    assert tagfile.output.consout.quiet is True
+    assert tagfile.output.conserr.quiet is True
+
+
+def test_verbose_flag_sets_output_flags_for_consoles():
+    cmd = Command(['--prune', '-v'])
+    exitcode = cmd.run()
+    assert cmd.flags.verbose is True
+    assert exitcode == 0
+    assert tagfile.output.flags.verbose is True
+    cmd = Command(['--prune', '--verbose'])
+    exitcode = cmd.run()
+    assert cmd.flags.verbose is True
+    assert exitcode == 0
+    assert tagfile.output.flags.verbose is True
