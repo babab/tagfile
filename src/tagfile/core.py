@@ -251,13 +251,15 @@ def clones(flags):
     res = (Index.select()
                 .where(Index.filehash << hashes)
                 .order_by(Index.filehash))
-    count = 0
+    count = -1
     changed = ''
     toggler = False
     for i in res:
         if changed != i.filehash:
             toggler = False if toggler else True
-            lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')
+            if count != -1:
+                # Display total ONLY after the first iteration
+                lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')
             count = 0
 
         _hash = i.filehash[:5]
@@ -274,4 +276,8 @@ def clones(flags):
             ))
         changed = i.filehash
         count += 1
-    lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')
+    if count == -1:
+        lnout('No clones/duplicates found in index')
+    else:
+        # Display total for last iteration, after loop is done
+        lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')
