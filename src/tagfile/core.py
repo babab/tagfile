@@ -35,6 +35,7 @@ import os
 
 import magic
 import pycommand
+from rich.pretty import Pretty
 from rich.progress import track
 
 from tagfile import (
@@ -129,19 +130,34 @@ class _TagFileManager:
                               description=''):
                 file_is_valid = True
                 iall += 1
+                basename = os.path.basename(path)
 
-                # see if filename matches any configured ignore patterns
-                for ignorepatt in cfg['ignore']:
-                    if ignorepatt in path:
+                # see if path matches with any configured ignore substrings
+                for substr in cfg['ignore']['name-based']['paths']:
+                    if substr in path:
                         file_is_valid = False
                         iignore += 1
-                        output.info('scan: path ignored: ' + path)
+                        output.info(f'scan: path ignored ({substr}): {path}')
+                        break
+                # see if filename matches any configured ignore strings
+                for fn in cfg['ignore']['name-based']['filenames']:
+                    if basename == fn:
+                        file_is_valid = False
+                        iignore += 1
+                        output.info(f'scan: filename ignored ({fn}): {path}')
+                        break
+                # see if file extension matches any configured ignore strings
+                for ext in cfg['ignore']['name-based']['extensions']:
+                    if basename.endswith(ext):
+                        file_is_valid = False
+                        iignore += 1
+                        output.info(f'scan: extension ignored ({ext}): {path}')
                         break
 
                 # get filesize, this might raise a few exceptions
                 try:
                     filesize = os.path.getsize(path)
-                    if cfg['ignore-empty'] and not filesize:
+                    if cfg['ignore']['empty-files'] and not filesize:
                         file_is_valid = False
                 except FileNotFoundError:
                     file_is_valid = False
@@ -160,7 +176,7 @@ class _TagFileManager:
                             _cat = _mimetype[:_mimetype.index('/')]
                             Index.create(
                                 filehash=files.hashfile(path), filepath=path,
-                                basename=os.path.basename(path),
+                                basename=basename,
                                 filesize=filesize, cat=_cat, mime=_mimetype
                             )
                         except PermissionError:
@@ -215,7 +231,7 @@ def info():
         lnout(f'- {item.filepath}')
 
     lnout('\n[bold]USER CONFIG[/]')
-    lnout(cfg)
+    lnout(Pretty(cfg, indent_size=2))
 
 
 def prune():

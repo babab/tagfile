@@ -56,19 +56,47 @@ logging:
 
 load-bar: yes
 
-ignore:
-    - .git
-    - .hg
-    - .svn
-    - .pyc
-    - .virtualenv
-    - __pycache__
-    - node_modules
-ignore-empty:   yes
-
 # hash-algo can be 'md5' or 'sha1'
 hash-algo:      sha1
 hash-buf-size:  1024
+
+ignore:
+    empty-files: yes
+    name-based:
+        paths:
+            - '/.git/'
+            - '/.hg/'
+            - '/.idea/'
+            - '/node_modules/'
+            - '/__pycache__/'
+            - '/.svn/'
+            - '/.venv/'
+            - '/venv/'
+            - '/.virtualenv/'
+        filenames:
+            - 'GPATH'
+            - 'GRTAGS'
+            - 'GTAGS'
+            - 'tags'
+        extensions:
+            - '.7z'
+            - '.class'
+            - '.com'
+            - '.dll'
+            - '.exe'
+            - '.geany'
+            - '.gz'
+            - '.iso'
+            - '.log'
+            - '.o'
+            - '.pyc'
+            - '.rar'
+            - '.so'
+            - '.sqlite'
+            - '.swp'
+            - '.tar'
+            - '.tgz'
+            - '.zip'
 '''.format(
     data_home=common.invertexpanduser(common.TAGFILE_DATA_HOME),
     date=datetime.datetime.now()

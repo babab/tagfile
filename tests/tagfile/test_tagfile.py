@@ -43,7 +43,18 @@ def test_default_cfg_structure():
     assert cfg['logging']['level'] == 'warning'
     assert cfg['load-bar'] is True
     assert cfg['ignore']
-    assert cfg['ignore-empty'] is True
+    assert type(cfg['ignore']) is dict
+    assert len(cfg['ignore']) == 2
+    assert cfg['ignore']['empty-files'] is True
+    assert cfg['ignore']['name-based']
+    assert type(cfg['ignore']['name-based']) is dict
+    assert len(cfg['ignore']['name-based']) == 3
+    assert cfg['ignore']['name-based']['paths']
+    assert type(cfg['ignore']['name-based']['paths']) is list
+    assert cfg['ignore']['name-based']['filenames']
+    assert type(cfg['ignore']['name-based']['filenames']) is list
+    assert cfg['ignore']['name-based']['extensions']
+    assert type(cfg['ignore']['name-based']['extensions']) is list
 
 
 def test_location_variables():
