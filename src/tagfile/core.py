@@ -34,6 +34,7 @@ import logging
 import os
 
 import magic
+import pycommand
 from rich.progress import track
 
 from tagfile import (
@@ -204,7 +205,7 @@ def find(substring):
 def info():
     lnout('[bold]INDEX STATS[/bold]')
     lnout(f'files indexed\t{Index.select().count()}')
-    lnout(f'duplicate files\t{clones(return_count=True)}')
+    lnout(f'duplicate files\t{len(clones_list())}')
 
     qrep = Repository.select()
     repos = f'[green]{qrep.count()}[/green]'
@@ -234,16 +235,19 @@ def prune():
     lnout(f'DONE. {npruned} files were removed from the index.', hl=False)
 
 
-def clones(return_count=False, sizes=False, categories=False,
-           mimetypes=False):
-    res = Index.raw('''SELECT *, COUNT(filehash) FROM `index`
-                    GROUP BY filehash HAVING ( COUNT(filehash) > 1 )''')
+def clones_list():
+    res = Index.raw('SELECT *, COUNT(filehash) FROM `index` '
+                    'GROUP BY filehash HAVING ( COUNT(filehash) > 1 )')
     hashes = []
     for i in res:
         hashes.append(i.filehash)
-    if return_count:
-        return len(hashes)
+    return hashes
 
+
+def clones(flags):
+    if not isinstance(flags, pycommand.pycommand.dictobject):
+        raise ProgrammingError('flags is not a pycommand.dictobject')
+    hashes = clones_list()
     res = (Index.select()
                 .where(Index.filehash << hashes)
                 .order_by(Index.filehash))
@@ -257,9 +261,9 @@ def clones(return_count=False, sizes=False, categories=False,
             count = 0
 
         _hash = i.filehash[:5]
-        _size = ' {}'.format(files.sizefmt(i.filesize)) if sizes else ''
-        _cat = ' {}'.format(i.cat) if categories else ''
-        _mime = ' {}'.format(i.mime) if mimetypes else ''
+        _size = ' {}'.format(files.sizefmt(i.filesize)) if flags.size else ''
+        _cat = ' {}'.format(i.cat) if flags.cat else ''
+        _mime = ' {}'.format(i.mime) if flags.mime else ''
         if toggler:
             lnout('[green]{}{}[/green]{}{} {}'.format(
                 _hash, _size, _cat, _mime, i.filepath

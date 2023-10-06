@@ -33,6 +33,7 @@
 import pycommand
 
 import tagfile.core
+import tagfile.output
 
 
 class ClonesCommand(pycommand.CommandBase):
@@ -51,11 +52,7 @@ class ClonesCommand(pycommand.CommandBase):
 
     def run(self):
         if self.flags.help:
-            print(self.usage)
+            tagfile.output.lnout(self.usage, hl=False)
             return 0
-        tagfile.core.clones(
-            sizes=self.flags.size,
-            categories=self.flags.cat,
-            mimetypes=self.flags.mime
-        )
+        tagfile.core.clones(flags=self.flags)
         return 0
