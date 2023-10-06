@@ -133,14 +133,6 @@ class _TagFileManager:
         lnout('\n[bold]USER CONFIG[/]')
         lnout(cfg)
 
-    def re_index(self):
-        if not self._initialized:
-            raise ProgrammingError("_TagFileManager was not initialized")
-        Index.delete().execute()
-        for i in Repository.select():
-            self.addPath(i.filepath)
-        self.scan()
-
     def prune(self):
         if not self._initialized:
             raise ProgrammingError("_TagFileManager was not initialized")

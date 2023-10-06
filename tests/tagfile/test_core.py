@@ -71,11 +71,6 @@ def test_core_tfman_error_when_not_initialized_info():
         tagfile.core.tfman.info()
 
 
-def test_core_tfman_error_when_not_initialized_re_index():
-    with pytest.raises(tagfile.common.ProgrammingError):
-        tagfile.core.tfman.re_index()
-
-
 def test_core_tfman_error_when_not_initialized_prune():
     with pytest.raises(tagfile.common.ProgrammingError):
         tagfile.core.tfman.prune()
