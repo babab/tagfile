@@ -32,7 +32,7 @@
 
 import pycommand
 
-from tagfile.core import tfman
+import tagfile.core
 
 
 class ClonesCommand(pycommand.CommandBase):
@@ -53,7 +53,7 @@ class ClonesCommand(pycommand.CommandBase):
         if self.flags.help:
             print(self.usage)
             return 0
-        tfman.init().clones(
+        tagfile.core.clones(
             sizes=self.flags.size,
             categories=self.flags.cat,
             mimetypes=self.flags.mime

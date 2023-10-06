@@ -61,26 +61,6 @@ def test_core_tfman_error_when_not_initialized_addPath():
         tagfile.core.tfman.addPath(sample_3_mp4)
 
 
-def test_core_tfman_error_when_not_initialized_find():
-    with pytest.raises(tagfile.common.ProgrammingError):
-        tagfile.core.tfman.find('sampl')
-
-
-def test_core_tfman_error_when_not_initialized_info():
-    with pytest.raises(tagfile.common.ProgrammingError):
-        tagfile.core.tfman.info()
-
-
-def test_core_tfman_error_when_not_initialized_prune():
-    with pytest.raises(tagfile.common.ProgrammingError):
-        tagfile.core.tfman.prune()
-
-
-def test_core_tfman_error_when_not_initialized_clones():
-    with pytest.raises(tagfile.common.ProgrammingError):
-        tagfile.core.tfman.clones()
-
-
 def test_core_tfman_error_when_not_initialized_scan():
     with pytest.raises(tagfile.common.ProgrammingError):
         tagfile.core.tfman.scan()

@@ -32,8 +32,8 @@
 
 import pycommand
 
+import tagfile.core
 import tagfile.output
-from tagfile.core import tfman
 
 
 class UpdateDbCommand(pycommand.CommandBase):
@@ -71,18 +71,18 @@ class UpdateDbCommand(pycommand.CommandBase):
 
         # All options that reach here are valid. We need the repos for
         # everything that follows.
-        tfman.init()
-        tfman.loadKnownRepos()
+        tagfile.core.tfman.init()
+        tagfile.core.tfman.loadKnownRepos()
 
         # support flagging of both options; don't skip or exit early with elif
         if self.flags.prune or self.flags.scan:
             if self.flags.prune:
-                tfman.prune()
+                tagfile.core.prune()
             if self.flags.scan:
-                tfman.scan()
+                tagfile.core.tfman.scan()
             return 0
 
         # default, without options
-        tfman.prune()
-        tfman.scan()
+        tagfile.core.prune()
+        tagfile.core.tfman.scan()
         return 0

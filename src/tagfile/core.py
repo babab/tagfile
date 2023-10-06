@@ -109,88 +109,6 @@ class _TagFileManager:
         self.paths.extend(files.walkdir(path))
         Repository.get_or_create(filepath=path)
 
-    def find(self, substring):
-        if not self._initialized:
-            raise ProgrammingError("_TagFileManager was not initialized")
-        res = Index.select().where(Index.basename.contains(substring))
-        for i in res:
-            print(i.filepath)
-
-    def info(self):
-        if not self._initialized:
-            raise ProgrammingError("_TagFileManager was not initialized")
-        lnout('[bold]INDEX STATS[/bold]')
-        lnout(f'files indexed\t{Index.select().count()}')
-        lnout(f'duplicate files\t{self.clones(return_count=True)}')
-
-        qrep = Repository.select()
-        repos = f'[green]{qrep.count()}[/green]'
-        lnout(f'\n[bold]MEDIA PATHS ({repos}):[/bold]')
-
-        for item in qrep:
-            lnout(f'- {item.filepath}')
-
-        lnout('\n[bold]USER CONFIG[/]')
-        lnout(cfg)
-
-    def prune(self):
-        if not self._initialized:
-            raise ProgrammingError("_TagFileManager was not initialized")
-        lnout('\n[bold]PRUNING[/bold]')
-        text = 'Checking index for entries with missing files... '
-        with c.status(text, spinner='dqpb'):
-            res = Index.raw('''SELECT * FROM `index`''')
-            npruned = 0
-
-        for i in track(res, console=output.consout,
-                       disable=False if cfg['load-bar'] else True,
-                       description=''):
-            if not os.path.exists(i.filepath):
-                Index.delete().where(Index.id == i.id).execute()
-                output.info('prune: Removed {}'.format(i.filepath))
-                npruned += 1
-        lnout(f'DONE. {npruned} files were removed from the index.', hl=False)
-
-    def clones(self, return_count=False, sizes=False, categories=False,
-               mimetypes=False):
-        if not self._initialized:
-            raise ProgrammingError("_TagFileManager was not initialized")
-        res = Index.raw('''SELECT *, COUNT(filehash) FROM `index`
-                        GROUP BY filehash HAVING ( COUNT(filehash) > 1 )''')
-        hashes = []
-        for i in res:
-            hashes.append(i.filehash)
-        if return_count:
-            return len(hashes)
-
-        res = (Index.select()
-                    .where(Index.filehash << hashes)
-                    .order_by(Index.filehash))
-        count = 0
-        changed = ''
-        toggler = False
-        for i in res:
-            if changed != i.filehash:
-                toggler = False if toggler else True
-                lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')
-                count = 0
-
-            _hash = i.filehash[:5]
-            _size = ' {}'.format(files.sizefmt(i.filesize)) if sizes else ''
-            _cat = ' {}'.format(i.cat) if categories else ''
-            _mime = ' {}'.format(i.mime) if mimetypes else ''
-            if toggler:
-                lnout('[green]{}{}[/green]{}{} {}'.format(
-                    _hash, _size, _cat, _mime, i.filepath
-                ))
-            else:
-                lnout('[magenta]{}{}[/magenta]{}{} {}'.format(
-                    _hash, _size, _cat, _mime, i.filepath
-                ))
-            changed = i.filehash
-            count += 1
-        lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')
-
     def scan(self):
         '''Check if filepaths are in database, otherwise hash file and save'''
         if not self._initialized:
@@ -275,3 +193,81 @@ class _TagFileManager:
 tfman = _TagFileManager()
 '''A single public instance of the private `_TagFileManager` object to
 use. The class `_TagFileManager` should not be used directly.'''
+
+
+def find(substring):
+    res = Index.select().where(Index.basename.contains(substring))
+    for i in res:
+        print(i.filepath)
+
+
+def info():
+    lnout('[bold]INDEX STATS[/bold]')
+    lnout(f'files indexed\t{Index.select().count()}')
+    lnout(f'duplicate files\t{clones(return_count=True)}')
+
+    qrep = Repository.select()
+    repos = f'[green]{qrep.count()}[/green]'
+    lnout(f'\n[bold]MEDIA PATHS ({repos}):[/bold]')
+
+    for item in qrep:
+        lnout(f'- {item.filepath}')
+
+    lnout('\n[bold]USER CONFIG[/]')
+    lnout(cfg)
+
+
+def prune():
+    lnout('\n[bold]PRUNING[/bold]')
+    text = 'Checking index for entries with missing files... '
+    with c.status(text, spinner='dqpb'):
+        res = Index.raw('''SELECT * FROM `index`''')
+        npruned = 0
+
+    for i in track(res, console=output.consout,
+                   disable=False if cfg['load-bar'] else True,
+                   description=''):
+        if not os.path.exists(i.filepath):
+            Index.delete().where(Index.id == i.id).execute()
+            output.info('prune: Removed {}'.format(i.filepath))
+            npruned += 1
+    lnout(f'DONE. {npruned} files were removed from the index.', hl=False)
+
+
+def clones(return_count=False, sizes=False, categories=False,
+           mimetypes=False):
+    res = Index.raw('''SELECT *, COUNT(filehash) FROM `index`
+                    GROUP BY filehash HAVING ( COUNT(filehash) > 1 )''')
+    hashes = []
+    for i in res:
+        hashes.append(i.filehash)
+    if return_count:
+        return len(hashes)
+
+    res = (Index.select()
+                .where(Index.filehash << hashes)
+                .order_by(Index.filehash))
+    count = 0
+    changed = ''
+    toggler = False
+    for i in res:
+        if changed != i.filehash:
+            toggler = False if toggler else True
+            lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')
+            count = 0
+
+        _hash = i.filehash[:5]
+        _size = ' {}'.format(files.sizefmt(i.filesize)) if sizes else ''
+        _cat = ' {}'.format(i.cat) if categories else ''
+        _mime = ' {}'.format(i.mime) if mimetypes else ''
+        if toggler:
+            lnout('[green]{}{}[/green]{}{} {}'.format(
+                _hash, _size, _cat, _mime, i.filepath
+            ))
+        else:
+            lnout('[magenta]{}{}[/magenta]{}{} {}'.format(
+                _hash, _size, _cat, _mime, i.filepath
+            ))
+        changed = i.filehash
+        count += 1
+    lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')

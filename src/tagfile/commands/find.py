@@ -32,7 +32,7 @@
 
 import pycommand
 
-from tagfile.core import tfman
+from tagfile import core
 
 
 class FindCommand(pycommand.CommandBase):
@@ -57,8 +57,7 @@ class FindCommand(pycommand.CommandBase):
             arg = None
 
         if arg:
-            tfman.init()
-            tfman.find(arg)
+            core.find(arg)
         else:
             print('error: command find requires argument\n')
             print(self.usage)
