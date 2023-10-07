@@ -52,7 +52,7 @@ def test_files_function_walkdir():
 
 
 def test_files_function_hashfile_raises_error_on_unknown_algo():
-    tagfile.cfg['hash-algo'] = 'not-a-valid-algo'
+    tagfile.cfg['hashing']['algorithm'] = 'not-a-valid-algo'
     _path = os.environ['TAGFILEDEV_MEDIA_PATH']
     paths = tagfile.files.walkdir(_path)
     sample_3_mp4 = paths[0]
