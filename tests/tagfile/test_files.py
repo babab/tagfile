@@ -40,11 +40,14 @@ import tagfile.files
 
 
 def test_files_function_walkdir():
+    '''Test walkdir with files that are created by Makefile/Taskfile'''
     _path = os.environ['TAGFILEDEV_MEDIA_PATH']
     paths = tagfile.files.walkdir(_path)
     assert paths == [
-        '{}/video/sample-3.mp4'.format(_path),
-        '{}/video/sample-3b.mp4'.format(_path),
+        '{}/video/sample-3.mp4'.format(_path),   # original
+        '{}/video/sample-3b.mp4'.format(_path),  # copy
+        '{}/video/sample3b.mp4'.format(_path),   # symlink to copy
+        '{}/video/sample3.mp4'.format(_path),    # symlink to original
     ]
 
 

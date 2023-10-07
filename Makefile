@@ -168,6 +168,8 @@ test-data: #custom
 	@printf '\n--- Downloading MEDIA FILES FOR TESTING ---\n'
 	wget -P "$${TAGFILEDEV_MEDIA_PATH}/video" "https://getsamplefiles.com/download/mp4/sample-3.mp4"
 	cp -v "$${TAGFILEDEV_MEDIA_PATH}/video/sample-3.mp4" "$${TAGFILEDEV_MEDIA_PATH}/video/sample-3b.mp4"
+	ln -vs "$${TAGFILEDEV_MEDIA_PATH}/video/sample-3.mp4" "$${TAGFILEDEV_MEDIA_PATH}/video/sample3.mp4"
+	ln -vs "$${TAGFILEDEV_MEDIA_PATH}/video/sample-3b.mp4" "$${TAGFILEDEV_MEDIA_PATH}/video/sample3b.mp4"
 
 test: ${VENVDIR} develop clean-config-data #custom
 	@printf '\n--- CREATING DIRECTORY FOR REPORTS ---\n'
