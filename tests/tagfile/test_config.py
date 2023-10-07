@@ -32,14 +32,14 @@
 
 import datetime
 import os
+import tomllib
 
 import pytest
-import yaml
 
 from tagfile import common, config
 
 
-_defaultconfigdict = yaml.safe_load(config.defaultconfig)
+_defaultconfigdict = tomllib.loads(config.defaultconfig)
 _testconfigpath = 'cache/tests/config/dir-{}'.format(
     datetime.datetime.now().toordinal()
 )
@@ -48,7 +48,7 @@ _testconfigpath = 'cache/tests/config/dir-{}'.format(
 def test_configuration_properties_uninitialized():
     assert config.Configuration.cfg == _defaultconfigdict
     assert config.Configuration.dirpath == common.TAGFILE_CONFIG_HOME
-    assert config.Configuration.basename == 'config.yaml'
+    assert config.Configuration.basename == 'config.toml'
     assert config.Configuration.fullpath is None
 
 
@@ -56,47 +56,47 @@ def test_configuration_properties_initialized():
     obj = config.Configuration()
     assert obj.cfg == _defaultconfigdict
     assert obj.dirpath == common.TAGFILE_CONFIG_HOME
-    assert obj.basename == 'config.yaml'
+    assert obj.basename == 'config.toml'
     assert obj.fullpath == os.path.join(common.TAGFILE_CONFIG_HOME,
-                                        'config.yaml')
+                                        'config.toml')
 
 
 def test_configuration_method_set_paths():
     with2args = config.Configuration()
-    with2args.set_paths('cache/tests/config/dirpath', 'custom.yml')
+    with2args.set_paths('cache/tests/config/dirpath', 'custom.toml')
     assert with2args.dirpath == 'cache/tests/config/dirpath'
-    assert with2args.basename == 'custom.yml'
-    assert with2args.fullpath == 'cache/tests/config/dirpath/custom.yml'
+    assert with2args.basename == 'custom.toml'
+    assert with2args.fullpath == 'cache/tests/config/dirpath/custom.toml'
     with1arg = config.Configuration()
-    with1arg.set_paths('cache/tests/config/dirpath/tfconfig.yml')
+    with1arg.set_paths('cache/tests/config/dirpath/tfconfig.toml')
     assert with1arg.dirpath == 'cache/tests/config/dirpath'
-    assert with1arg.basename == 'tfconfig.yml'
-    assert with1arg.fullpath == 'cache/tests/config/dirpath/tfconfig.yml'
+    assert with1arg.basename == 'tfconfig.toml'
+    assert with1arg.fullpath == 'cache/tests/config/dirpath/tfconfig.toml'
 
 
 def test_configuration_method_write_defaultconfig_with_makedirs_is_False():
     obj = config.Configuration()
-    obj.set_paths('cache/tests/config/dirpath', 'custom.yml')
+    obj.set_paths('cache/tests/config/dirpath', 'custom.toml')
     with pytest.raises(common.ConfigError):
         obj.write_defaultconfig(makedirs=False)
 
 
 def test_configuration_method_load_configfile_error_when_not_exists():
     obj = config.Configuration()
-    obj.set_paths(_testconfigpath, 'custom.yml')
+    obj.set_paths(_testconfigpath, 'custom.toml')
     with pytest.raises(common.ConfigError):
         obj.load_configfile()
 
 
 def test_configuration_method_write_defaultconfig_with_makedirs_is_True():
     obj = config.Configuration()
-    obj.set_paths(_testconfigpath, 'custom.yml')
+    obj.set_paths(_testconfigpath, 'custom.toml')
     obj.write_defaultconfig()
     assert os.path.exists(obj.fullpath)
 
 
 def test_configuration_method_load_configfile_error_when_exists():
     obj = config.Configuration()
-    obj.set_paths(_testconfigpath, 'custom.yml')
+    obj.set_paths(_testconfigpath, 'custom.toml')
     obj.load_configfile()
     obj.cfg = _defaultconfigdict

@@ -169,7 +169,6 @@ Prerequisites:
 Dependencies (automatically installed with pipx / pip):
 
 - Peewee ORM (https://peewee.readthedocs.org/en/latest/)
-- PyYAML (https://pyyaml.org/)
 - rich (https://pypi.python.org/pypi/rich/)
 - pycommand (https://babab.github.io/pycommand/)
 

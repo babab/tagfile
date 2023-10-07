@@ -34,69 +34,76 @@
 
 import datetime
 import os
-
-import yaml
+import tomllib
 
 from tagfile import common
 
 defaultconfig = '''# config created by tagfile 0.2.0a9 at {date}
 
 # A tilde `~` in filepaths will expand to $HOME on *BSD/Linux/MacOS/Unix
-# or %USERPROFILE% on Windows.
+# or `%USERPROFILE%` on Windows.
 
-logging:
-    enabled: yes
-    file: {data_home}/tagfile.log
+load-bar = true
 
-    # Valid levels are: 'debug', 'info', 'warning', 'error' or 'fatal'.
-    # The recommended level is 'warning'. Use 'info' to log most actions.
-    # Level 'debug' will log all database queries, impacting performance
-    # and should only be used when absolutely needed.
-    level: warning
+# hash-algo can be "md5" or "sha1"
+hash-algo = "sha1"
+hash-buf-size = 1024
 
-load-bar: yes
+logging.enabled = true
+logging.file = "{data_home}/tagfile.log"
 
-# hash-algo can be 'md5' or 'sha1'
-hash-algo:      sha1
-hash-buf-size:  1024
+# Valid levels are: "info", "warning", "error" and "fatal".
+# Use "info" to log most actions, like adding and ignoring files during
+# scanning, pruning files, etc. These messages are not printed to the
+# console by default, unless a --verbose option flag is used.
+# Level "debug" will log all database queries, impacting performance
+# and should only be used when absolutely needed for debugging purposes.
+# The recommended level is "warning".
+logging.level = "warning"
 
-ignore:
-    empty-files: yes
-    name-based:
-        paths:
-            - '/.git/'
-            - '/.hg/'
-            - '/.idea/'
-            - '/node_modules/'
-            - '/__pycache__/'
-            - '/.svn/'
-            - '/.venv/'
-            - '/venv/'
-            - '/.virtualenv/'
-        filenames:
-            - 'GPATH'
-            - 'GRTAGS'
-            - 'GTAGS'
-            - 'tags'
-        extensions:
-            - '.7z'
-            - '.class'
-            - '.com'
-            - '.dll'
-            - '.exe'
-            - '.geany'
-            - '.gz'
-            - '.iso'
-            - '.log'
-            - '.o'
-            - '.pyc'
-            - '.rar'
-            - '.so'
-            - '.sqlite'
-            - '.swp'
-            - '.tar'
-            - '.tgz'
-            - '.zip'
+ignore.empty-files = true  # you probably don't need to track 0 byte files
+[ignore.name-based]
+# Will try to match paths/filenames in the order of:
+# 1. paths (substrings of the absolute full path to file)
+# 2. filenames (exact match with basename)
+# 3. extensions (basename ends with extension)
+paths = [
+    "/.git/",
+    "/.hg/",
+    "/.idea/",
+    "/node_modules/",
+    "/__pycache__/",
+    "/.svn/",
+    "/.venv/",
+    "/venv/",
+    "/.virtualenv/",
+]
+filenames = [
+    "GPATH",
+    "GRTAGS",
+    "GTAGS",
+    "tags",
+]
+extensions = [
+    ".7z",
+    ".class",
+    ".com",
+    ".dll",
+    ".exe",
+    ".geany",
+    ".gz",
+    ".iso",
+    ".log",
+    ".o",
+    ".pyc",
+    ".rar",
+    ".so",
+    ".sqlite",
+    ".swp",
+    ".tar",
+    ".tgz",
+    ".zip",
+]
 '''.format(
     data_home=common.invertexpanduser(common.TAGFILE_DATA_HOME),
     date=datetime.datetime.now()
@@ -104,9 +111,9 @@ ignore:
 
 
 class Configuration:
-    cfg = yaml.safe_load(defaultconfig)
+    cfg = tomllib.loads(defaultconfig)
     dirpath = common.TAGFILE_CONFIG_HOME
-    basename = 'config.yaml'
+    basename = 'config.toml'
     fullpath = None
 
     def __init__(self):
@@ -125,22 +132,24 @@ class Configuration:
             self.basename = basename
 
     def write_defaultconfig(self, makedirs=True):
-        '''Create config home dirs and config.yaml at first run'''
+        '''Create config home dirs and config.toml at first run'''
         if not os.path.exists(self.fullpath):
-            if makedirs:
-                os.makedirs(self.dirpath)
-            else:
-                raise common.ConfigError(
-                    'dirpath "{}" does not exist'.format(self.dirpath)
-                )
+            if not os.path.exists(self.dirpath):
+                if makedirs:
+                    os.makedirs(self.dirpath)
+                else:
+                    raise common.ConfigError(
+                        'dirpath "{}" does not exist'.format(self.dirpath)
+                    )
             with open(self.fullpath, 'w') as _fconf:
                 _fconf.write(defaultconfig)
 
     def load_configfile(self):
         '''Load user config file into memory'''
         if os.path.exists(self.fullpath):
-            self.cfg.update(yaml.safe_load(open(self.fullpath).read()))
-            # todo: add validation
+            with open(self.fullpath, 'rb') as _file:
+                self.cfg.update(tomllib.load(_file))
+                # todo: add validation
         else:
             raise common.ConfigError(
                 'File "{}" does not exist'.format(self.fullpath)

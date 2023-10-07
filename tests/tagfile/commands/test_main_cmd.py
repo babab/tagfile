@@ -83,8 +83,8 @@ def test_pycommand_help_bool_flag_is_True_or_None():
 
 
 def test_pycommand_config_flag_argument():
-    cmd = Command(['--config', 'somefilename.yml'])
-    assert cmd.flags['config'] == 'somefilename.yml'
+    cmd = Command(['--config', 'somefilename.toml'])
+    assert cmd.flags['config'] == 'somefilename.toml'
 
     cmd = Command([''])
     assert cmd.flags['config'] is None
@@ -105,29 +105,29 @@ def test_pycommand_bool_flags_with_2_options():
 
 
 def test_pycommand_bool_flags_with_3_options():
-    cmd = Command(['-h', '-V', '--config=/tmp/tagfiledevtest-config.yml'])
-    assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.yml'
+    cmd = Command(['-h', '-V', '--config=/tmp/tagfiledevtest-config.toml'])
+    assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.toml'
     assert cmd.flags['help'] is True
     assert cmd.flags['version'] is True
 
 
 def test_pycommand_config_option_string_as_2_args():
-    cmd = Command(['--config', '/tmp/tagfiledevtest-config.yml'])
-    assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.yml'
+    cmd = Command(['--config', '/tmp/tagfiledevtest-config.toml'])
+    assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.toml'
     assert cmd.flags['help'] is None
     assert cmd.flags['version'] is None
 
 
 def test_pycommand_config_option_string_as_1_arg_with_equals_sign():
-    cmd = Command(['--config=/tmp/tagfiledevtest-config.yml'])
-    assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.yml'
+    cmd = Command(['--config=/tmp/tagfiledevtest-config.toml'])
+    assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.toml'
     assert cmd.flags['help'] is None
     assert cmd.flags['version'] is None
 
 
 def test_pycommand_flags_are_accessible_by_attribute():
-    cmd = Command(['-h', '--config=/tmp/tagfiledevtest-config.yml'])
-    assert cmd.flags.config == '/tmp/tagfiledevtest-config.yml'
+    cmd = Command(['-h', '--config=/tmp/tagfiledevtest-config.toml'])
+    assert cmd.flags.config == '/tmp/tagfiledevtest-config.toml'
     assert cmd.flags.help is True
     assert cmd.flags.version is None
 
