@@ -43,8 +43,6 @@ defaultconfig = '''# config created by tagfile 0.2.0a9 at {date}
 # A tilde `~` in filepaths will expand to $HOME on *BSD/Linux/MacOS/Unix
 # or `%USERPROFILE%` on Windows.
 
-load-bar = true
-
 # hash-algo can be "md5" or "sha1"
 hash-algo = "sha1"
 hash-buf-size = 1024
@@ -60,6 +58,8 @@ logging.file = "{data_home}/tagfile.log"
 # and should only be used when absolutely needed for debugging purposes.
 # The recommended level is "warning".
 logging.level = "warning"
+
+show.progressbars = true
 
 ignore.empty-files = true  # you probably don't need to track 0 byte files
 [ignore.name-based]

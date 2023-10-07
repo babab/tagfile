@@ -124,10 +124,9 @@ class _TagFileManager:
         total = len(self.paths)
         try:
             lnout('\n[bold]SCANNING[/bold]')
-
+            disable_bar = False if cfg['show']['progressbars'] else True
             for path in track(self.paths, console=output.consout,
-                              disable=False if cfg['load-bar'] else True,
-                              description=''):
+                              disable=disable_bar, description=''):
                 file_is_valid = True
                 iall += 1
                 basename = os.path.basename(path)
@@ -241,9 +240,9 @@ def prune():
         res = Index.raw('''SELECT * FROM `index`''')
         npruned = 0
 
+    disable_bar = False if cfg['show']['progressbars'] else True
     for i in track(res, console=output.consout,
-                   disable=False if cfg['load-bar'] else True,
-                   description=''):
+                   disable=disable_bar, description=''):
         if not os.path.exists(i.filepath):
             Index.delete().where(Index.id == i.id).execute()
             output.info('prune: Removed {}'.format(i.filepath))

@@ -41,7 +41,10 @@ def test_default_cfg_structure():
     assert cfg['logging']['enabled'] is True
     assert cfg['logging']['file']
     assert cfg['logging']['level'] == 'warning'
-    assert cfg['load-bar'] is True
+    assert cfg['show']
+    assert type(cfg['show']) is dict
+    assert len(cfg['show']) == 1
+    assert cfg['show']['progressbars'] is True
     assert cfg['ignore']
     assert type(cfg['ignore']) is dict
     assert len(cfg['ignore']) == 2
