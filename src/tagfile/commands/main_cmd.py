@@ -48,9 +48,15 @@ from tagfile.commands.info import InfoCommand
 from tagfile.commands.updatedb import UpdateDbCommand
 
 
-def entry():
+def entry(argv='sys_argv'):
+    '''Defining a param with a default like ``argv=sys.argv[1:]`` can
+    throw off documentation generators. As a workaround, a string of
+    sys_argv is interpreted as an alias for ``sys.argv[1:]``.
+    In all other cases, argv should be of type list.
+    '''
+    argv = sys.argv[1:] if argv == 'sys_argv' else argv
     try:
-        cmd = Command(sys.argv[1:])
+        cmd = Command(argv)
         if cmd.error:
             lnerr('error: {0}'.format(cmd.error))
             return 1
