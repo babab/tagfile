@@ -59,22 +59,23 @@ class AddCommand(pycommand.CommandBase):
         except IndexError:
             arg = None
 
-        if arg:
-            filepath = os.path.abspath(os.path.expanduser(arg))
-            if not filepath:
-                print('error: could not determine media path')
-                return 3
-            if not os.path.exists(filepath):
-                print('Could not add media path: {}'.format(filepath))
-                print('\nerror: media path does not exist')
-                return 4
-            tfman.init()
-            tfman.addPath(filepath)
-            print('Added media path: {}'.format(filepath))
-            if self.flags.scan:
-                tfman.scan()
-        else:
+        if not arg:
             print('error: command add requires argument')
             print()
             print('To add and scan current dir, use `tagfile add --scan .`')
             print('See `tagfile help add` OR `tagfile add -h` for more info.')
+            return 1
+
+        filepath = os.path.abspath(os.path.expanduser(arg))
+        if not filepath:
+            print('error: could not determine media path')
+            return 3
+        if not os.path.exists(filepath):
+            print('Could not add media path: {}'.format(filepath))
+            print('\nerror: media path does not exist')
+            return 4
+        tfman.init()
+        tfman.addPath(filepath)
+        print('Added media path: {}'.format(filepath))
+        if self.flags.scan:
+            tfman.scan()
