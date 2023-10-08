@@ -99,7 +99,7 @@ class _TagFileManager:
         if not self._initialized:
             raise ProgrammingError("_TagFileManager was not initialized")
         text = 'Browsing media paths for files... '
-        with c.status(text, spinner='dqpb'):
+        with c.status(text, spinner='simpleDotsScrolling'):
             qrep = Repository.select()
             for item in qrep:
                 self.addPath(item.filepath)
@@ -236,7 +236,7 @@ def info():
 def prune():
     lnout('\n[bold]PRUNING[/bold]')
     text = 'Checking index for entries with missing files... '
-    with c.status(text, spinner='dqpb'):
+    with c.status(text, spinner='simpleDotsScrolling'):
         res = Index.raw('''SELECT * FROM `index`''')
         npruned = 0
 
