@@ -151,16 +151,24 @@ def configlvl():
 # generic functions for printing to console without logging  #################
 
 def sout(text, hl=True):
+    '''Print string without newline to stdout stream if not flags.quiet.'''
     if not flags.quiet:
         consout.print(text, end='', soft_wrap=True, highlight=hl)
 
 
 def lnout(text, hl=True):
+    r'''Print string + \n to stdout stream if not flags.quiet.'''
     if not flags.quiet:
         consout.print(text, soft_wrap=True, highlight=hl)
 
 
+def echo(text):
+    '''Print string without highlighting but while respecting flags.quiet.'''
+    lnout(text, hl=False)
+
+
 def serr(text, hl=True, ignore_quiet=False):
+    '''Print string without newline to stderr and optionally override quiet.'''
     if ignore_quiet:
         origval = flags.quiet
         flags.quiet = False
@@ -172,6 +180,7 @@ def serr(text, hl=True, ignore_quiet=False):
 
 
 def lnerr(text, hl=True, ignore_quiet=False):
+    r'''Print string + \n to stderr and optionally override quiet.'''
     if ignore_quiet:
         origval = flags.quiet
         flags.quiet = False
