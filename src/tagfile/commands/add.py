@@ -35,25 +35,29 @@ import os
 import pycommand
 
 from tagfile.core import tfman
+import tagfile.output
 from tagfile.output import consout, lnout
 
 
 class AddCommand(pycommand.CommandBase):
     '''Add a directory to media paths (to be scanned later or right away)'''
     usagestr = (
-        'usage: tagfile add [--scan] <media-path>\n'
+        'usage: tagfile add [-q | --quiet] [--scan] <media-path>\n'
         '   or: tagfile add [-h | --help]'
     )
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),
         ('scan', ('', False, 'scan path now (this may take a long time)')),
+        ('quiet', ('q', False, 'print nothing except fatal errors')),
     )
 
     def run(self):
         if self.flags.help:
             print(self.usage)
             return 0
+
+        tagfile.output.flags.quiet = self.flags.quiet
 
         try:
             arg = self.args[0]

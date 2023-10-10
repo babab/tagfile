@@ -35,6 +35,7 @@ import os
 import pycommand
 import pytest
 
+import tagfile.output
 from tagfile.commands.add import AddCommand as Command
 
 TAGFILE_CONFIG_HOME = os.environ['TAGFILE_CONFIG_HOME']
@@ -42,14 +43,15 @@ TAGFILE_DATA_HOME = os.environ['TAGFILE_DATA_HOME']
 TAGFILEDEV_MEDIA_PATH = os.environ['TAGFILEDEV_MEDIA_PATH']
 
 
-output_help = '''usage: tagfile add [--scan] <media-path>
+output_help = '''usage: tagfile add [-q | --quiet] [--scan] <media-path>
    or: tagfile add [-h | --help]
 
 Add a directory to media paths (to be scanned later or right away)
 
 Options:
--h, --help  show this help information
---scan      scan path now (this may take a long time)
+-h, --help   show this help information
+--scan       scan path now (this may take a long time)
+-q, --quiet  print nothing except fatal errors
 
 '''
 
@@ -140,3 +142,31 @@ def test_media_path_arg_will_show_error_if_not_exists(capfd):
     cap = capfd.readouterr()
     assert output_doesnotexist == cap.out
     assert returncode == 4
+
+
+def test_quiet_flag_blocks_output_and_cascades_to_consoles_correctly(capfd):
+    # check default value
+    assert tagfile.output.flags.quiet is False
+    assert tagfile.output.consout.quiet is False
+    assert tagfile.output.conserr.quiet is False
+    # set quiet through command flag
+    cmd = Command(['-q'])
+    exitcode = cmd.run()
+    cap = capfd.readouterr()
+    assert cap.out == ''
+    assert cap.err == ''
+    assert cmd.flags.quiet is True
+    assert exitcode == 1
+    assert tagfile.output.flags.quiet is True
+    assert tagfile.output.consout.quiet is True
+    assert tagfile.output.conserr.quiet is True
+    cmd = Command(['--quiet'])
+    exitcode = cmd.run()
+    assert cmd.flags.quiet is True
+    assert exitcode == 1
+    assert tagfile.output.flags.quiet is True
+    assert tagfile.output.consout.quiet is True
+    assert tagfile.output.conserr.quiet is True
+    # reset to default value
+    tagfile.output.flags.quiet = False
+    assert tagfile.output.flags.quiet is False
