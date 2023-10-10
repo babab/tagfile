@@ -229,6 +229,13 @@ def test_pycommand_command_arg_find_shows_help_message(capfd):
     assert output_help_find == cap.out
 
 
+def test_pycommand_command_arg_info_shows_help_message(capfd):
+    cmd = Command(['info'])
+    cmd.run()
+    cap = capfd.readouterr()
+    assert output_help_info == cap.out
+
+
 def test_pycommand_command_arg_updatedb_shows_help_message(capfd):
     cmd = Command(['updatedb'])
     cmd.run()
