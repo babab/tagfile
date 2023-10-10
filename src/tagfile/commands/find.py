@@ -32,7 +32,10 @@
 
 import pycommand
 
-from tagfile import core
+from tagfile import (
+    core,    # module
+    output,  # module
+)
 
 
 class FindCommand(pycommand.CommandBase):
@@ -48,7 +51,7 @@ class FindCommand(pycommand.CommandBase):
 
     def run(self):
         if self.flags.help:
-            print(self.usage)
+            output.echo(self.usage)
             return 0
 
         try:
@@ -59,6 +62,6 @@ class FindCommand(pycommand.CommandBase):
         if arg:
             core.find(arg)
         else:
-            print('error: command find requires argument\n')
-            print(self.usage)
+            output.lnerr('error: command find requires argument\n')
+            output.lnerr(self.usage)
             return 1

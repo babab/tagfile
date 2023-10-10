@@ -86,11 +86,12 @@ def test_pycommand_optionerror_on_unset_flags_attributes():
         assert cmd.flags.doesnotexist is None
 
 
-def test_pycommand_command_shows_message_when_no_args(capfd):
+def test_pycommand_command_shows_error_message_when_no_args(capfd):
     cmd = Command([])
     cmd.run()
     cap = capfd.readouterr()
-    assert output_noargs == cap.out
+    assert cap.out == ''
+    assert cap.err == output_noargs
 
 
 def test_pycommand_command_help_flag_shows_help_message(capfd):
