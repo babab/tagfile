@@ -123,9 +123,11 @@ def test_pycommand_command_help_flag_shows_help_message(capfd):
 
 
 def test_setting_quiet_flag_cascades_to_consoles_correctly():
+    # check default values
     assert tagfile.output.flags.quiet is False
     assert tagfile.output.consout.quiet is False
     assert tagfile.output.conserr.quiet is False
+    # set quiet through command flag
     cmd = Command(['--prune', '-q'])
     exitcode = cmd.run()
     assert cmd.flags.quiet is True
@@ -140,6 +142,11 @@ def test_setting_quiet_flag_cascades_to_consoles_correctly():
     assert tagfile.output.flags.quiet is True
     assert tagfile.output.consout.quiet is True
     assert tagfile.output.conserr.quiet is True
+    # reset to default values
+    tagfile.output.flags.quiet = False
+    assert tagfile.output.flags.quiet is False
+    assert tagfile.output.consout.quiet is False
+    assert tagfile.output.conserr.quiet is False
 
 
 def test_verbose_flag_sets_output_flags_for_consoles():
@@ -153,3 +160,6 @@ def test_verbose_flag_sets_output_flags_for_consoles():
     assert cmd.flags.verbose is True
     assert exitcode == 0
     assert tagfile.output.flags.verbose is True
+    # reset to default value
+    tagfile.output.flags.verbose = False
+    assert tagfile.output.flags.verbose is False
