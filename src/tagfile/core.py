@@ -35,7 +35,6 @@ import os
 
 import magic
 import pycommand
-from rich.pretty import Pretty
 from rich.progress import track
 
 from tagfile import (
@@ -215,22 +214,6 @@ def find(substring):
     res = Index.select().where(Index.basename.contains(substring))
     for i in res:
         print(i.filepath)
-
-
-def info():
-    lnout('[bold]INDEX STATS[/bold]')
-    lnout(f'files indexed\t{Index.select().count()}')
-    lnout(f'duplicate files\t{len(clones_list())}')
-
-    qrep = Repository.select()
-    repos = f'[green]{qrep.count()}[/green]'
-    lnout(f'\n[bold]MEDIA PATHS ({repos}):[/bold]')
-
-    for item in qrep:
-        lnout(f'- {item.filepath}')
-
-    lnout('\n[bold]USER CONFIG[/]')
-    lnout(Pretty(cfg, indent_size=2))
 
 
 def prune():

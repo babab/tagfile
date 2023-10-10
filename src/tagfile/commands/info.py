@@ -30,9 +30,15 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
+from rich.pretty import Pretty
 import pycommand
 
-from tagfile import core
+from tagfile import (
+    cfg,     # dict - from `tagfile.config.Configuration().cfg`
+    core,    # module
+    output,  # module
+)
+from tagfile.models import Index, Repository
 
 
 class InfoCommand(pycommand.CommandBase):
@@ -47,4 +53,17 @@ class InfoCommand(pycommand.CommandBase):
         if self.flags.help:
             print(self.usage)
             return 0
-        core.info()
+
+        output.lnout('[bold]INDEX STATS[/bold]')
+        output.lnout(f'files indexed\t{Index.select().count()}')
+        output.lnout(f'duplicate files\t{len(core.clones_list())}')
+
+        qrep = Repository.select()
+        repos = f'[green]{qrep.count()}[/green]'
+        output.lnout(f'\n[bold]MEDIA PATHS ({repos}):[/bold]')
+
+        for item in qrep:
+            output.lnout(f'- {item.filepath}')
+
+        output.lnout('\n[bold]USER CONFIG[/]')
+        output.lnout(Pretty(cfg, indent_size=2))
