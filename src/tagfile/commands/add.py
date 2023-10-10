@@ -34,9 +34,8 @@ import os
 
 import pycommand
 
-from tagfile.core import tfman
-import tagfile.output
-from tagfile.output import consout, lnout
+from tagfile import output      # module
+from tagfile.core import tfman  # instance of tagfile.core._TagFileManager
 
 
 class AddCommand(pycommand.CommandBase):
@@ -54,10 +53,10 @@ class AddCommand(pycommand.CommandBase):
 
     def run(self):
         if self.flags.help:
-            print(self.usage)
+            output.echo(self.usage)
             return 0
 
-        tagfile.output.flags.quiet = self.flags.quiet
+        output.flags.quiet = self.flags.quiet
 
         try:
             arg = self.args[0]
@@ -65,23 +64,25 @@ class AddCommand(pycommand.CommandBase):
             arg = None
 
         if not arg:
-            lnout('error: command add requires argument')
-            lnout('\nTo add and scan current dir, use `tagfile add --scan .`')
-            lnout('See `tagfile help add` OR `tagfile add -h` for more info.')
+            output.lnerr(
+                'error: command add requires argument\n\n'
+                'To add and scan current dir, use `tagfile add --scan .`\n'
+                'See `tagfile help add` OR `tagfile add -h` for more info.'
+            )
             return 1
 
         filepath = os.path.abspath(os.path.expanduser(arg))
         if not filepath:
-            lnout('error: could not determine media path')
+            output.lnerr('error: could not determine media path')
             return 3
         if not os.path.exists(filepath):
-            lnout('Could not add media path: {}'.format(filepath))
-            lnout('\nerror: media path does not exist')
+            output.lnerr('Could not add media path: {}'.format(filepath))
+            output.lnerr('\nerror: media path does not exist')
             return 4
 
-        with consout.status('', spinner='simpleDotsScrolling'):
+        with output.consout.status('', spinner='simpleDotsScrolling'):
             tfman.init()
             tfman.addPath(filepath)
-            lnout('Added media path: {}'.format(filepath))
+            output.lnout('Added media path: {}'.format(filepath))
             if self.flags.scan:
                 tfman.scan()

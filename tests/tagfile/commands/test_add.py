@@ -117,7 +117,8 @@ def test_pycommand_command_shows_message_when_no_args(capfd):
     cmd = Command([])
     cmd.run()
     cap = capfd.readouterr()
-    assert output_noargs == cap.out
+    assert cap.out == ''
+    assert cap.err == output_noargs
 
 
 def test_pycommand_command_help_flag_shows_help_message(capfd):
@@ -140,7 +141,8 @@ def test_media_path_arg_will_show_error_if_not_exists(capfd):
     cmd = Command(['/tagfile/OhhcJ11KPwWqfLb4'])
     returncode = cmd.run()
     cap = capfd.readouterr()
-    assert output_doesnotexist == cap.out
+    assert cap.out == ''
+    assert cap.err == output_doesnotexist
     assert returncode == 4
 
 
