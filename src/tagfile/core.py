@@ -210,12 +210,6 @@ tfman = _TagFileManager()
 use. The class `_TagFileManager` should not be used directly.'''
 
 
-def find(substring):
-    res = Index.select().where(Index.basename.contains(substring))
-    for i in res:
-        print(i.filepath)
-
-
 def prune():
     lnout('\n[bold]PRUNING[/bold]')
     text = 'Checking index for entries with missing files... '

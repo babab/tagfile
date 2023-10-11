@@ -32,10 +32,8 @@
 
 import pycommand
 
-from tagfile import (
-    core,    # module
-    output,  # module
-)
+from tagfile import output
+from tagfile.models import Index
 
 
 class FindCommand(pycommand.CommandBase):
@@ -60,7 +58,9 @@ class FindCommand(pycommand.CommandBase):
             arg = None
 
         if arg:
-            core.find(arg)
+            res = Index.select().where(Index.basename.contains(arg))
+            for i in res:
+                output.lnout(i.filepath)
         else:
             output.lnerr('error: command find requires argument\n')
             output.lnerr(self.usage)
