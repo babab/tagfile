@@ -169,8 +169,9 @@ Prerequisites:
 Dependencies (automatically installed with pipx / pip):
 
 - Peewee ORM (https://peewee.readthedocs.org/en/latest/)
-- rich (https://pypi.python.org/pypi/rich/)
 - pycommand (https://babab.github.io/pycommand/)
+- python-magic (https://pypi.python.org/pypi/python-magic/)
+- rich (https://pypi.python.org/pypi/rich/)
 
 
 ----------------
