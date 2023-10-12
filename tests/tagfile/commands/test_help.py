@@ -103,15 +103,26 @@ Options:
 
 '''
 
-output_help_find = '''usage: tagfile find <string>
-   or: tagfile [-h | --help]
+output_help_find = (
+    '''usage: tagfile find [--cat=CAT] [--mime=MIMETYPE] [--size-gt=BYTES]
+                    [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]
+                    [--name=NAME | --in-name=STRING]
+   or: tagfile find [-h | --help]
 
 Find files according to certain criterias
 
 Options:
--h, --help  show this help information
+-h, --help        show this help information
+--cat=CAT         match on category (1st part of MIME-type)
+--mime=MIMETYPE   match files on MIME-type
+--size-gt=BYTES   match files where size is greater than BYTES
+--size-lt=BYTES   match files where size is lesser than BYTES
+--hash=HEX        match files where checksum is (or starts with) HEX
+--in-path=STRING  match absolute paths with a substring of STRING
+--name=NAME       match filenames that are exactly NAME
+--in-name=STRING  match filenames with a substring of STRING
 
-'''
+''')
 
 output_help_info = '''usage: tagfile info [-h | --help]
 

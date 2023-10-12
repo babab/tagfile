@@ -32,19 +32,37 @@
 
 import pycommand
 
-from tagfile import output
+from tagfile import files, output
 from tagfile.models import Index
 
 
 class FindCommand(pycommand.CommandBase):
     '''Find files according to certain criterias'''
     usagestr = (
-        'usage: tagfile find <string>\n'
-        '   or: tagfile [-h | --help]'
+        'usage: tagfile find [--cat=CAT] [--mime=MIMETYPE] [--size-gt=BYTES]\n'
+        '                    [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]'
+        '\n                    [--name=NAME | --in-name=STRING]\n'
+        '   or: tagfile find [-h | --help]'
     )
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),
+        ('cat', ('', 'CAT',
+                 'match on category (1st part of MIME-type)')),
+        ('mime', ('', 'MIMETYPE',
+                  'match files on MIME-type')),
+        ('size-gt', ('', 'BYTES',
+                     'match files where size is greater than BYTES')),
+        ('size-lt', ('', 'BYTES',
+                     'match files where size is lesser than BYTES')),
+        ('hash', ('', 'HEX',
+                  'match files where checksum is (or starts with) HEX')),
+        ('in-path', ('', 'STRING',
+                     'match absolute paths with a substring of STRING')),
+        ('name', ('', 'NAME',
+                  'match filenames that are exactly NAME')),
+        ('in-name', ('', 'STRING',
+                     'match filenames with a substring of STRING')),
     )
 
     def run(self):
@@ -52,16 +70,62 @@ class FindCommand(pycommand.CommandBase):
             output.echo(self.usage)
             return 0
 
-        try:
-            arg = self.args[0]
-        except IndexError:
-            arg = None
+        fields = []
+        params = []
+        valid_args = False
+        if self.flags.cat:
+            valid_args = True
+            fields.append('`cat` = ?')
+            params.append(self.flags.cat)
+        if self.flags.mime:
+            valid_args = True
+            fields.append('`mime` = ?')
+            params.append(self.flags.mime)
+        if self.flags['size-gt']:
+            valid_args = True
+            fields.append('`filesize` > ?')
+            params.append(self.flags['size-gt'])
+        if self.flags['size-lt']:
+            valid_args = True
+            fields.append('`filesize` < ?')
+            params.append(self.flags['size-lt'])
+        if self.flags.hash:
+            valid_args = True
+            fields.append('`filehash` LIKE ?')
+            params.append('{self.flags.hash}%')
 
-        if arg:
-            res = Index.select().where(Index.basename.contains(arg))
-            for i in res:
-                output.lnout(i.filepath)
-        else:
-            output.lnerr('error: command find requires argument\n')
-            output.lnerr(self.usage)
+        # Cannot use --name and --in-name simultaneously
+        if self.flags.name:
+            valid_args = True
+            fields.append('`basename` = ?')
+            params.append(self.flags.name)
+        elif self.flags['in-name']:
+            valid_args = True
+            fields.append('`basename` LIKE ?')
+            params.append(f'%{self.flags["in-name"]}%')
+
+        if self.flags['in-path']:
+            valid_args = True
+            fields.append('`filepath` LIKE ?')
+            params.append('%{self.flags["in-path"]}%')
+
+        # Stop and show error if no (valid) options are given
+        if not valid_args:
+            output.lnerr('error: command find requires one or more options\n')
+            output.lnerr(self.usage, hl=False)
             return 1
+
+        # all passed args are valid, create query
+        statement = "SELECT * FROM `index` WHERE {}".format(
+            ' AND '.join(fields)
+        )
+        output.log('debug', f'find built SQL statement: {statement}')
+        query = Index.raw(statement, *params)
+
+        for i in query:
+            _hash = i.filehash[:5]
+            _size = ' {}'.format(files.sizefmt(i.filesize))
+            _mime = ' {}'.format(i.mime)
+            output.sout(f'[green]{_hash}[/][white]{_size}[/]', hl=False)
+            output.lnout('{} {}'.format(_mime, i.filepath))
+        return 0
