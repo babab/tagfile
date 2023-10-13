@@ -92,7 +92,7 @@ class FindCommand(pycommand.CommandBase):
         if self.flags.hash:
             valid_args = True
             fields.append('`filehash` LIKE ?')
-            params.append('{self.flags.hash}%')
+            params.append(f'{self.flags.hash}%')
 
         # Cannot use --name and --in-name simultaneously
         if self.flags.name:
@@ -107,7 +107,7 @@ class FindCommand(pycommand.CommandBase):
         if self.flags['in-path']:
             valid_args = True
             fields.append('`filepath` LIKE ?')
-            params.append('%{self.flags["in-path"]}%')
+            params.append(f'%{self.flags["in-path"]}%')
 
         # Stop and show error if no (valid) options are given
         if not valid_args:
