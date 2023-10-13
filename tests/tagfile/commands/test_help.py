@@ -124,12 +124,14 @@ Options:
 
 ''')
 
-output_help_info = '''usage: tagfile info [-h | --help]
+output_help_info = '''usage: tagfile info [-C | --show-config]
+   or: tagfile info [-h | --help]
 
-Show statistics for index and media paths
+Show media paths, user config and statistics for index.
 
 Options:
--h, --help  show this help information
+-h, --help         show this help information
+-C, --show-config  pretty print active config in python
 
 '''
 

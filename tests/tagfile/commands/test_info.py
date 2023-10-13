@@ -30,19 +30,33 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
+import os
+
 import pycommand
 import pytest
 
 from tagfile.commands.info import InfoCommand as Command
 
+TAGFILEDEV_MEDIA_PATH = os.environ['TAGFILEDEV_MEDIA_PATH']
 
-output_help = '''usage: tagfile info [-h | --help]
 
-Show statistics for index and media paths
+output_help = '''usage: tagfile info [-C | --show-config]
+   or: tagfile info [-h | --help]
+
+Show media paths, user config and statistics for index.
 
 Options:
--h, --help  show this help information
+-h, --help         show this help information
+-C, --show-config  pretty print active config in python
 
+'''
+
+output_default_with_test_data_dir = f'''INDEX STATS
+files indexed   0
+duplicate files 0
+
+MEDIA PATHS (1):
+- {TAGFILEDEV_MEDIA_PATH}
 '''
 
 
@@ -70,6 +84,12 @@ def test_pycommand_bool_flags_with_1_option():
     assert cmd.flags['help'] is True
 
 
+def test_pycommand_bool_flags_with_2_options():
+    cmd = Command(['-h', '--show-config'])
+    assert cmd.flags['help'] is True
+    assert cmd.flags['show-config'] is True
+
+
 def test_pycommand_flags_are_accessible_by_attribute():
     cmd = Command(['-h'])
     assert cmd.flags.help is True
@@ -86,3 +106,11 @@ def test_pycommand_command_help_flag_shows_help_message(capfd):
     cmd.run()
     cap = capfd.readouterr()
     assert output_help == cap.out
+
+
+def test_output_with_default_no_arguments(capfd):
+    cmd = Command([])
+    cmd.run()
+    cap = capfd.readouterr()
+    assert cap.out == output_default_with_test_data_dir
+    assert cap.err == ''

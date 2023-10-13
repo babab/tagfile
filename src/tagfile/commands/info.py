@@ -34,7 +34,7 @@ from rich.pretty import Pretty
 import pycommand
 
 from tagfile import (
-    cfg,     # dict - from `tagfile.config.Configuration().cfg`
+    _configuration,  # instance of `tagfile.config.Configuration`
     core,    # module
     output,  # module
 )
@@ -42,16 +42,26 @@ from tagfile.models import Index, Repository
 
 
 class InfoCommand(pycommand.CommandBase):
-    '''Show statistics for index and media paths'''
-    usagestr = 'usage: tagfile info [-h | --help]'
+    '''Show media paths, user config and statistics for index.'''
+    usagestr = (
+        'usage: tagfile info [-C | --show-config]\n'
+        '   or: tagfile info [-h | --help]'
+    )
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),
+        ('show-config', ('C', False, 'pretty print active config in python')),
     )
 
     def run(self):
         if self.flags.help:
             print(self.usage)
+            return 0
+
+        if self.flags['show-config']:
+            output.lnout('[bold]USER CONFIG[/]')
+            output.lnout(f'file: {_configuration.fullpath}\n')
+            output.lnout(Pretty(_configuration.cfg, indent_size=2))
             return 0
 
         output.lnout('[bold]INDEX STATS[/bold]')
@@ -61,9 +71,5 @@ class InfoCommand(pycommand.CommandBase):
         qrep = Repository.select()
         repos = f'[green]{qrep.count()}[/green]'
         output.lnout(f'\n[bold]MEDIA PATHS ({repos}):[/bold]')
-
         for item in qrep:
             output.lnout(f'- {item.filepath}')
-
-        output.lnout('\n[bold]USER CONFIG[/]')
-        output.lnout(Pretty(cfg, indent_size=2))
