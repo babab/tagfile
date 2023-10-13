@@ -52,6 +52,7 @@ Commands:
   find       find files according to certain criterias
   help       show help information
   info       show statistics for index and media paths
+  list       show all indexed files
   updatedb   scan media paths and index newly added files
   version    show version and platform information
 
@@ -134,6 +135,23 @@ Options:
 -C, --show-config  pretty print active config in python
 
 '''
+
+output_help_list = (
+    '''usage: tagfile list [-s | --size] [-c | --cat] [-m | --mime]
+                    [-S COL | --sort=COL]
+   or: tagfile list [-h | --help]
+
+Show all indexed files.
+By default, the list is sorted on file path.
+
+Options:
+-h, --help          show this help information
+-s, --size          display column with filesizes
+-c, --cat           display column with media categories
+-m, --mime          display column with full mimetypes
+-S COL, --sort=COL  sort on: name, hash, size, cat or mime
+
+''')
 
 output_help_updatedb = (
     '''usage: tagfile updatedb [--prune] [--scan] [-v, --verbose] [-q, --quiet]
@@ -247,6 +265,13 @@ def test_pycommand_command_arg_info_shows_help_message(capfd):
     cmd.run()
     cap = capfd.readouterr()
     assert output_help_info == cap.out
+
+
+def test_pycommand_command_arg_list_shows_help_message(capfd):
+    cmd = Command(['list'])
+    cmd.run()
+    cap = capfd.readouterr()
+    assert output_help_list == cap.out
 
 
 def test_pycommand_command_arg_updatedb_shows_help_message(capfd):

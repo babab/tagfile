@@ -45,6 +45,7 @@ from tagfile.commands.add import AddCommand
 from tagfile.commands.clones import ClonesCommand
 from tagfile.commands.find import FindCommand
 from tagfile.commands.info import InfoCommand
+from tagfile.commands.listcmd import ListCommand
 from tagfile.commands.updatedb import UpdateDbCommand
 
 
@@ -92,6 +93,8 @@ class HelpCommand(pycommand.CommandBase):
                 print(FindCommand([]).usage)
             elif self.args[0] == 'info':
                 print(InfoCommand([]).usage)
+            elif self.args[0] == 'list':
+                print(ListCommand([]).usage)
             elif self.args[0] == 'updatedb':
                 print(UpdateDbCommand([]).usage)
             else:
@@ -134,6 +137,7 @@ class Command(pycommand.CommandBase):
         'clones': ClonesCommand,
         'find': FindCommand,
         'info': InfoCommand,
+        'list': ListCommand,
         'updatedb': UpdateDbCommand,
     }
     optionList = (
@@ -148,6 +152,7 @@ class Command(pycommand.CommandBase):
         '  find       find files according to certain criterias\n'
         '  help       show help information\n'
         '  info       show statistics for index and media paths\n'
+        '  list       show all indexed files\n'
         '  updatedb   scan media paths and index newly added files\n'
         '  version    show version and platform information\n'
 

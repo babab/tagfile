@@ -1,4 +1,4 @@
-# file: tests/tagfile/commands/test_main_cmd.py
+# file: tests/tagfile/commands/test_listcmd.py
 
 # Copyright (c) 2015-2023 Benjamin Althues <benjamin@babab.nl>
 #
@@ -33,35 +33,25 @@
 import pycommand
 import pytest
 
-from tagfile.commands.main_cmd import Command
+from tagfile.commands.listcmd import ListCommand as Command
 
 
-output_help = '''Usage: tagfile [--config <filename>] <command>
-   or: tagfile [-h | --help] | [-V | --version]
+output_help = (
+    '''usage: tagfile list [-s | --size] [-c | --cat] [-m | --mime]
+                    [-S COL | --sort=COL]
+   or: tagfile list [-h | --help]
 
-Search, index and tag your files and find duplicates
+Show all indexed files.
+By default, the list is sorted on file path.
 
 Options:
---config=<filename>  use specified config file
--h, --help           show this help information
--V, --version        show version and platform information
+-h, --help          show this help information
+-s, --size          display column with filesizes
+-c, --cat           display column with media categories
+-m, --mime          display column with full mimetypes
+-S COL, --sort=COL  sort on: name, hash, size, cat or mime
 
-Commands:
-  add        add a directory to media paths
-  clones     show all indexed duplicate files
-  find       find files according to certain criterias
-  help       show help information
-  info       show statistics for index and media paths
-  list       show all indexed files
-  updatedb   scan media paths and index newly added files
-  version    show version and platform information
-
-See 'tagfile help <command>' for more information on a
-specific command, before using it.
-
-'''
-
-output_noargs = output_help
+''')
 
 
 def test_pycommand_flags_are_None_by_default():
@@ -83,67 +73,20 @@ def test_pycommand_help_bool_flag_is_True_or_None():
     assert cmd.flags['help'] is None
 
 
-def test_pycommand_config_flag_argument():
-    cmd = Command(['--config', 'somefilename.toml'])
-    assert cmd.flags['config'] == 'somefilename.toml'
-
-    cmd = Command([''])
-    assert cmd.flags['config'] is None
-
-
 def test_pycommand_bool_flags_with_1_option():
     cmd = Command(['-h'])
-    assert cmd.flags['config'] is None
     assert cmd.flags['help'] is True
-    assert cmd.flags['version'] is None
-
-
-def test_pycommand_bool_flags_with_2_options():
-    cmd = Command(['-h', '--version'])
-    assert cmd.flags['config'] is None
-    assert cmd.flags['help'] is True
-    assert cmd.flags['version'] is True
-
-
-def test_pycommand_bool_flags_with_3_options():
-    cmd = Command(['-h', '-V', '--config=/tmp/tagfiledevtest-config.toml'])
-    assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.toml'
-    assert cmd.flags['help'] is True
-    assert cmd.flags['version'] is True
-
-
-def test_pycommand_config_option_string_as_2_args():
-    cmd = Command(['--config', '/tmp/tagfiledevtest-config.toml'])
-    assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.toml'
-    assert cmd.flags['help'] is None
-    assert cmd.flags['version'] is None
-
-
-def test_pycommand_config_option_string_as_1_arg_with_equals_sign():
-    cmd = Command(['--config=/tmp/tagfiledevtest-config.toml'])
-    assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.toml'
-    assert cmd.flags['help'] is None
-    assert cmd.flags['version'] is None
 
 
 def test_pycommand_flags_are_accessible_by_attribute():
-    cmd = Command(['-h', '--config=/tmp/tagfiledevtest-config.toml'])
-    assert cmd.flags.config == '/tmp/tagfiledevtest-config.toml'
+    cmd = Command(['-h'])
     assert cmd.flags.help is True
-    assert cmd.flags.version is None
 
 
 def test_pycommand_optionerror_on_unset_flags_attributes():
     cmd = Command(['-h'])
     with pytest.raises(pycommand.OptionError):
         assert cmd.flags.doesnotexist is None
-
-
-def test_pycommand_command_shows_message_when_no_args(capfd):
-    cmd = Command([])
-    cmd.run()
-    cap = capfd.readouterr()
-    assert output_noargs == cap.out
 
 
 def test_pycommand_command_help_flag_shows_help_message(capfd):
