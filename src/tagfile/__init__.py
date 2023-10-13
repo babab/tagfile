@@ -58,8 +58,8 @@ def verboseVersionInfo():
     )
 
 
-_configuration = tagfile.config.Configuration()
-cfg = _configuration.cfg
+configuration = tagfile.config.Configuration()
+cfg = configuration.cfg
 
 _data_home = tagfile.common.TAGFILE_DATA_HOME
 if not os.path.exists(_data_home):

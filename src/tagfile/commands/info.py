@@ -34,7 +34,7 @@ from rich.pretty import Pretty
 import pycommand
 
 from tagfile import (
-    _configuration,  # instance of `tagfile.config.Configuration`
+    configuration,  # instance of `tagfile.config.Configuration`
     core,    # module
     output,  # module
 )
@@ -60,8 +60,8 @@ class InfoCommand(pycommand.CommandBase):
 
         if self.flags['show-config']:
             output.lnout('[bold]USER CONFIG[/]')
-            output.lnout(f'file: {_configuration.fullpath}\n')
-            output.lnout(Pretty(_configuration.cfg, indent_size=2))
+            output.lnout(f'file: {configuration.fullpath}\n')
+            output.lnout(Pretty(configuration.cfg, indent_size=2))
             return 0
 
         output.lnout('[bold]INDEX STATS[/bold]')

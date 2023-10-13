@@ -170,8 +170,8 @@ class Command(pycommand.CommandBase):
         if self.flags['config']:
             _fpath = os.path.abspath(self.flags['config'])
             if os.path.exists(_fpath):
-                tagfile._configuration.set_paths(_fpath)
-                tagfile._configuration.load_configfile()
+                tagfile.configuration.set_paths(_fpath)
+                tagfile.configuration.load_configfile()
             else:
                 lnerr(f'error: file {_fpath} does not exist.')
                 return 2
