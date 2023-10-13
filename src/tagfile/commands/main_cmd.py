@@ -168,7 +168,7 @@ class Command(pycommand.CommandBase):
 
         # Update cfg with file
         if self.flags['config']:
-            _fpath = os.path.abspath(self.flags['config'])
+            _fpath = os.path.abspath(os.path.expanduser(self.flags['config']))
             if os.path.exists(_fpath):
                 tagfile.configuration.set_paths(_fpath)
                 tagfile.configuration.load_configfile()
