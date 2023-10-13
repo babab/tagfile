@@ -126,6 +126,13 @@ def test_function_sout_regular(capfd):
     assert cap.err == ''
 
 
+def test_function_sout_regular_multiple_args(capfd):
+    tagfile.output.sout('this is a', 'string without', 'ending newline')
+    cap = capfd.readouterr()
+    assert cap.out == 'this is a string without ending newline'
+    assert cap.err == ''
+
+
 def test_function_sout_regular_when_quiet(capfd):
     tagfile.output.flags.quiet = True
     tagfile.output.sout('this is a string without ending newline')
@@ -170,6 +177,13 @@ def test_function_lnout_regular(capfd):
     assert cap.err == ''
 
 
+def test_function_lnout_regular_multiple_args(capfd):
+    tagfile.output.lnout('this is a', 'string with', 'ending newline')
+    cap = capfd.readouterr()
+    assert cap.out == 'this is a string with ending newline\n'
+    assert cap.err == ''
+
+
 def test_function_lnout_regular_when_quiet(capfd):
     tagfile.output.flags.quiet = True
     tagfile.output.lnout('this is a string with ending newline')
@@ -209,6 +223,13 @@ def test_function_lnout_colored_string_forced_hl_is_True(capfd):
 # function serr
 def test_function_serr_regular(capfd):
     tagfile.output.serr('this is a string without ending newline')
+    cap = capfd.readouterr()
+    assert cap.out == ''
+    assert cap.err == 'this is a string without ending newline'
+
+
+def test_function_serr_regular_multiple_args(capfd):
+    tagfile.output.serr('this is a', 'string without', 'ending newline')
     cap = capfd.readouterr()
     assert cap.out == ''
     assert cap.err == 'this is a string without ending newline'
@@ -264,6 +285,13 @@ def test_function_serr_colored_string_forced_hl_is_True(capfd):
 # function lnerr
 def test_function_lnerr_regular(capfd):
     tagfile.output.lnerr('this is a string with ending newline')
+    cap = capfd.readouterr()
+    assert cap.out == ''
+    assert cap.err == 'this is a string with ending newline\n'
+
+
+def test_function_lnerr_regular_multiple_args(capfd):
+    tagfile.output.lnerr('this is a', 'string with', 'ending newline')
     cap = capfd.readouterr()
     assert cap.out == ''
     assert cap.err == 'this is a string with ending newline\n'

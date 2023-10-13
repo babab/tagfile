@@ -150,45 +150,45 @@ def configlvl():
 
 # generic functions for printing to console without logging  #################
 
-def sout(text, hl=True):
+def sout(*args, hl=True):
     '''Print string without newline to stdout stream if not flags.quiet.'''
     if not flags.quiet:
-        consout.print(text, end='', soft_wrap=True, highlight=hl)
+        consout.print(*args, end='', soft_wrap=True, highlight=hl)
 
 
-def lnout(text, hl=True):
+def lnout(*args, hl=True):
     r'''Print string + \n to stdout stream if not flags.quiet.'''
     if not flags.quiet:
-        consout.print(text, soft_wrap=True, highlight=hl)
+        consout.print(*args, soft_wrap=True, highlight=hl)
 
 
-def echo(text):
+def echo(*args):
     '''Print string without highlighting but while respecting flags.quiet.'''
-    lnout(text, hl=False)
+    lnout(*args, hl=False)
 
 
-def serr(text, hl=True, ignore_quiet=False):
+def serr(*args, hl=True, ignore_quiet=False):
     '''Print string without newline to stderr and optionally override quiet.'''
     if ignore_quiet:
         origval = flags.quiet
         flags.quiet = False
-        conserr.print(text, end='', soft_wrap=True, highlight=hl)
+        conserr.print(*args, end='', soft_wrap=True, highlight=hl)
         flags.quiet = origval
     else:
         if not flags.quiet:
-            conserr.print(text, end='', soft_wrap=True, highlight=hl)
+            conserr.print(*args, end='', soft_wrap=True, highlight=hl)
 
 
-def lnerr(text, hl=True, ignore_quiet=False):
+def lnerr(*args, hl=True, ignore_quiet=False):
     r'''Print string + \n to stderr and optionally override quiet.'''
     if ignore_quiet:
         origval = flags.quiet
         flags.quiet = False
-        conserr.print(text, soft_wrap=True, highlight=hl)
+        conserr.print(*args, soft_wrap=True, highlight=hl)
         flags.quiet = origval
     else:
         if not flags.quiet:
-            conserr.print(text, soft_wrap=True, highlight=hl)
+            conserr.print(*args, soft_wrap=True, highlight=hl)
 
 
 # generic functions for verbose echo and logging #############################
