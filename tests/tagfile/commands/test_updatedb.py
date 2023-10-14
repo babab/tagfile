@@ -84,6 +84,8 @@ def test_pycommand_bool_flags_with_1_option():
     assert cmd.flags['help'] is True
     assert cmd.flags['scan'] is None
     assert cmd.flags['prune'] is None
+    assert cmd.flags['quiet'] is None
+    assert cmd.flags['verbose'] is None
 
 
 def test_pycommand_bool_flags_with_2_options():
@@ -91,6 +93,8 @@ def test_pycommand_bool_flags_with_2_options():
     assert cmd.flags['help'] is True
     assert cmd.flags['scan'] is True
     assert cmd.flags['prune'] is None
+    assert cmd.flags['quiet'] is None
+    assert cmd.flags['verbose'] is None
 
 
 def test_pycommand_bool_flags_with_3_options():
@@ -98,6 +102,8 @@ def test_pycommand_bool_flags_with_3_options():
     assert cmd.flags['help'] is True
     assert cmd.flags['scan'] is True
     assert cmd.flags['prune'] is True
+    assert cmd.flags['quiet'] is None
+    assert cmd.flags['verbose'] is None
 
 
 def test_pycommand_flags_are_accessible_by_attribute():

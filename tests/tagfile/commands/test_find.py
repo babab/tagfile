@@ -81,9 +81,219 @@ def test_pycommand_help_bool_flag_is_True_or_None():
     assert cmd.flags['help'] is None
 
 
-def test_pycommand_bool_flags_with_1_option():
+def test_pycommand_bool_flag_for_help():
     cmd = Command(['-h'])
     assert cmd.flags['help'] is True
+    cmd = Command(['--help'])
+    assert cmd.flags['help'] is True
+
+
+def test_pycommand_cat_option_string_as_2_args():
+    cmd = Command(['--cat', 'text'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] == 'text'
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_cat_option_string_as_1_arg_with_equals_sign():
+    cmd = Command(['--cat=text'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] == 'text'
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_mime_option_string_as_2_args():
+    cmd = Command(['--mime', 'video/mp4'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] == 'video/mp4'
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_mime_option_string_as_1_arg_with_equals_sign():
+    cmd = Command(['--mime=video/mp4'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] == 'video/mp4'
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_sizegt_option_string_as_2_args():
+    cmd = Command(['--size-gt', '6000'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] == '6000'
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_sizegt_option_string_as_1_arg_with_equals_sign():
+    cmd = Command(['--size-gt=6000'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] == '6000'
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_sizelt_option_string_as_2_args():
+    cmd = Command(['--size-lt', '1_024_000'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] == '1_024_000'
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_sizelt_option_string_as_1_arg_with_equals_sign():
+    cmd = Command(['--size-lt=1_024_000'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] == '1_024_000'
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_hash_option_string_as_2_args():
+    cmd = Command(['--hash', '0d7'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] == '0d7'
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_hash_option_string_as_1_arg_with_equals_sign():
+    cmd = Command(['--hash=0d7'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] == '0d7'
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_inpath_option_string_as_2_args():
+    cmd = Command(['--in-path', 'cache/media'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] == 'cache/media'
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_inpath_option_string_as_1_arg_with_equals_sign():
+    cmd = Command(['--in-path=cache/media'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] == 'cache/media'
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_name_option_string_as_2_args():
+    cmd = Command(['--name', 'sample3.mp4'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] == 'sample3.mp4'
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_name_option_string_as_1_arg_with_equals_sign():
+    cmd = Command(['--name=sample3.mp4'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] == 'sample3.mp4'
+    assert cmd.flags['in-name'] is None
+
+
+def test_pycommand_inname_option_string_as_2_args():
+    cmd = Command(['--in-name', 'sample3'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] == 'sample3'
+
+
+def test_pycommand_inname_option_string_as_1_arg_with_equals_sign():
+    cmd = Command(['--in-name=sample3'])
+    assert cmd.flags['help'] is None
+    assert cmd.flags['cat'] is None
+    assert cmd.flags['mime'] is None
+    assert cmd.flags['size-gt'] is None
+    assert cmd.flags['size-lt'] is None
+    assert cmd.flags['hash'] is None
+    assert cmd.flags['in-path'] is None
+    assert cmd.flags['name'] is None
+    assert cmd.flags['in-name'] == 'sample3'
 
 
 def test_pycommand_flags_are_accessible_by_attribute():
