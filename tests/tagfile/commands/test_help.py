@@ -279,3 +279,11 @@ def test_pycommand_command_arg_updatedb_shows_help_message(capfd):
     cmd.run()
     cap = capfd.readouterr()
     assert output_help_updatedb == cap.out
+
+
+def test_invalid_command_arg(capfd):
+    cmd = Command(['notacommand'])
+    cmd.run()
+    cap = capfd.readouterr()
+    assert cap.out == ''
+    assert cap.err == 'error: Unknown command\n'

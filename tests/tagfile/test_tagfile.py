@@ -34,6 +34,17 @@ import os
 
 import tagfile
 from tagfile import common
+from tagfile.commands.main_cmd import entry
+
+
+output_help_help = '''usage: tagfile help [<command>]
+
+Show usage information (for subcommands)
+
+Options:
+-h, --help  show usage information for help command
+
+'''
 
 
 def test_default_cfg_structure():
@@ -68,3 +79,19 @@ def test_location_variables():
 def test_location_paths_have_been_created():
     assert os.path.exists(common.TAGFILE_DATA_HOME)
     assert os.path.exists(common.TAGFILE_CONFIG_HOME)
+
+
+def test_entry_help_help(capfd):
+    exitcode = entry(['help', 'help'])
+    assert exitcode == 0
+    cap = capfd.readouterr()
+    assert cap.out == output_help_help
+    assert cap.err == ''
+
+
+def test_entry_invalid_flag(capfd):
+    exitcode = entry(['-Z'])
+    assert exitcode == 1
+    cap = capfd.readouterr()
+    assert cap.out == ''
+    assert cap.err == 'error: option -Z not recognized\n'
