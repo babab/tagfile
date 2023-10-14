@@ -30,9 +30,13 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
+import os
+import sys
+
 import pycommand
 import pytest
 
+import tagfile
 from tagfile.commands.main_cmd import VersionCommand as Command
 
 
@@ -44,6 +48,21 @@ Options:
 -h, --help  show this help information
 
 '''
+
+
+output_verboseversion = '''{0}
+{1}
+
+Python {2}
+Interpreter is at {3}
+Platform is {4}
+'''.format(
+        tagfile.versionStr,
+        tagfile.__copyright__,
+        sys.version.replace('\n', ''),
+        sys.executable or 'unknown',
+        os.name,
+    )
 
 
 def test_pycommand_flags_are_None_by_default():
@@ -86,3 +105,11 @@ def test_pycommand_command_help_flag_shows_help_message(capfd):
     cmd.run()
     cap = capfd.readouterr()
     assert output_help == cap.out
+
+
+def test_run_no_args(capfd):
+    cmd = Command([])
+    cmd.run()
+    cap = capfd.readouterr()
+    assert cap.out == output_verboseversion
+    assert cap.err == ''
