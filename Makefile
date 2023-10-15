@@ -92,6 +92,7 @@ help:
 	@echo ' exe          - build a single executable file with pyinstaller'
 	@echo ' test-pkg     - install pkg and run checks/tests without coverage'
 	@echo ' badges       - make test and create svg badges using shields.io'
+	@echo ' qtest        - faster subseq. testruns (some checks removed)'
 	@echo
 	@printf 'PIPX TARGETS (using ~/.local/pipx/venvs/%s)\n' "${NAME}"
 	@echo ' pipx-install - flit build and install with pipx install'
@@ -184,6 +185,12 @@ test: ${VENVDIR} develop clean-config-data #custom
 	${VENVDIR}/bin/coverage report
 	${VENVDIR}/bin/coverage xml -o reports/coverage.xml
 	${VENVDIR}/bin/coverage html -d reports/htmlcov
+
+qtest: clean-config-data #custom
+	@printf '\n--- RUN PYTEST THROUGH COVERAGE ---\n'
+	${VENVDIR}/bin/coverage run -m pytest
+	@printf '\n--- COVERAGE REPORT ---\n'
+	${VENVDIR}/bin/coverage report
 
 test-pkg: ${VENVDIR} venv-install clean-config-data #custom
 	@printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
