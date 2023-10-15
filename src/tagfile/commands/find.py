@@ -40,10 +40,10 @@ class FindCommand(pycommand.CommandBase):
     '''Find files according to certain criterias'''
     usagestr = (
         'usage: tagfile find [--cat=CAT] [--mime=MIMETYPE] [--size-gt=BYTES]\n'
-        '                    [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]'
-        '\n                    [--name=NAME | --in-name=STRING]\n'
+        '{pad} [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]\n'
+        '{pad} [--name=NAME | --in-name=STRING] [-S COL | --sort=COL]\n'
         '   or: tagfile find [-h | --help]'
-    )
+    ).format(pad=' ' * 19)
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),
@@ -63,6 +63,7 @@ class FindCommand(pycommand.CommandBase):
                   'match filenames that are exactly NAME')),
         ('in-name', ('', 'STRING',
                      'match filenames with a substring of STRING')),
+        ('sort', ('S', 'COL', 'sort on: name, hash, size, cat or mime')),
     )
 
     def run(self):
@@ -70,6 +71,7 @@ class FindCommand(pycommand.CommandBase):
             output.echo(self.usage)
             return 0
 
+    # handle matching flags and build WHERE statement
         fields = []
         params = []
         valid_args = False
@@ -109,15 +111,28 @@ class FindCommand(pycommand.CommandBase):
             fields.append('`filepath` LIKE ?')
             params.append(f'%{self.flags["in-path"]}%')
 
-        # Stop and show error if no (valid) options are given
+        # Stop and show error if no (valid) matching options are given
         if not valid_args:
             output.lnerr('error: command find requires one or more options\n')
             output.lnerr(self.usage, hl=False)
             return 1
 
-        # all passed args are valid, create query
-        statement = "SELECT * FROM `index` WHERE {}".format(
-            ' AND '.join(fields)
+    # handle sort flag and build ORDER BY statement ######################
+        sortcol = '`filepath`'
+        if self.flags.sort == 'name':
+            sortcol = '`basename`'
+        elif self.flags.sort == 'hash':
+            sortcol = '`filehash`, `filepath`'
+        elif self.flags.sort == 'size':
+            sortcol = '`filesize`'
+        elif self.flags.sort == 'cat':
+            sortcol = '`cat`, `filepath`'
+        elif self.flags.sort == 'mime':
+            sortcol = '`mime`, `filepath`'
+
+    # all passed args are valid, create query and output rows ############
+        statement = "SELECT * FROM `index` WHERE {} ORDER BY {}".format(
+            ' AND '.join(fields), sortcol
         )
         output.log('debug', f'find built SQL statement: {statement}')
         query = Index.raw(statement, *params)
