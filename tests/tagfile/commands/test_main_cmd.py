@@ -64,17 +64,17 @@ specific command, before using it.
 output_noargs = output_help
 
 
-def test_pycommand_flags_are_None_by_default():
+def test_flags_are_None_by_default():
     cmd = Command([])
     assert cmd.flags['help'] is None
 
 
-def test_pycommand_error_is_None_by_default():
+def test_error_is_None_by_default():
     cmd = Command(['-h'])
     assert cmd.error is None
 
 
-def test_pycommand_help_bool_flag_is_True_or_None():
+def test_help_bool_flag_is_True_or_None():
     '''When a flag is given, it's value should be True, else None'''
     cmd = Command(['-h'])
     assert cmd.flags['help'] is True
@@ -83,7 +83,7 @@ def test_pycommand_help_bool_flag_is_True_or_None():
     assert cmd.flags['help'] is None
 
 
-def test_pycommand_config_flag_argument():
+def test_config_flag_argument():
     cmd = Command(['--config', 'somefilename.toml'])
     assert cmd.flags['config'] == 'somefilename.toml'
 
@@ -91,62 +91,62 @@ def test_pycommand_config_flag_argument():
     assert cmd.flags['config'] is None
 
 
-def test_pycommand_bool_flags_with_1_option():
+def test_bool_flags_with_1_option():
     cmd = Command(['-h'])
     assert cmd.flags['config'] is None
     assert cmd.flags['help'] is True
     assert cmd.flags['version'] is None
 
 
-def test_pycommand_bool_flags_with_2_options():
+def test_bool_flags_with_2_options():
     cmd = Command(['-h', '--version'])
     assert cmd.flags['config'] is None
     assert cmd.flags['help'] is True
     assert cmd.flags['version'] is True
 
 
-def test_pycommand_bool_flags_with_3_options():
+def test_bool_flags_with_3_options():
     cmd = Command(['-h', '-V', '--config=/tmp/tagfiledevtest-config.toml'])
     assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.toml'
     assert cmd.flags['help'] is True
     assert cmd.flags['version'] is True
 
 
-def test_pycommand_config_option_string_as_2_args():
+def test_config_option_string_as_2_args():
     cmd = Command(['--config', '/tmp/tagfiledevtest-config.toml'])
     assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.toml'
     assert cmd.flags['help'] is None
     assert cmd.flags['version'] is None
 
 
-def test_pycommand_config_option_string_as_1_arg_with_equals_sign():
+def test_config_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--config=/tmp/tagfiledevtest-config.toml'])
     assert cmd.flags['config'] == '/tmp/tagfiledevtest-config.toml'
     assert cmd.flags['help'] is None
     assert cmd.flags['version'] is None
 
 
-def test_pycommand_flags_are_accessible_by_attribute():
+def test_flags_are_accessible_by_attribute():
     cmd = Command(['-h', '--config=/tmp/tagfiledevtest-config.toml'])
     assert cmd.flags.config == '/tmp/tagfiledevtest-config.toml'
     assert cmd.flags.help is True
     assert cmd.flags.version is None
 
 
-def test_pycommand_optionerror_on_unset_flags_attributes():
+def test_optionerror_on_unset_flags_attributes():
     cmd = Command(['-h'])
     with pytest.raises(pycommand.OptionError):
         assert cmd.flags.doesnotexist is None
 
 
-def test_pycommand_command_shows_message_when_no_args(capfd):
+def test_command_shows_message_when_no_args(capfd):
     cmd = Command([])
     cmd.run()
     cap = capfd.readouterr()
     assert output_noargs == cap.out
 
 
-def test_pycommand_command_help_flag_shows_help_message(capfd):
+def test_command_help_flag_shows_help_message(capfd):
     cmd = Command(['-h'])
     cmd.run()
     cap = capfd.readouterr()

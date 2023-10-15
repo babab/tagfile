@@ -62,17 +62,17 @@ output_noargs = '''error: command find requires one or more options
 ''' + output_help
 
 
-def test_pycommand_flags_are_None_by_default():
+def test_flags_are_None_by_default():
     cmd = Command([])
     assert cmd.flags['help'] is None
 
 
-def test_pycommand_error_is_None_by_default():
+def test_error_is_None_by_default():
     cmd = Command(['-h'])
     assert cmd.error is None
 
 
-def test_pycommand_help_bool_flag_is_True_or_None():
+def test_help_bool_flag_is_True_or_None():
     '''When a flag is given, it's value should be True, else None'''
     cmd = Command(['-h'])
     assert cmd.flags['help'] is True
@@ -81,14 +81,14 @@ def test_pycommand_help_bool_flag_is_True_or_None():
     assert cmd.flags['help'] is None
 
 
-def test_pycommand_bool_flag_for_help():
+def test_bool_flag_for_help():
     cmd = Command(['-h'])
     assert cmd.flags['help'] is True
     cmd = Command(['--help'])
     assert cmd.flags['help'] is True
 
 
-def test_pycommand_cat_option_string_as_2_args():
+def test_cat_option_string_as_2_args():
     cmd = Command(['--cat', 'text'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] == 'text'
@@ -101,7 +101,7 @@ def test_pycommand_cat_option_string_as_2_args():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_cat_option_string_as_1_arg_with_equals_sign():
+def test_cat_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--cat=text'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] == 'text'
@@ -114,7 +114,7 @@ def test_pycommand_cat_option_string_as_1_arg_with_equals_sign():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_mime_option_string_as_2_args():
+def test_mime_option_string_as_2_args():
     cmd = Command(['--mime', 'video/mp4'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -127,7 +127,7 @@ def test_pycommand_mime_option_string_as_2_args():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_mime_option_string_as_1_arg_with_equals_sign():
+def test_mime_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--mime=video/mp4'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -140,7 +140,7 @@ def test_pycommand_mime_option_string_as_1_arg_with_equals_sign():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_sizegt_option_string_as_2_args():
+def test_sizegt_option_string_as_2_args():
     cmd = Command(['--size-gt', '6000'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -153,7 +153,7 @@ def test_pycommand_sizegt_option_string_as_2_args():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_sizegt_option_string_as_1_arg_with_equals_sign():
+def test_sizegt_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--size-gt=6000'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -166,7 +166,7 @@ def test_pycommand_sizegt_option_string_as_1_arg_with_equals_sign():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_sizelt_option_string_as_2_args():
+def test_sizelt_option_string_as_2_args():
     cmd = Command(['--size-lt', '1_024_000'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -179,7 +179,7 @@ def test_pycommand_sizelt_option_string_as_2_args():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_sizelt_option_string_as_1_arg_with_equals_sign():
+def test_sizelt_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--size-lt=1_024_000'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -192,7 +192,7 @@ def test_pycommand_sizelt_option_string_as_1_arg_with_equals_sign():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_hash_option_string_as_2_args():
+def test_hash_option_string_as_2_args():
     cmd = Command(['--hash', '0d7'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -205,7 +205,7 @@ def test_pycommand_hash_option_string_as_2_args():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_hash_option_string_as_1_arg_with_equals_sign():
+def test_hash_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--hash=0d7'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -218,7 +218,7 @@ def test_pycommand_hash_option_string_as_1_arg_with_equals_sign():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_inpath_option_string_as_2_args():
+def test_inpath_option_string_as_2_args():
     cmd = Command(['--in-path', 'cache/media'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -231,7 +231,7 @@ def test_pycommand_inpath_option_string_as_2_args():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_inpath_option_string_as_1_arg_with_equals_sign():
+def test_inpath_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--in-path=cache/media'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -244,7 +244,7 @@ def test_pycommand_inpath_option_string_as_1_arg_with_equals_sign():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_name_option_string_as_2_args():
+def test_name_option_string_as_2_args():
     cmd = Command(['--name', 'sample3.mp4'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -257,7 +257,7 @@ def test_pycommand_name_option_string_as_2_args():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_name_option_string_as_1_arg_with_equals_sign():
+def test_name_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--name=sample3.mp4'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -270,7 +270,7 @@ def test_pycommand_name_option_string_as_1_arg_with_equals_sign():
     assert cmd.flags['in-name'] is None
 
 
-def test_pycommand_inname_option_string_as_2_args():
+def test_inname_option_string_as_2_args():
     cmd = Command(['--in-name', 'sample3'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -283,7 +283,7 @@ def test_pycommand_inname_option_string_as_2_args():
     assert cmd.flags['in-name'] == 'sample3'
 
 
-def test_pycommand_inname_option_string_as_1_arg_with_equals_sign():
+def test_inname_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--in-name=sample3'])
     assert cmd.flags['help'] is None
     assert cmd.flags['cat'] is None
@@ -296,18 +296,18 @@ def test_pycommand_inname_option_string_as_1_arg_with_equals_sign():
     assert cmd.flags['in-name'] == 'sample3'
 
 
-def test_pycommand_flags_are_accessible_by_attribute():
+def test_flags_are_accessible_by_attribute():
     cmd = Command(['-h'])
     assert cmd.flags.help is True
 
 
-def test_pycommand_optionerror_on_unset_flags_attributes():
+def test_optionerror_on_unset_flags_attributes():
     cmd = Command(['-h'])
     with pytest.raises(pycommand.OptionError):
         assert cmd.flags.doesnotexist is None
 
 
-def test_pycommand_command_shows_error_message_when_no_args(capfd):
+def test_command_shows_error_message_when_no_args(capfd):
     cmd = Command([])
     cmd.run()
     cap = capfd.readouterr()
@@ -315,7 +315,7 @@ def test_pycommand_command_shows_error_message_when_no_args(capfd):
     assert cap.err == output_noargs
 
 
-def test_pycommand_command_help_flag_shows_help_message(capfd):
+def test_command_help_flag_shows_help_message(capfd):
     cmd = Command(['-h'])
     cmd.run()
     cap = capfd.readouterr()

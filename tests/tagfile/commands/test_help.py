@@ -176,17 +176,17 @@ It will always prune deleted files before scanning for new files.
 ''')
 
 
-def test_pycommand_flags_are_None_by_default():
+def test_flags_are_None_by_default():
     cmd = Command([])
     assert cmd.flags['help'] is None
 
 
-def test_pycommand_error_is_None_by_default():
+def test_error_is_None_by_default():
     cmd = Command(['-h'])
     assert cmd.error is None
 
 
-def test_pycommand_help_bool_flag_is_True_or_None():
+def test_help_bool_flag_is_True_or_None():
     '''When a flag is given, it's value should be True, else None'''
     cmd = Command(['-h'])
     assert cmd.flags['help'] is True
@@ -195,86 +195,86 @@ def test_pycommand_help_bool_flag_is_True_or_None():
     assert cmd.flags['help'] is None
 
 
-def test_pycommand_bool_flags_with_1_option():
+def test_bool_flags_with_1_option():
     cmd = Command(['-h'])
     assert cmd.flags['help'] is True
 
 
-def test_pycommand_flags_are_accessible_by_attribute():
+def test_flags_are_accessible_by_attribute():
     cmd = Command(['-h'])
     assert cmd.flags.help is True
 
 
-def test_pycommand_optionerror_on_unset_flags_attributes():
+def test_optionerror_on_unset_flags_attributes():
     cmd = Command(['-h'])
     with pytest.raises(pycommand.OptionError):
         assert cmd.flags.doesnotexist is None
 
 
-def test_pycommand_command_shows_main_help_when_no_args(capfd):
+def test_command_shows_main_help_when_no_args(capfd):
     cmd = Command([])
     cmd.run()
     cap = capfd.readouterr()
     assert output_help_main == cap.out
 
 
-def test_pycommand_command_help_flag_shows_help_message(capfd):
+def test_command_help_flag_shows_help_message(capfd):
     cmd = Command(['-h'])
     cmd.run()
     cap = capfd.readouterr()
     assert output_help_help == cap.out
 
 
-def test_pycommand_command_arg_help_shows_help_message(capfd):
+def test_command_arg_help_shows_help_message(capfd):
     cmd = Command(['help'])
     cmd.run()
     cap = capfd.readouterr()
     assert output_help_help == cap.out
 
 
-def test_pycommand_command_arg_version_shows_help_message(capfd):
+def test_command_arg_version_shows_help_message(capfd):
     cmd = Command(['version'])
     cmd.run()
     cap = capfd.readouterr()
     assert output_help_version == cap.out
 
 
-def test_pycommand_command_arg_add_shows_help_message(capfd):
+def test_command_arg_add_shows_help_message(capfd):
     cmd = Command(['add'])
     cmd.run()
     cap = capfd.readouterr()
     assert output_help_add == cap.out
 
 
-def test_pycommand_command_arg_clones_shows_help_message(capfd):
+def test_command_arg_clones_shows_help_message(capfd):
     cmd = Command(['clones'])
     cmd.run()
     cap = capfd.readouterr()
     assert output_help_clones == cap.out
 
 
-def test_pycommand_command_arg_find_shows_help_message(capfd):
+def test_command_arg_find_shows_help_message(capfd):
     cmd = Command(['find'])
     cmd.run()
     cap = capfd.readouterr()
     assert output_help_find == cap.out
 
 
-def test_pycommand_command_arg_info_shows_help_message(capfd):
+def test_command_arg_info_shows_help_message(capfd):
     cmd = Command(['info'])
     cmd.run()
     cap = capfd.readouterr()
     assert output_help_info == cap.out
 
 
-def test_pycommand_command_arg_list_shows_help_message(capfd):
+def test_command_arg_list_shows_help_message(capfd):
     cmd = Command(['list'])
     cmd.run()
     cap = capfd.readouterr()
     assert output_help_list == cap.out
 
 
-def test_pycommand_command_arg_updatedb_shows_help_message(capfd):
+def test_command_arg_updatedb_shows_help_message(capfd):
     cmd = Command(['updatedb'])
     cmd.run()
     cap = capfd.readouterr()
