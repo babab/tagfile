@@ -32,7 +32,7 @@
 
 import peewee
 
-from tagfile import DB
+from tagfile import database
 
 __author__ = "Benjamin Althues"
 __copyright__ = "Copyright (C) 2015-2023  Benjamin Althues"
@@ -41,7 +41,7 @@ __copyright__ = "Copyright (C) 2015-2023  Benjamin Althues"
 class Model(peewee.Model):
     '''Database model for peewee ORM'''
     class Meta:
-        database = DB
+        database = database
 
 
 class Index(Model):

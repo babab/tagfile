@@ -38,10 +38,10 @@ import pycommand
 from rich.progress import track
 
 from tagfile import (
-    cfg,     # dict - from `tagfile.config.Configuration().cfg`
-    DB,      # var - Database handler for Peewee
-    files,   # module
-    output,  # module
+    cfg,       # dict - from `tagfile.config.Configuration().cfg`
+    database,  # var - Database handler for Peewee
+    files,     # module
+    output,    # module
 )
 from tagfile.output import (
     consout as c,  # instance - from `rich.console.Console()`
@@ -70,7 +70,7 @@ class _TagFileManager:
     _initialized = False
 
     def init(self):
-        '''Connect the `tagfile.DB` database handler and setup tables.
+        '''Connect the `tagfile.database` database handler and setup tables.
 
         This is to make sure the database is only initialized once, and
         can receive arguments in the future. It can be called multiple
@@ -84,9 +84,9 @@ class _TagFileManager:
             level=output.configlvl(), style='{',
             format='{asctime}:{levelname}: {message}'
         )
-        DB.connect()
+        database.connect()
         if not Index.table_exists():
-            DB.create_tables([Index, Repository])
+            database.create_tables([Index, Repository])
         self._initialized = True
 
         output.log('debug', 'tfman initialized')

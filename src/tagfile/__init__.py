@@ -65,7 +65,7 @@ _data_home = tagfile.common.TAGFILE_DATA_HOME
 if not os.path.exists(_data_home):
     os.makedirs(_data_home)
 
-DB = peewee.SqliteDatabase(os.path.join(_data_home, 'index.db'))
+database = peewee.SqliteDatabase(os.path.join(_data_home, 'index.db'))
 '''Database handler for Peewee ORM / sqlite database.
 
 The database gets connected in `tagfile.core.tfman.init()`, which is
