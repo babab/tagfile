@@ -61,7 +61,6 @@ show.progressbars = true
 hashing.algorithm = "sha1"
 hashing.buffer-size = 1024
 
-ignore.empty-files = true  # you probably don't need to track 0 byte files
 [ignore.name-based]
 # Will try to match paths/filenames in the order of:
 # 1. paths (substrings of the absolute full path to file)
@@ -104,6 +103,10 @@ extensions = [
     ".tgz",
     ".zip",
 ]
+
+[ignore.essential]
+# you probably don't need to track 0 byte files
+empty-files = true
 '''.format(
     data_home=common.invertexpanduser(common.TAGFILE_DATA_HOME),
     date=datetime.datetime.now()

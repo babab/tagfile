@@ -124,6 +124,7 @@ class _TagFileManager:
         try:
             lnout('\n[bold]SCANNING[/bold]')
             disable_bar = False if cfg['show']['progressbars'] else True
+            ignore_empty = cfg['ignore']['essential']['empty-files']
             for path in track(self.paths, console=output.consout,
                               disable=disable_bar, description=''):
                 file_is_valid = True
@@ -155,7 +156,7 @@ class _TagFileManager:
                 # get filesize, this might raise a few exceptions
                 try:
                     filesize = os.path.getsize(path)
-                    if cfg['ignore']['empty-files'] and not filesize:
+                    if ignore_empty and not filesize:
                         file_is_valid = False
                 except FileNotFoundError:
                     file_is_valid = False

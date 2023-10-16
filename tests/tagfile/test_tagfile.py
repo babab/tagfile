@@ -59,7 +59,6 @@ def test_default_cfg_structure():
     assert cfg['ignore']
     assert type(cfg['ignore']) is dict
     assert len(cfg['ignore']) == 2
-    assert cfg['ignore']['empty-files'] is True
     assert cfg['ignore']['name-based']
     assert type(cfg['ignore']['name-based']) is dict
     assert len(cfg['ignore']['name-based']) == 3
@@ -69,6 +68,10 @@ def test_default_cfg_structure():
     assert type(cfg['ignore']['name-based']['filenames']) is list
     assert cfg['ignore']['name-based']['extensions']
     assert type(cfg['ignore']['name-based']['extensions']) is list
+    assert cfg['ignore']['essential']
+    assert type(cfg['ignore']['essential']) is dict
+    assert len(cfg['ignore']['essential']) == 1
+    assert cfg['ignore']['essential']['empty-files'] is True
 
 
 def test_location_variables():
