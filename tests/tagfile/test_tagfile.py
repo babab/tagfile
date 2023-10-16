@@ -52,10 +52,10 @@ def test_default_cfg_structure():
     assert cfg['logging']['enabled'] is True
     assert cfg['logging']['file']
     assert cfg['logging']['level'] == 'warning'
-    assert cfg['show']
-    assert type(cfg['show']) is dict
-    assert len(cfg['show']) == 1
-    assert cfg['show']['progressbars'] is True
+    assert cfg['ui']
+    assert type(cfg['ui']) is dict
+    assert len(cfg['ui']) == 1
+    assert cfg['ui']['progressbars'] is True
     assert cfg['ignore']
     assert type(cfg['ignore']) is dict
     assert len(cfg['ignore']) == 2
@@ -72,6 +72,11 @@ def test_default_cfg_structure():
     assert type(cfg['ignore']['essential']) is dict
     assert len(cfg['ignore']['essential']) == 1
     assert cfg['ignore']['essential']['empty-files'] is True
+    assert cfg['hashing']
+    assert type(cfg['hashing']) is dict
+    assert len(cfg['hashing']) == 2
+    assert cfg['hashing']['algorithm'] == 'sha1'
+    assert cfg['hashing']['buffer-size'] == 1024
 
 
 def test_location_variables():

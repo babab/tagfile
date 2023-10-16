@@ -123,7 +123,7 @@ class _TagFileManager:
         total = len(self.paths)
         try:
             lnout('\n[bold]SCANNING[/bold]')
-            disable_bar = False if cfg['show']['progressbars'] else True
+            disable_bar = False if cfg['ui']['progressbars'] else True
             ignore_empty = cfg['ignore']['essential']['empty-files']
             for path in track(self.paths, console=output.consout,
                               disable=disable_bar, description=''):
@@ -218,7 +218,7 @@ def prune():
         res = Index.raw('''SELECT * FROM `index`''')
         npruned = 0
 
-    disable_bar = False if cfg['show']['progressbars'] else True
+    disable_bar = False if cfg['ui']['progressbars'] else True
     for i in track(res, console=output.consout,
                    disable=disable_bar, description=''):
         if not os.path.exists(i.filepath):

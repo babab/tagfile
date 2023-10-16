@@ -55,11 +55,8 @@ logging.file = "{data_home}/tagfile.log"
 # The recommended level is "warning".
 logging.level = "warning"
 
-show.progressbars = true
-
-# algorithm can be "md5" or "sha1"
-hashing.algorithm = "sha1"
-hashing.buffer-size = 1024
+[ui]
+progressbars = true
 
 [ignore.name-based]
 # Will try to match paths/filenames in the order of:
@@ -107,6 +104,11 @@ extensions = [
 [ignore.essential]
 # you probably don't need to track 0 byte files
 empty-files = true
+
+[hashing]
+# algorithm can be "md5" or "sha1"
+algorithm = "sha1"
+buffer-size = 1024
 '''.format(
     data_home=common.invertexpanduser(common.TAGFILE_DATA_HOME),
     date=datetime.datetime.now()
