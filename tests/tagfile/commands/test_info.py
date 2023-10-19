@@ -51,7 +51,8 @@ Options:
 
 '''
 
-output_default_with_test_data_dir = f'''INDEX STATS
+output_default_with_test_data_dir = f'''INDEX
+database name   main
 files indexed   0
 duplicate files 0
 

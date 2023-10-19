@@ -81,7 +81,6 @@ class AddCommand(pycommand.CommandBase):
             return 4
 
         with output.consout.status('', spinner='simpleDotsScrolling'):
-            tfman.init()
             tfman.addPath(filepath)
             output.lnout('Added media path: {}'.format(filepath))
             if self.flags.scan:

@@ -61,11 +61,13 @@ def verboseVersionInfo():
 configuration = tagfile.config.Configuration()
 cfg = configuration.cfg
 
-_data_home = tagfile.common.TAGFILE_DATA_HOME
-if not os.path.exists(_data_home):
-    os.makedirs(_data_home)
-
-database = peewee.SqliteDatabase(os.path.join(_data_home, 'index.db'))
+database = peewee.SqliteDatabase(None, pragmas={
+    'journal_mode': 'wal',
+    'cache_size': -1 * 64000,  # 64MB
+    'foreign_keys': 1,
+    'ignore_check_constraints': 0,
+    'synchronous': 0
+})
 '''Database handler for Peewee ORM / sqlite database.
 
 The database gets connected in `tagfile.core.tfman.init()`, which is

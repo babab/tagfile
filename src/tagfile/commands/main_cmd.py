@@ -37,6 +37,7 @@ import pycommand
 
 import tagfile
 from tagfile import __doc__ as main_description
+from tagfile.core import tfman
 from tagfile.output import (
     lnerr,
     lnout,
@@ -124,7 +125,7 @@ class VersionCommand(pycommand.CommandBase):
 class Command(pycommand.CommandBase):
     '''Argument handler based on pycommand'''
     usagestr = (
-        'Usage: tagfile [--config <filename>] <command>\n'
+        'Usage: tagfile [--config <filename>] [--db <name>] <command>\n'
         '   or: tagfile [-h | --help] | [-V | --version]'
     )
     description = main_description
@@ -142,6 +143,7 @@ class Command(pycommand.CommandBase):
     }
     optionList = (
         ('config', ('', '<filename>', 'use specified config file')),
+        ('db', ('', '<name>', 'use database <name>, defined in config file')),
         ('help', ('h', False, 'show this help information')),
         ('version', ('V', False, 'show version and platform information')),
     )
@@ -181,6 +183,15 @@ class Command(pycommand.CommandBase):
                 lnerr(f'error: file {_fpath} does not exist.')
                 return 2
 
+        # Init database connection and/or create TAGFILE_DATA_HOME
+        if self.flags['db']:
+            DB_OK = tfman.init(db_name=self.flags['db'])
+        else:
+            DB_OK = tfman.init()
+
+        if not DB_OK:
+            return 1
+
         # temporary handling of old commands, the super call will catch
         # and handle these further with 'error: unknown command'
         try:
@@ -210,6 +221,7 @@ class Command(pycommand.CommandBase):
             return e.err
 
         cmd.registerParentFlag('config', self.flags.config)
+        cmd.registerParentFlag('db', self.flags.db)
 
         if cmd.error:
             lnerr('tagfile {cmd}: {error}'

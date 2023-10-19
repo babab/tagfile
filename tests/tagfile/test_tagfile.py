@@ -49,6 +49,13 @@ Options:
 
 def test_default_cfg_structure():
     cfg = tagfile.cfg
+    assert cfg
+    assert type(cfg) is dict
+    assert len(cfg) == 6
+    assert cfg['default_database'] == 'main'
+    assert cfg['logging']
+    assert type(cfg['logging']) is dict
+    assert len(cfg['logging']) == 3
     assert cfg['logging']['enabled'] is True
     assert cfg['logging']['file']
     assert cfg['logging']['level'] == 'warning'

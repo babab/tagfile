@@ -48,12 +48,12 @@ def test_core_tfman_paths_is_not_None():
     assert tfman.paths is not None
 
 
-def test_core_tfman_error_when_not_initialized_loadKnownRepos():
+def test_core_tfman_error_when_not_ready_loadKnownRepos():
     with pytest.raises(tagfile.common.ProgrammingError):
         tagfile.core.tfman.loadKnownRepos()
 
 
-def test_core_tfman_error_when_not_initialized_addPath():
+def test_core_tfman_error_when_not_ready_addPath():
     _path = os.environ['TAGFILEDEV_MEDIA_PATH']
     paths = tagfile.files.walkdir(_path)
     sample_3_mp4 = paths[0]
@@ -61,7 +61,7 @@ def test_core_tfman_error_when_not_initialized_addPath():
         tagfile.core.tfman.addPath(sample_3_mp4)
 
 
-def test_core_tfman_error_when_not_initialized_scan():
+def test_core_tfman_error_when_not_ready_scan():
     with pytest.raises(tagfile.common.ProgrammingError):
         tagfile.core.tfman.scan()
 
@@ -71,6 +71,6 @@ def test_core_tfman_error_when_not_initialized_scan():
 
 def test_core_tfman_before_and_after_init():
     tfman = tagfile.core.tfman
-    assert tfman._initialized is False
+    assert tfman.ready is False
     tfman.init()
-    assert tfman._initialized is True
+    assert tfman.ready is True

@@ -36,13 +36,15 @@ import pytest
 from tagfile.commands.main_cmd import Command
 
 
-output_help = '''Usage: tagfile [--config <filename>] <command>
+output_help = (
+    '''Usage: tagfile [--config <filename>] [--db <name>] <command>
    or: tagfile [-h | --help] | [-V | --version]
 
 Search, index and tag your files and find duplicates
 
 Options:
 --config=<filename>  use specified config file
+--db=<name>          use database <name>, defined in config file
 -h, --help           show this help information
 -V, --version        show version and platform information
 
@@ -59,7 +61,7 @@ Commands:
 See 'tagfile help <command>' for more information on a
 specific command, before using it.
 
-'''
+''')
 
 output_noargs = output_help
 

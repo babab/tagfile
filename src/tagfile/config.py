@@ -40,8 +40,14 @@ from tagfile import common
 
 defaultconfig = '''# config created by tagfile 0.2.0a9 at {date}
 
+# Use multiple config files to:
+# - define (sets of) database locations
+# - tie one ore more DB's to a set of ignore rules
+
 # A tilde `~` in filepaths will expand to $HOME on *BSD/Linux/MacOS/Unix
 # or `%USERPROFILE%` on Windows.
+
+default_database = "main"
 
 logging.enabled = true
 logging.file = "{data_home}/tagfile.log"
@@ -57,6 +63,17 @@ logging.level = "warning"
 
 [ui]
 progressbars = true
+
+[databases]
+# Database `main` must always be defined. You can define other sqlite DB's
+# to keep separate indexes as you see fit. To use a specific
+# database for a certain period of time, define it in the config as
+# database.default or pass it as argument with --db, like:
+#     tagfile --db=main <command> [option]
+
+main = "{data_home}/main.db"
+#custom = "{data_home}/custom.db"
+#cats = "{data_home}/cat-pictures.sqlite"
 
 [ignore.name-based]
 # Will try to match paths/filenames in the order of:

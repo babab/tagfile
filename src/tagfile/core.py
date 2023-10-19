@@ -34,6 +34,7 @@ import logging
 import os
 
 import magic
+import peewee
 import pycommand
 from rich.progress import track
 
@@ -47,7 +48,10 @@ from tagfile.output import (
     consout as c,  # instance - from `rich.console.Console()`
     lnout,         # function
 )
-from tagfile.common import ProgrammingError
+from tagfile.common import (
+    ProgrammingError,
+    TAGFILE_DATA_HOME,
+)
 from tagfile.models import Index, Repository
 
 # NAMESPACE SHORTCUTS
@@ -67,52 +71,80 @@ class _TagFileManager:
     Use `addPath(path)` to add new media path (recursively adding files).
     '''
 
-    _initialized = False
+    ready = False
+    db_name = None
 
-    def init(self):
-        '''Connect the `tagfile.database` database handler and setup tables.
+    def init(self, db_name=None):
+        '''Connect the `tagfile.database` database handler and setup tables.'''
+        if self.ready:
+            return True
 
-        This is to make sure the database is only initialized once, and
-        can receive arguments in the future. It can be called multiple
-        times without a problem and since it returns self, you can
-        directly chain any of the other methods.
-        '''
-        if self._initialized:
-            return self
+        _data_home = TAGFILE_DATA_HOME
+        if not os.path.exists(_data_home):
+            os.makedirs(_data_home)
         logging.basicConfig(
             filename=os.path.expanduser(cfg['logging']['file']),
             level=output.configlvl(), style='{',
             format='{asctime}:{levelname}: {message}'
         )
-        database.connect()
-        if not Index.table_exists():
-            database.create_tables([Index, Repository])
-        self._initialized = True
+
+        if not db_name:
+            db_name = cfg['default_database']
+        if not self.select_db(db_name):
+            return False
 
         output.log('debug', 'tfman initialized')
         output.log('debug', 'color_system = {}'.format(c.color_system))
-        return self
+        return True
+
+    def select_db(self, db_name):
+        try:
+            db_path = os.path.expanduser(cfg['databases'][db_name])
+        except KeyError:
+            output.fatal(f'no database configured with name "{db_name}"')
+            self.ready = False
+            return False
+
+        output.info(f'core: loading default database "{db_name}"')
+        database.init(db_path)
+        try:
+            database.connect()
+        except peewee.OperationalError as err:
+            msg = f'while trying to open {db_path}\npeewee: {err}\n\n'
+            parent = os.path.dirname(db_path)
+            if not os.path.exists(parent):
+                msg += f'Parent directory "{parent}" does not exist.\n'
+                msg += 'Create the directory and try again.'
+            output.fatal(msg)
+            self.ready = False
+            return False
+
+        if not Index.table_exists():
+            database.create_tables([Index, Repository])
+        self.db_name = db_name
+        self.ready = True
+        return True
 
     def loadKnownRepos(self):
         '''Load known media paths into `self.paths`'''
-        if not self._initialized:
+        if not self.ready:
             raise ProgrammingError("_TagFileManager was not initialized")
         text = 'Browsing media paths for files... '
-        with c.status(text, spinner='simpleDotsScrolling'):
+        with c.status(status=text, spinner='simpleDotsScrolling'):
             qrep = Repository.select()
             for item in qrep:
                 self.addPath(item.filepath)
 
     def addPath(self, path):
         '''Walk path and add all found files'''
-        if not self._initialized:
+        if not self.ready:
             raise ProgrammingError("_TagFileManager was not initialized")
         self.paths.extend(files.walkdir(path))
         Repository.get_or_create(filepath=path)
 
     def scan(self):
         '''Check if filepaths are in database, otherwise hash file and save'''
-        if not self._initialized:
+        if not self.ready:
             raise ProgrammingError("_TagFileManager was not initialized")
         iall = 0
         inew = 0

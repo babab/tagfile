@@ -64,7 +64,8 @@ class InfoCommand(pycommand.CommandBase):
             output.lnout(Pretty(configuration.cfg, indent_size=2))
             return 0
 
-        output.lnout('[bold]INDEX STATS[/bold]')
+        output.lnout('[bold]INDEX[/bold]')
+        output.lnout(f'database name\t[bold]{core.tfman.db_name}[/bold]')
         output.lnout(f'files indexed\t{Index.select().count()}')
         output.lnout(f'duplicate files\t{len(core.clones_list())}')
 
