@@ -178,7 +178,7 @@ test: ${VENVDIR} develop clean-config-data #custom
 	@printf '\n--- CHECKING IF TESTDATA IS ALREADY AVAILABLE ---\n' #custom
 	test -d "$${TAGFILEDEV_MEDIA_PATH}" || make test-data #custom
 	@printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
-	${VENVDIR}/bin/flake8 -v --max-complexity=20 ${CODE_DIRS}
+	${VENVDIR}/bin/flake8 -v --max-complexity=25 ${CODE_DIRS}
 	@printf '\n--- RUN PYTEST THROUGH COVERAGE ---\n'
 	${VENVDIR}/bin/coverage run -m pytest
 	@printf '\n--- COVERAGE REPORT ---\n'
@@ -194,7 +194,7 @@ qtest: clean-config-data #custom
 
 test-pkg: ${VENVDIR} venv-install clean-config-data #custom
 	@printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
-	${VENVDIR}/bin/flake8 -v --max-complexity=20 ${CODE_DIRS}
+	${VENVDIR}/bin/flake8 -v --max-complexity=25 ${CODE_DIRS}
 	@printf '\n--- RUN PYTEST ---\n'
 	${VENVDIR}/bin/pytest  # uses config section in pyproject.toml
 

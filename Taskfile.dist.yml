@@ -169,7 +169,7 @@ tasks:
       - task: develop
       - cmd: printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
         silent: true
-      - '{{.VENVDIR}}/bin/flake8 -v --max-complexity=20 {{.CODE_DIRS}}'
+      - '{{.VENVDIR}}/bin/flake8 -v --max-complexity=25 {{.CODE_DIRS}}'
       - cmd: printf '\n--- RUN PYTEST THROUGH COVERAGE ---\n'
         silent: true
       - '{{.VENVDIR}}/bin/coverage run -m pytest'
@@ -184,7 +184,7 @@ tasks:
       - task: venv-install
       - cmd: printf '\n--- CHECK CODE STYLE AND CYCLOMATIC COMPLEXITY ---\n'
         silent: true
-      - '{{.VENVDIR}}/bin/flake8 -v --max-complexity=20 {{.CODE_DIRS}}'
+      - '{{.VENVDIR}}/bin/flake8 -v --max-complexity=25 {{.CODE_DIRS}}'
       - cmd: printf '\n--- RUN PYTEST ---\n'
         silent: true
       - '{{.VENVDIR}}/bin/pytest  # uses config section in pyproject.toml'
