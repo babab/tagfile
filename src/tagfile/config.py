@@ -119,8 +119,13 @@ extensions = [
 ]
 
 [ignore.essential]
-# you probably don't need to track 0 byte files
+# You probably don't need to track 0 byte files.
 empty-files = true
+
+# For unixy systems that support them, symlinks to files that are in the
+# same database will show up as clones. Because they are not physical
+# copies / actual duplicates, you probably want to ignore them.
+symlinks = true
 
 [hashing]
 # algorithm can be "md5" or "sha1"
@@ -210,6 +215,7 @@ class Configuration:
         val.is_list('ignore.name-based.extensions')
         val.is_dict('ignore.essential', min_size=1)
         val.is_bool('ignore.essential.empty-files')
+        val.is_bool('ignore.essential.symlinks')
         val.is_dict('hashing', min_size=2)
         val.is_str('hashing.algorithm', options=['sha1', 'md5'])
         val.is_int('hashing.buffer-size', vmin=64)

@@ -163,6 +163,14 @@ class _TagFileManager:
                 iall += 1
                 basename = os.path.basename(path)
 
+                # ignore symlinks
+                if (cfg['ignore']['essential']['symlinks']
+                        and os.path.islink(path)):
+                    file_is_valid = False
+                    iignore += 1
+                    output.info(f'scan: symlink ignored: {path}')
+                    continue
+
                 # see if path matches with any configured ignore substrings
                 for substr in cfg['ignore']['name-based']['paths']:
                     if substr in path:
