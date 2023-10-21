@@ -37,6 +37,8 @@ import pytest
 
 from tagfile.commands.info import InfoCommand as Command
 
+TAGFILE_CONFIG_HOME = os.environ['TAGFILE_CONFIG_HOME']
+TAGFILE_DATA_HOME = os.environ['TAGFILE_DATA_HOME']
 TAGFILEDEV_MEDIA_PATH = os.environ['TAGFILEDEV_MEDIA_PATH']
 
 
@@ -51,7 +53,11 @@ Options:
 
 '''
 
-output_default_with_test_data_dir = f'''INDEX
+output_default_with_test_data_dir = f'''ENV
+TAGFILE_CONFIG_HOME={TAGFILE_CONFIG_HOME}
+TAGFILE_DATA_HOME={TAGFILE_DATA_HOME}
+
+INDEX
 database name   main
 files indexed   0
 duplicate files 0

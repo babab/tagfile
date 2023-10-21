@@ -34,6 +34,7 @@ from rich.pretty import Pretty
 import pycommand
 
 from tagfile import (
+    common,  # module
     configuration,  # instance of `tagfile.config.Configuration`
     core,    # module
     output,  # module
@@ -63,6 +64,10 @@ class InfoCommand(pycommand.CommandBase):
             output.lnout(f'file: {configuration.fullpath}\n')
             output.lnout(Pretty(configuration.cfg, indent_size=2))
             return 0
+
+        output.lnout('[bold]ENV[/]')
+        output.lnout(f'TAGFILE_CONFIG_HOME={common.TAGFILE_CONFIG_HOME}')
+        output.lnout(f'TAGFILE_DATA_HOME={common.TAGFILE_DATA_HOME}\n')
 
         output.lnout('[bold]INDEX[/bold]')
         output.lnout(f'database name\t[bold]{core.tfman.db_name}[/bold]')
