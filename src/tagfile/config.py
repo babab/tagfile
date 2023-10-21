@@ -38,7 +38,7 @@ import tomllib
 
 from tagfile import common
 
-defaultconfig = '''# config created by tagfile 0.2.0a9 at {date}
+defaultconfig = '''# config created by tagfile 0.2.0a10 at {date}
 
 # Use multiple config files to:
 # - define (sets of) database locations
@@ -142,6 +142,7 @@ class Configuration:
         self.fullpath = os.path.join(self.dirpath, self.basename)
         self.write_defaultconfig()
         self.load_configfile()
+        self.validate()
 
     def set_paths(self, fullpath_or_dirpath, basename='>unset<'):
         if basename == '>unset<':
@@ -167,12 +168,48 @@ class Configuration:
                 _fconf.write(defaultconfig)
 
     def load_configfile(self):
-        '''Load user config file into memory'''
-        if os.path.exists(self.fullpath):
-            with open(self.fullpath, 'rb') as _file:
-                self.cfg.update(tomllib.load(_file))
-                # todo: add validation
-        else:
+        '''Update config by parsing user's TOML config file.
+
+        Raises common.configError if an error occurs.
+        '''
+        if not os.path.exists(self.fullpath):
             raise common.ConfigError(
                 'File "{}" does not exist'.format(self.fullpath)
             )
+
+        with open(self.fullpath, 'rb') as _file:
+            try:
+                self.cfg.update(tomllib.load(_file))
+            except tomllib.TOMLDecodeError as e:
+                raise common.ConfigError(f'TOML syntax: {e}')
+
+    def validate(self, config_var=None):
+        cfg = config_var if config_var else self.cfg
+
+        if not cfg:
+            raise common.ConfigError('config is empty dict or false-ish')
+        if not type(cfg) is dict:
+            raise common.ConfigError('config is not a dictionary')
+
+        val = common.ConfigValidator(cfg)
+        val.is_str('default_database')
+        val.is_dict('logging', min_size=3)
+        val.is_bool('logging.enabled')
+        val.is_str('logging.file')
+        val.is_str('logging.level', options=[
+            'debug', 'info', 'warn', 'warning', 'error', 'fatal', 'critical',
+        ])
+        val.is_dict('ui')
+        val.is_bool('ui.progressbars')
+        val.is_dict('databases', min_size=1)
+        val.is_str('databases.main')
+        val.is_dict('ignore', min_size=2)
+        val.is_dict('ignore.name-based', min_size=3)
+        val.is_list('ignore.name-based.paths')
+        val.is_list('ignore.name-based.filenames')
+        val.is_list('ignore.name-based.extensions')
+        val.is_dict('ignore.essential', min_size=1)
+        val.is_bool('ignore.essential.empty-files')
+        val.is_dict('hashing', min_size=2)
+        val.is_str('hashing.algorithm', options=['sha1', 'md5'])
+        val.is_int('hashing.buffer-size', vmin=64)

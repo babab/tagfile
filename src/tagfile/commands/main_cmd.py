@@ -42,6 +42,7 @@ from tagfile.output import (
     lnerr,
     lnout,
 )
+import tagfile.common
 from tagfile.commands.add import AddCommand
 from tagfile.commands.clones import ClonesCommand
 from tagfile.commands.find import FindCommand
@@ -67,6 +68,9 @@ def entry(argv='sys_argv'):
     except KeyboardInterrupt:
         lnerr('\nUser interrupted. Tagfile successfully exited.')
         return 0
+    except tagfile.common.ConfigError as e:
+        lnerr(f'[bold]error in configfile:[/bold] {e}')
+        return 2
 
 
 class HelpCommand(pycommand.CommandBase):
@@ -179,6 +183,10 @@ class Command(pycommand.CommandBase):
             if os.path.exists(_fpath):
                 tagfile.configuration.set_paths(_fpath)
                 tagfile.configuration.load_configfile()
+                tagfile.configuration.validate()
+                # On config mishaps, load_configfile() and validate()
+                # will raise ConfigError, handled in uppermost
+                # tagfile.commands.main_cmd.entry function with `return 3`.
             else:
                 lnerr(f'error: file {_fpath} does not exist.')
                 return 2
