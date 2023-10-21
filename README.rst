@@ -22,16 +22,17 @@ It also is a package for Python (but the API is unstable at this point).
 Features
 --------
 
-- scan all files in a directory recursively
-- index files with their checksums into a sqlite database
-- find duplicate files/checksums
-- ignore files according to rules in user config
-- prune index from files that got moved or deleted
+- scan all files in a directory (media-path) recursively
+- ignore files when scanning according to rules in user config
 - maintain a list of media-paths to prune/scan on a regular basis
+- index files with their checksums into a sqlite database
+- index filesize and MIME-type of files
+- prune index from files that got moved or deleted
+- find duplicate files, based on checksums
+- find files by checksum, mimetype, size, name or substring of name and/or path
 
 Features to be implemented in later versions:
 
-- index filesize, MIME-type and timestamps of files
 - remove duplicate files in the same directory
 - remove duplicate files interactively across directories
 - add user defined tags to files (using checksums, independent from filenames)
@@ -164,7 +165,7 @@ Since at this moment in time, you cannot tag your files yet :)
 
 Prerequisites:
 
-- Python 3.7 or later
+- Python 3.8 or later
 
 Dependencies (automatically installed with pipx / pip):
 
