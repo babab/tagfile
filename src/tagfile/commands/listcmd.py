@@ -73,7 +73,7 @@ class ListCommand(pycommand.CommandBase):
             query = Index.select().order_by(Index.filepath)
 
         for i in query:
-            _hash = i.filehash[:5]
+            _hash = i.filehash[:7]
             _size = ' {}'.format(
                 tagfile.files.sizefmt(i.filesize)
             ) if self.flags.size else ''

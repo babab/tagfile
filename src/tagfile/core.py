@@ -295,7 +295,7 @@ def clones(flags):
                 lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')
             count = 0
 
-        _hash = i.filehash[:5]
+        _hash = i.filehash[:7]
         _size = ' {}'.format(files.sizefmt(i.filesize)) if flags.size else ''
         _cat = ' {}'.format(i.cat) if flags.cat else ''
         _mime = ' {}'.format(i.mime) if flags.mime else ''

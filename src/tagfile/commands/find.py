@@ -138,7 +138,7 @@ class FindCommand(pycommand.CommandBase):
         query = Index.raw(statement, *params)
 
         for i in query:
-            _hash = i.filehash[:5]
+            _hash = i.filehash[:7]
             _size = ' {}'.format(files.sizefmt(i.filesize))
             _mime = ' {}'.format(i.mime)
             output.sout(f'[green]{_hash}[/][white]{_size}[/]', hl=False)
