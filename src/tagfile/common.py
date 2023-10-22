@@ -125,9 +125,15 @@ def invertexpanduser(path):
 # Set base paths, overridable using ENV vars
 TAGFILE_DATA_HOME = os.environ.get(
     'TAGFILE_DATA_HOME',
-    os.path.expanduser('~/.local/share/tagfile')
+    os.path.join(
+        os.environ.get('XDG_DATA_HOME', os.path.expanduser('~/.local/share')),
+        'tagfile'
+    )
 )
 TAGFILE_CONFIG_HOME = os.environ.get(
     'TAGFILE_CONFIG_HOME',
-    os.path.expanduser('~/.config/tagfile')
+    os.path.join(
+        os.environ.get('XDG_CONFIG_HOME', os.path.expanduser('~/.config')),
+        'tagfile'
+    )
 )
