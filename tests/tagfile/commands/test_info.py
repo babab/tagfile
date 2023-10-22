@@ -63,7 +63,7 @@ files indexed   0
 duplicate files 0
 
 MEDIA PATHS (1):
-- {TAGFILEDEV_MEDIA_PATH}
+{TAGFILEDEV_MEDIA_PATH} (id=1)
 '''
 
 

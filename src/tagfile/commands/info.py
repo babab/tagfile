@@ -78,4 +78,7 @@ class InfoCommand(pycommand.CommandBase):
         repos = f'[green]{qrep.count()}[/green]'
         output.lnout(f'\n[bold]MEDIA PATHS ({repos}):[/bold]')
         for item in qrep:
-            output.lnout(f'- {item.filepath}')
+            output.sout(item.filepath)
+            output.sout(' [magenta](id=[/]', hl=False)
+            output.sout(item.id)
+            output.lnout('[magenta])[/]', hl=False)
