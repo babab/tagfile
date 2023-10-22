@@ -300,13 +300,11 @@ def clones(flags):
         _cat = ' {}'.format(i.cat) if flags.cat else ''
         _mime = ' {}'.format(i.mime) if flags.mime else ''
         if toggler:
-            lnout('[green]{}{}[/green]{}{} {}'.format(
-                _hash, _size, _cat, _mime, i.filepath
-            ))
+            output.sout(f'[green]{_hash}[/]', hl=False)
         else:
-            lnout('[magenta]{}{}[/magenta]{}{} {}'.format(
-                _hash, _size, _cat, _mime, i.filepath
-            ))
+            output.sout(f'[magenta]{_hash}[/]', hl=False)
+        output.sout(_size, hl=False)
+        lnout(f'{_cat}{_mime} {i.filepath}')
         changed = i.filehash
         count += 1
     if count == -1:
