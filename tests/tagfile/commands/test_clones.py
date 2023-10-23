@@ -36,18 +36,20 @@ import pytest
 from tagfile.commands.clones import ClonesCommand as Command
 
 
-output_help = '''usage: tagfile clones [-scm] [--size] [--cat] [--mime]
+output_help = (
+    'usage: tagfile clones [-s | --show-size] [-t | --show-type]'
+    ''' [-m | --show-mime]
    or: tagfile clones [-h | --help]
 
 Show all indexed duplicate files
 
 Options:
--h, --help  show this help information
--s, --size  display column with filesizes
--c, --cat   display column with media categories
--m, --mime  display column with full mimetypes
+-h, --help       show this help information
+-s, --show-size  display column with filesizes
+-t, --show-type  display column with MIME type
+-m, --show-mime  display column with MIME type/subtype
 
-'''
+''')
 
 
 def test_flags_are_None_by_default():

@@ -296,15 +296,17 @@ def clones(flags):
             count = 0
 
         _hash = i.filehash[:7]
-        _size = ' {}'.format(files.sizefmt(i.filesize)) if flags.size else ''
-        _cat = ' {}'.format(i.cat) if flags.cat else ''
-        _mime = ' {}'.format(i.mime) if flags.mime else ''
+        _size = ' {}'.format(
+            files.sizefmt(i.filesize)
+        ) if flags['show-size'] else ''
+        _type = ' {}'.format(i.cat) if flags['show-type'] else ''
+        _mime = ' {}'.format(i.mime) if flags['show-mime'] else ''
         if toggler:
             output.sout(f'[green]{_hash}[/]', hl=False)
         else:
             output.sout(f'[magenta]{_hash}[/]', hl=False)
         output.sout(_size, hl=False)
-        lnout(f'{_cat}{_mime} {i.filepath}')
+        lnout(f'{_type}{_mime} {i.filepath}')
         changed = i.filehash
         count += 1
     if count == -1:

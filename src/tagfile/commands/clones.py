@@ -39,15 +39,16 @@ import tagfile.output
 class ClonesCommand(pycommand.CommandBase):
     '''Show all indexed duplicate files'''
     usagestr = (
-        'usage: tagfile clones [-scm] [--size] [--cat] [--mime]\n'
+        'usage: tagfile clones [-s | --show-size] [-t | --show-type] '
+        '[-m | --show-mime]\n'
         '   or: tagfile clones [-h | --help]'
     )
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),
-        ('size', ('s', False, 'display column with filesizes')),
-        ('cat', ('c', False, 'display column with media categories')),
-        ('mime', ('m', False, 'display column with full mimetypes')),
+        ('show-size', ('s', False, 'display column with filesizes')),
+        ('show-type', ('t', False, 'display column with MIME type')),
+        ('show-mime', ('m', False, 'display column with MIME type/subtype')),
     )
 
     def run(self):

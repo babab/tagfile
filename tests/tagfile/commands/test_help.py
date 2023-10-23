@@ -93,18 +93,20 @@ Options:
 
 '''
 
-output_help_clones = '''usage: tagfile clones [-scm] [--size] [--cat] [--mime]
+output_help_clones = (
+    'usage: tagfile clones [-s | --show-size] [-t | --show-type]'
+    ''' [-m | --show-mime]
    or: tagfile clones [-h | --help]
 
 Show all indexed duplicate files
 
 Options:
--h, --help  show this help information
--s, --size  display column with filesizes
--c, --cat   display column with media categories
--m, --mime  display column with full mimetypes
+-h, --help       show this help information
+-s, --show-size  display column with filesizes
+-t, --show-type  display column with MIME type
+-m, --show-mime  display column with MIME type/subtype
 
-'''
+''')
 
 output_help_find = (
     '''usage: tagfile find [--cat=CAT] [--mime=MIMETYPE] [--size-gt=BYTES]
