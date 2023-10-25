@@ -109,24 +109,38 @@ Options:
 ''')
 
 output_help_find = (
-    '''usage: tagfile find [--cat=CAT] [--mime=MIMETYPE] [--size-gt=BYTES]
+    '''usage: tagfile find [--type=TYPE] [--mime=MIMETYPE] [--size-gt=BYTES]
                     [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]
-                    [--name=NAME | --in-name=STRING] [-S COL | --sort=COL]
+                    [--name=NAME | --in-name=STRING] [-H | --show-hash]
+                    [-s | --show-size] [-t | --show-type] [-m | --show-mime]
+                    [-a | --show-all] [-S COL | --sort=COL]
+
+   or: tagfile find [--type=TYPE] [--mime=MIMETYPE] [--size-gt=BYTES]
+                    [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]
+                    [--name=NAME | --in-name=STRING] [-0 | --print0]
+                    [-S COL | --sort=COL]
+
    or: tagfile find [-h | --help]
 
 Find files according to certain criterias
 
 Options:
 -h, --help          show this help information
---cat=CAT           match on category (1st part of MIME-type)
---mime=MIMETYPE     match files on MIME-type
+--type=TYPE         match files on 1st part of MIME type
+--mime=MIMETYPE     match files on full MIME type/subtype
 --size-gt=BYTES     match files where size is greater than BYTES
 --size-lt=BYTES     match files where size is lesser than BYTES
 --hash=HEX          match files where checksum is (or starts with) HEX
 --in-path=STRING    match absolute paths with a substring of STRING
 --name=NAME         match filenames that are exactly NAME
 --in-name=STRING    match filenames with a substring of STRING
--S COL, --sort=COL  sort on: name, hash, size, cat or mime
+-H, --show-hash     display column with checksum hash
+-s, --show-size     display column with filesizes
+-t, --show-type     display column with MIME type
+-m, --show-mime     display column with MIME type/subtype
+-a, --show-all      display hash, size, mime (same as -Hsm)
+-S COL, --sort=COL  sort on: name, hash, size, type or mime
+-0, --print0        end lines with null instead of newline
 
 ''')
 
@@ -142,19 +156,26 @@ Options:
 '''
 
 output_help_list = (
-    '''usage: tagfile list [-s | --size] [-c | --cat] [-m | --mime]
-                    [-S COL | --sort=COL]
+    'usage: tagfile list [-H | --show-hash] [-s | --show-size] '
+    '''[-t | --show-type]
+                    [-m | --show-mime] [-a | --show-all] [-S COL | --sort=COL]
+
+   or: tagfile list [-0 | --print0] [-S COL | --sort=COL]
+
    or: tagfile list [-h | --help]
 
-Show all indexed files.
+Output a list of all indexed files.
 By default, the list is sorted on file path.
 
 Options:
 -h, --help          show this help information
--s, --size          display column with filesizes
--c, --cat           display column with media categories
--m, --mime          display column with full mimetypes
--S COL, --sort=COL  sort on: name, hash, size, cat or mime
+-H, --show-hash     display column with checksum hash
+-s, --show-size     display column with filesizes
+-t, --show-type     display column with MIME type
+-m, --show-mime     display column with MIME type/subtype
+-a, --show-all      display hash, size, mime (same as -Hsm)
+-S COL, --sort=COL  sort on: name, hash, size, type or mime
+-0, --print0        end lines with null instead of newline
 
 ''')
 

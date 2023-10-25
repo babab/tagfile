@@ -37,19 +37,26 @@ from tagfile.commands.listcmd import ListCommand as Command
 
 
 output_help = (
-    '''usage: tagfile list [-s | --size] [-c | --cat] [-m | --mime]
-                    [-S COL | --sort=COL]
+    'usage: tagfile list [-H | --show-hash] [-s | --show-size] '
+    '''[-t | --show-type]
+                    [-m | --show-mime] [-a | --show-all] [-S COL | --sort=COL]
+
+   or: tagfile list [-0 | --print0] [-S COL | --sort=COL]
+
    or: tagfile list [-h | --help]
 
-Show all indexed files.
+Output a list of all indexed files.
 By default, the list is sorted on file path.
 
 Options:
 -h, --help          show this help information
--s, --size          display column with filesizes
--c, --cat           display column with media categories
--m, --mime          display column with full mimetypes
--S COL, --sort=COL  sort on: name, hash, size, cat or mime
+-H, --show-hash     display column with checksum hash
+-s, --show-size     display column with filesizes
+-t, --show-type     display column with MIME type
+-m, --show-mime     display column with MIME type/subtype
+-a, --show-all      display hash, size, mime (same as -Hsm)
+-S COL, --sort=COL  sort on: name, hash, size, type or mime
+-0, --print0        end lines with null instead of newline
 
 ''')
 

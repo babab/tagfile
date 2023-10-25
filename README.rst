@@ -15,8 +15,8 @@ Tagfile is primarily a unixy command-line application with a focus on
 simplicity, interactivity and scriptabilty through (shell) scripts.
 It also is a package for Python (but the API is unstable at this point).
 
-- Codeberg: babab/tagfile | https://codeberg.org/babab/tagfile
-- Github:   babab/tagfile | https://github.com/babab/tagfile
+- Codeberg: https://codeberg.org/babab/tagfile
+- Github:   https://github.com/babab/tagfile
 
 --------
 Features
@@ -25,11 +25,14 @@ Features
 - scan all files in a directory (media-path) recursively
 - ignore files when scanning according to rules in user config
 - maintain a list of media-paths to prune/scan on a regular basis
-- index files with their checksums into a sqlite database
-- index filesize and MIME-type of files
-- prune index from files that got moved or deleted
+- index files with their checksums, size and MIME-type into a sqlite database
+- show a list of files in index, sortable by checksum, size and mimetype
 - find duplicate files, based on checksums
-- find files by checksum, mimetype, size, name or substring of name and/or path
+- find files by matching on checksum, mimetype, size, name or substring
+  of name and/or path
+- prune index from files that got moved or deleted
+- print results of **list** and **find** commands terminated with a null
+  character to use for piping to other utilities like xargs.
 
 Features to be implemented in later versions:
 
@@ -95,13 +98,13 @@ Search for files by string:
 
 .. code:: console
 
-   tagfile find radiohead
+   tagfile find --in-name radiohead
 
 Show duplicate files using the following commands:
 
 .. code:: console
 
-   tagfile same
+   tagfile clones
 
 
 ------------------
@@ -152,7 +155,7 @@ without offering migrations.** Tagfile adheres to `Semantic Versioning
 <https://semver.org>`_.
 
 - Current stable release: **v0.1.0**
-- Current dev/git version: *v0.2.0a10*
+- Current dev/git version: *v0.2.0a11*
 
 Tagfile has been written in a short time and used by me sporadically for
 8 years after that. All code was contained in a single file script in

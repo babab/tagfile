@@ -37,24 +37,38 @@ from tagfile.commands.find import FindCommand as Command
 
 
 output_help = (
-    '''usage: tagfile find [--cat=CAT] [--mime=MIMETYPE] [--size-gt=BYTES]
+    '''usage: tagfile find [--type=TYPE] [--mime=MIMETYPE] [--size-gt=BYTES]
                     [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]
-                    [--name=NAME | --in-name=STRING] [-S COL | --sort=COL]
+                    [--name=NAME | --in-name=STRING] [-H | --show-hash]
+                    [-s | --show-size] [-t | --show-type] [-m | --show-mime]
+                    [-a | --show-all] [-S COL | --sort=COL]
+
+   or: tagfile find [--type=TYPE] [--mime=MIMETYPE] [--size-gt=BYTES]
+                    [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]
+                    [--name=NAME | --in-name=STRING] [-0 | --print0]
+                    [-S COL | --sort=COL]
+
    or: tagfile find [-h | --help]
 
 Find files according to certain criterias
 
 Options:
 -h, --help          show this help information
---cat=CAT           match on category (1st part of MIME-type)
---mime=MIMETYPE     match files on MIME-type
+--type=TYPE         match files on 1st part of MIME type
+--mime=MIMETYPE     match files on full MIME type/subtype
 --size-gt=BYTES     match files where size is greater than BYTES
 --size-lt=BYTES     match files where size is lesser than BYTES
 --hash=HEX          match files where checksum is (or starts with) HEX
 --in-path=STRING    match absolute paths with a substring of STRING
 --name=NAME         match filenames that are exactly NAME
 --in-name=STRING    match filenames with a substring of STRING
--S COL, --sort=COL  sort on: name, hash, size, cat or mime
+-H, --show-hash     display column with checksum hash
+-s, --show-size     display column with filesizes
+-t, --show-type     display column with MIME type
+-m, --show-mime     display column with MIME type/subtype
+-a, --show-all      display hash, size, mime (same as -Hsm)
+-S COL, --sort=COL  sort on: name, hash, size, type or mime
+-0, --print0        end lines with null instead of newline
 
 ''')
 
@@ -89,10 +103,10 @@ def test_bool_flag_for_help():
     assert cmd.flags['help'] is True
 
 
-def test_cat_option_string_as_2_args():
-    cmd = Command(['--cat', 'text'])
+def test_type_option_string_as_2_args():
+    cmd = Command(['--type', 'text'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] == 'text'
+    assert cmd.flags['type'] == 'text'
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] is None
@@ -102,10 +116,10 @@ def test_cat_option_string_as_2_args():
     assert cmd.flags['in-name'] is None
 
 
-def test_cat_option_string_as_1_arg_with_equals_sign():
-    cmd = Command(['--cat=text'])
+def test_type_option_string_as_1_arg_with_equals_sign():
+    cmd = Command(['--type=text'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] == 'text'
+    assert cmd.flags['type'] == 'text'
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] is None
@@ -118,7 +132,7 @@ def test_cat_option_string_as_1_arg_with_equals_sign():
 def test_mime_option_string_as_2_args():
     cmd = Command(['--mime', 'video/mp4'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] == 'video/mp4'
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] is None
@@ -131,7 +145,7 @@ def test_mime_option_string_as_2_args():
 def test_mime_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--mime=video/mp4'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] == 'video/mp4'
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] is None
@@ -144,7 +158,7 @@ def test_mime_option_string_as_1_arg_with_equals_sign():
 def test_sizegt_option_string_as_2_args():
     cmd = Command(['--size-gt', '6000'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] == '6000'
     assert cmd.flags['size-lt'] is None
@@ -157,7 +171,7 @@ def test_sizegt_option_string_as_2_args():
 def test_sizegt_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--size-gt=6000'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] == '6000'
     assert cmd.flags['size-lt'] is None
@@ -170,7 +184,7 @@ def test_sizegt_option_string_as_1_arg_with_equals_sign():
 def test_sizelt_option_string_as_2_args():
     cmd = Command(['--size-lt', '1_024_000'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] == '1_024_000'
@@ -183,7 +197,7 @@ def test_sizelt_option_string_as_2_args():
 def test_sizelt_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--size-lt=1_024_000'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] == '1_024_000'
@@ -196,7 +210,7 @@ def test_sizelt_option_string_as_1_arg_with_equals_sign():
 def test_hash_option_string_as_2_args():
     cmd = Command(['--hash', '0d7'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] is None
@@ -209,7 +223,7 @@ def test_hash_option_string_as_2_args():
 def test_hash_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--hash=0d7'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] is None
@@ -222,7 +236,7 @@ def test_hash_option_string_as_1_arg_with_equals_sign():
 def test_inpath_option_string_as_2_args():
     cmd = Command(['--in-path', 'cache/media'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] is None
@@ -235,7 +249,7 @@ def test_inpath_option_string_as_2_args():
 def test_inpath_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--in-path=cache/media'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] is None
@@ -248,7 +262,7 @@ def test_inpath_option_string_as_1_arg_with_equals_sign():
 def test_name_option_string_as_2_args():
     cmd = Command(['--name', 'sample3.mp4'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] is None
@@ -261,7 +275,7 @@ def test_name_option_string_as_2_args():
 def test_name_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--name=sample3.mp4'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] is None
@@ -274,7 +288,7 @@ def test_name_option_string_as_1_arg_with_equals_sign():
 def test_inname_option_string_as_2_args():
     cmd = Command(['--in-name', 'sample3'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] is None
@@ -287,7 +301,7 @@ def test_inname_option_string_as_2_args():
 def test_inname_option_string_as_1_arg_with_equals_sign():
     cmd = Command(['--in-name=sample3'])
     assert cmd.flags['help'] is None
-    assert cmd.flags['cat'] is None
+    assert cmd.flags['type'] is None
     assert cmd.flags['mime'] is None
     assert cmd.flags['size-gt'] is None
     assert cmd.flags['size-lt'] is None

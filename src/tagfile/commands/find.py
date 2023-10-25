@@ -30,27 +30,38 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
+import sys
+
 import pycommand
 
-from tagfile import files, output
+from tagfile import output
+import tagfile.repeat
 from tagfile.models import Index
 
 
 class FindCommand(pycommand.CommandBase):
     '''Find files according to certain criterias'''
     usagestr = (
-        'usage: tagfile find [--cat=CAT] [--mime=MIMETYPE] [--size-gt=BYTES]\n'
+        'usage: tagfile find [--type=TYPE] [--mime=MIMETYPE] '
+        '[--size-gt=BYTES]\n'
         '{pad} [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]\n'
-        '{pad} [--name=NAME | --in-name=STRING] [-S COL | --sort=COL]\n'
+        '{pad} [--name=NAME | --in-name=STRING] [-H | --show-hash]\n'
+        '{pad} [-s | --show-size] [-t | --show-type] [-m | --show-mime]\n'
+        '{pad} [-a | --show-all] [-S COL | --sort=COL]\n\n'
+        '   or: tagfile find [--type=TYPE] [--mime=MIMETYPE] '
+        '[--size-gt=BYTES]\n'
+        '{pad} [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]\n'
+        '{pad} [--name=NAME | --in-name=STRING] [-0 | --print0]\n'
+        '{pad} [-S COL | --sort=COL]\n\n'
         '   or: tagfile find [-h | --help]'
     ).format(pad=' ' * 19)
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),
-        ('cat', ('', 'CAT',
-                 'match on category (1st part of MIME-type)')),
+        ('type', ('', 'TYPE',
+                  'match files on 1st part of MIME type')),
         ('mime', ('', 'MIMETYPE',
-                  'match files on MIME-type')),
+                  'match files on full MIME type/subtype')),
         ('size-gt', ('', 'BYTES',
                      'match files where size is greater than BYTES')),
         ('size-lt', ('', 'BYTES',
@@ -63,7 +74,14 @@ class FindCommand(pycommand.CommandBase):
                   'match filenames that are exactly NAME')),
         ('in-name', ('', 'STRING',
                      'match filenames with a substring of STRING')),
-        ('sort', ('S', 'COL', 'sort on: name, hash, size, cat or mime')),
+
+        ('show-hash', ('H', False, 'display column with checksum hash')),
+        ('show-size', ('s', False, 'display column with filesizes')),
+        ('show-type', ('t', False, 'display column with MIME type')),
+        ('show-mime', ('m', False, 'display column with MIME type/subtype')),
+        ('show-all', ('a', False, 'display hash, size, mime (same as -Hsm)')),
+        ('sort', ('S', 'COL', 'sort on: name, hash, size, type or mime')),
+        ('print0', ('0', False, 'end lines with null instead of newline')),
     )
 
     def run(self):
@@ -71,14 +89,19 @@ class FindCommand(pycommand.CommandBase):
             output.echo(self.usage)
             return 0
 
+        if self.flags['show-all']:
+            self.flags['show-hash'] = True
+            self.flags['show-size'] = True
+            self.flags['show-mime'] = True
+
     # handle matching flags and build WHERE statement
         fields = []
         params = []
         valid_args = False
-        if self.flags.cat:
+        if self.flags.type:
             valid_args = True
             fields.append('`cat` = ?')
-            params.append(self.flags.cat)
+            params.append(self.flags.type)
         if self.flags.mime:
             valid_args = True
             fields.append('`mime` = ?')
@@ -125,7 +148,7 @@ class FindCommand(pycommand.CommandBase):
             sortcol = '`filehash`, `filepath`'
         elif self.flags.sort == 'size':
             sortcol = '`filesize`'
-        elif self.flags.sort == 'cat':
+        elif self.flags.sort == 'type':
             sortcol = '`cat`, `filepath`'
         elif self.flags.sort == 'mime':
             sortcol = '`mime`, `filepath`'
@@ -138,9 +161,10 @@ class FindCommand(pycommand.CommandBase):
         query = Index.raw(statement, *params)
 
         for i in query:
-            _hash = i.filehash[:7]
-            _size = ' {}'.format(files.sizefmt(i.filesize))
-            _mime = ' {}'.format(i.mime)
-            output.sout(f'[green]{_hash}[/][white]{_size}[/]', hl=False)
-            output.lnout('{} {}'.format(_mime, i.filepath))
+            if self.flags['print0']:
+                output.sout(f'{i.filepath}\0', hl=False)
+                sys.stdout.write(f'{i.filepath}\0')
+                continue
+
+            tagfile.repeat.print_filelist_row(self.flags, i)
         return 0

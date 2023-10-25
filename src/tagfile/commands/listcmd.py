@@ -30,28 +30,37 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
+import sys
+
 import pycommand
 
 import tagfile.core
 import tagfile.files
 from tagfile.models import Index
 import tagfile.output
+import tagfile.repeat
 
 
 class ListCommand(pycommand.CommandBase):
-    '''Show all indexed files.'''
+    '''Output a list of all indexed files.'''
     usagestr = (
-        'usage: tagfile list [-s | --size] [-c | --cat] [-m | --mime]\n'
-        '                    [-S COL | --sort=COL]\n'
+        'usage: tagfile list [-H | --show-hash] [-s | --show-size] '
+        '[-t | --show-type]\n'
+        '                    [-m | --show-mime] [-a | --show-all] '
+        '[-S COL | --sort=COL]\n\n'
+        '   or: tagfile list [-0 | --print0] [-S COL | --sort=COL]\n\n'
         '   or: tagfile list [-h | --help]'
     )
     description = f'{__doc__}\nBy default, the list is sorted on file path.'
     optionList = (
         ('help', ('h', False, 'show this help information')),
-        ('size', ('s', False, 'display column with filesizes')),
-        ('cat', ('c', False, 'display column with media categories')),
-        ('mime', ('m', False, 'display column with full mimetypes')),
-        ('sort', ('S', 'COL', 'sort on: name, hash, size, cat or mime')),
+        ('show-hash', ('H', False, 'display column with checksum hash')),
+        ('show-size', ('s', False, 'display column with filesizes')),
+        ('show-type', ('t', False, 'display column with MIME type')),
+        ('show-mime', ('m', False, 'display column with MIME type/subtype')),
+        ('show-all', ('a', False, 'display hash, size, mime (same as -Hsm)')),
+        ('sort', ('S', 'COL', 'sort on: name, hash, size, type or mime')),
+        ('print0', ('0', False, 'end lines with null instead of newline')),
     )
 
     def run(self):
@@ -59,27 +68,28 @@ class ListCommand(pycommand.CommandBase):
             tagfile.output.echo(self.usage)
             return 0
 
+        if self.flags['show-all']:
+            self.flags['show-hash'] = True
+            self.flags['show-size'] = True
+            self.flags['show-mime'] = True
+
         if self.flags.sort == 'name':
             query = Index.select().order_by(Index.basename)
         elif self.flags.sort == 'hash':
             query = Index.select().order_by(Index.filehash, Index.filepath)
         elif self.flags.sort == 'size':
-            query = Index.select().order_by(Index.filesize)
-        elif self.flags.sort == 'cat':
+            query = Index.select().order_by(Index.filesize, Index.filepath)
+        elif self.flags.sort == 'type':
             query = Index.select().order_by(Index.cat, Index.filepath)
         elif self.flags.sort == 'mime':
             query = Index.select().order_by(Index.mime, Index.filepath)
-        else:  # same as self.flags.sort == 'path'
+        else:  # default / self.flags.sort == 'path'
             query = Index.select().order_by(Index.filepath)
 
         for i in query:
-            _hash = i.filehash[:7]
-            _size = ' {}'.format(
-                tagfile.files.sizefmt(i.filesize)
-            ) if self.flags.size else ''
-            _cat = ' {}'.format(i.cat) if self.flags.cat else ''
-            _mime = ' {}'.format(i.mime) if self.flags.mime else ''
-            tagfile.output.lnout('[green]{}{}[/green]{}{} {}'.format(
-                _hash, _size, _cat, _mime, i.filepath
-            ))
+            if self.flags['print0']:
+                sys.stdout.write(f'{i.filepath}\0')
+                continue
+
+            tagfile.repeat.print_filelist_row(self.flags, i)
         return 0
