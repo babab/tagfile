@@ -64,6 +64,9 @@ logging.level = "warning"
 [ui]
 progressbars = true
 
+# Colors can be "auto", "always", "never"
+colors = "auto"
+
 [databases]
 # Database `main` must always be defined. You can define other sqlite DB's
 # to keep separate indexes as you see fit. To use a specific
@@ -148,6 +151,7 @@ class Configuration:
         self.write_defaultconfig()
         self.load_configfile()
         self.validate()
+        self.apply()
 
     def set_paths(self, fullpath_or_dirpath, basename='>unset<'):
         if basename == '>unset<':
@@ -206,6 +210,7 @@ class Configuration:
         ])
         val.is_dict('ui')
         val.is_bool('ui.progressbars')
+        val.is_str('ui.colors', options=['auto', 'always', 'never'])
         val.is_dict('databases', min_size=1)
         val.is_str('databases.main')
         val.is_dict('ignore', min_size=2)
@@ -219,3 +224,10 @@ class Configuration:
         val.is_dict('hashing', min_size=2)
         val.is_str('hashing.algorithm', options=['sha1', 'md5'])
         val.is_int('hashing.buffer-size', vmin=64)
+
+    def apply(self):
+        '''Apply settings that have a global nature'''
+        if self.cfg['ui']['colors'] == 'always':
+            os.environ['FORCE_COLOR'] = '1'
+        elif self.cfg['ui']['colors'] == 'never':
+            os.environ['NO_COLOR'] = '1'

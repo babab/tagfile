@@ -187,6 +187,7 @@ class Command(pycommand.CommandBase):
                 # On config mishaps, load_configfile() and validate()
                 # will raise ConfigError, handled in uppermost
                 # tagfile.commands.main_cmd.entry function with `return 3`.
+                tagfile.configuration.apply()
             else:
                 lnerr(f'error: file {_fpath} does not exist.')
                 return 2

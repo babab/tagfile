@@ -61,8 +61,9 @@ def test_default_cfg_structure():
     assert cfg['logging']['level'] == 'warning'
     assert cfg['ui']
     assert type(cfg['ui']) is dict
-    assert len(cfg['ui']) == 1
+    assert len(cfg['ui']) == 2
     assert cfg['ui']['progressbars'] is True
+    assert cfg['ui']['colors'] == 'auto'
     assert cfg['ignore']
     assert type(cfg['ignore']) is dict
     assert len(cfg['ignore']) == 2
