@@ -130,7 +130,7 @@ def test_command_help_flag_shows_help_message(capfd):
 
 def test_setting_quiet_flag_cascades_to_consoles_correctly():
     # check default values
-    assert tagfile.output.flags.quiet is False
+    assert tagfile.output.settings.quiet is False
     assert tagfile.output.consout.quiet is False
     assert tagfile.output.conserr.quiet is False
     # set quiet through command flag
@@ -138,19 +138,19 @@ def test_setting_quiet_flag_cascades_to_consoles_correctly():
     exitcode = cmd.run()
     assert cmd.flags.quiet is True
     assert exitcode == 0
-    assert tagfile.output.flags.quiet is True
+    assert tagfile.output.settings.quiet is True
     assert tagfile.output.consout.quiet is True
     assert tagfile.output.conserr.quiet is True
     cmd = Command(['--prune', '--quiet'])
     exitcode = cmd.run()
     assert cmd.flags.quiet is True
     assert exitcode == 0
-    assert tagfile.output.flags.quiet is True
+    assert tagfile.output.settings.quiet is True
     assert tagfile.output.consout.quiet is True
     assert tagfile.output.conserr.quiet is True
     # reset to default values
-    tagfile.output.flags.quiet = False
-    assert tagfile.output.flags.quiet is False
+    tagfile.output.settings.quiet = False
+    assert tagfile.output.settings.quiet is False
     assert tagfile.output.consout.quiet is False
     assert tagfile.output.conserr.quiet is False
 
@@ -160,12 +160,12 @@ def test_verbose_flag_sets_output_flags_for_consoles():
     exitcode = cmd.run()
     assert cmd.flags.verbose is True
     assert exitcode == 0
-    assert tagfile.output.flags.verbose is True
+    assert tagfile.output.settings.verbose is True
     cmd = Command(['--prune', '--verbose'])
     exitcode = cmd.run()
     assert cmd.flags.verbose is True
     assert exitcode == 0
-    assert tagfile.output.flags.verbose is True
+    assert tagfile.output.settings.verbose is True
     # reset to default value
-    tagfile.output.flags.verbose = False
-    assert tagfile.output.flags.verbose is False
+    tagfile.output.settings.verbose = False
+    assert tagfile.output.settings.verbose is False

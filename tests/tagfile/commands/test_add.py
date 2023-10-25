@@ -148,7 +148,7 @@ def test_media_path_arg_will_show_error_if_not_exists(capfd):
 
 def test_quiet_flag_blocks_output_and_cascades_to_consoles_correctly(capfd):
     # check default value
-    assert tagfile.output.flags.quiet is False
+    assert tagfile.output.settings.quiet is False
     assert tagfile.output.consout.quiet is False
     assert tagfile.output.conserr.quiet is False
     # set quiet through command flag
@@ -159,16 +159,16 @@ def test_quiet_flag_blocks_output_and_cascades_to_consoles_correctly(capfd):
     assert cap.err == ''
     assert cmd.flags.quiet is True
     assert exitcode == 1
-    assert tagfile.output.flags.quiet is True
+    assert tagfile.output.settings.quiet is True
     assert tagfile.output.consout.quiet is True
     assert tagfile.output.conserr.quiet is True
     cmd = Command(['--quiet'])
     exitcode = cmd.run()
     assert cmd.flags.quiet is True
     assert exitcode == 1
-    assert tagfile.output.flags.quiet is True
+    assert tagfile.output.settings.quiet is True
     assert tagfile.output.consout.quiet is True
     assert tagfile.output.conserr.quiet is True
     # reset to default value
-    tagfile.output.flags.quiet = False
-    assert tagfile.output.flags.quiet is False
+    tagfile.output.settings.quiet = False
+    assert tagfile.output.settings.quiet is False

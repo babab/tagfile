@@ -56,7 +56,7 @@ class AddCommand(pycommand.CommandBase):
             output.echo(self.usage)
             return 0
 
-        output.flags.quiet = self.flags.quiet
+        output.settings.quiet = self.flags.quiet
 
         try:
             arg = self.args[0]

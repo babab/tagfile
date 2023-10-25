@@ -39,7 +39,7 @@ import tagfile
 from tagfile.common import ConfigError
 
 
-class OutputFlags:
+class OutputSettings:
     verbose = False
     '''Used to set state of verbose output when using -v command flags'''
 
@@ -97,7 +97,7 @@ consout = console.Console(theme=theme)
 conserr = console.Console(theme=theme, stderr=True)
 '''Rich text console API for stderr'''
 
-flags = OutputFlags()
+settings = OutputSettings()
 
 
 # mappings for strings to values of logging.* constants ######################
@@ -151,53 +151,53 @@ def configlvl():
 # generic functions for printing to console without logging  #################
 
 def sout(*args, hl=True):
-    '''Print string without newline to stdout stream if not flags.quiet.'''
-    if not flags.quiet:
+    '''Print without newline to stdout stream if not settings.quiet.'''
+    if not settings.quiet:
         consout.print(*args, end='', soft_wrap=True, highlight=hl)
 
 
 def lnout(*args, hl=True):
-    r'''Print string + \n to stdout stream if not flags.quiet.'''
-    if not flags.quiet:
+    r'''Print with newline to stdout stream if not settings.quiet.'''
+    if not settings.quiet:
         consout.print(*args, soft_wrap=True, highlight=hl)
 
 
 def echo(*args):
-    '''Print string without highlighting but while respecting flags.quiet.'''
+    '''Print without highlighting but while respecting settings.quiet.'''
     lnout(*args, hl=False)
 
 
 def serr(*args, hl=True, ignore_quiet=False):
-    '''Print string without newline to stderr and optionally override quiet.'''
+    '''Print without newline to stderr and optionally override quiet.'''
     if ignore_quiet:
-        origval = flags.quiet
-        flags.quiet = False
+        origval = settings.quiet
+        settings.quiet = False
         conserr.print(*args, end='', soft_wrap=True, highlight=hl)
-        flags.quiet = origval
+        settings.quiet = origval
     else:
-        if not flags.quiet:
+        if not settings.quiet:
             conserr.print(*args, end='', soft_wrap=True, highlight=hl)
 
 
 def lnerr(*args, hl=True, ignore_quiet=False):
-    r'''Print string + \n to stderr and optionally override quiet.'''
+    r'''Print with newline to stderr and optionally override quiet.'''
     if ignore_quiet:
-        origval = flags.quiet
-        flags.quiet = False
+        origval = settings.quiet
+        settings.quiet = False
         conserr.print(*args, soft_wrap=True, highlight=hl)
-        flags.quiet = origval
+        settings.quiet = origval
     else:
-        if not flags.quiet:
+        if not settings.quiet:
             conserr.print(*args, soft_wrap=True, highlight=hl)
 
 
 # generic functions for verbose echo and logging #############################
 
 def vecho(level_string, text):
-    '''Print to std{out,err} based on level_string and `flags.verbose` var.
+    '''Print to std{out,err} based on level_string and `settings.verbose` var.
 
     Always print fatal errors, but print other levels (info, warning,
-    error) only when not flags.quiet and flags.verbose is trueish.
+    error) only when not settings.quiet and settings.verbose is trueish.
     Messages with the *debug* level print nothing here. They are
     exclusively logged.
     '''
@@ -205,7 +205,7 @@ def vecho(level_string, text):
     if lvl >= logging.FATAL:
         lnerr('fatal error: {}'.format(text), ignore_quiet=True)
         return
-    if flags.quiet or not flags.verbose:
+    if settings.quiet or not settings.verbose:
         return
 
     if lvl == logging.INFO:
@@ -232,20 +232,20 @@ def logvecho(level_string, text):
 # level specific shortcuts for logging and verbose echo ######################
 
 def info(text):
-    '''Log info level message and print if flags.verbose is True'''
+    '''Log info level message and print if settings.verbose is True'''
     logvecho('info', text)
 
 
 def warning(text):
-    '''Log warning level message and print if flags.verbose is True'''
+    '''Log warning level message and print if settings.verbose is True'''
     logvecho('warning', text)
 
 
 def error(text):
-    '''Log error level message and print if flags.verbose is True'''
+    '''Log error level message and print if settings.verbose is True'''
     logvecho('error', text)
 
 
 def fatal(text):
-    '''Log fatal level message and print regardless of flags.verbose value'''
+    '''Log fatal level message and print regardless of settings.verbose'''
     logvecho('fatal', text)

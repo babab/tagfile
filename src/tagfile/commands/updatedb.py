@@ -66,8 +66,8 @@ class UpdateDbCommand(pycommand.CommandBase):
             print(self.usage)
             return 0
 
-        tagfile.output.flags.quiet = self.flags.quiet
-        tagfile.output.flags.verbose = self.flags.verbose
+        tagfile.output.settings.quiet = self.flags.quiet
+        tagfile.output.settings.verbose = self.flags.verbose
 
         # All options that reach here are valid. We need the repos for
         # everything that follows.
