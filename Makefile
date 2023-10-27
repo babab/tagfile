@@ -151,6 +151,7 @@ dist: ${VENVDIR}
 
 install: venv-install
 	@printf '\n--- CREATING SYMBOLIC LINK IN PATH ---\n'
+	test -d "$${HOME}/.local/bin" || mkdir -p "$${HOME}/.local/bin"
 	ln -svf "$${PWD}/${VENVDIR}/bin/${BIN_NAME}" "$${HOME}/.local/bin/${BIN_NAME}"
 
 venv-install: ${VENVDIR}
