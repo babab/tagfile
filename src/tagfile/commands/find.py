@@ -47,12 +47,12 @@ class FindCommand(pycommand.CommandBase):
         '{pad} [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]\n'
         '{pad} [--name=NAME | --in-name=STRING] [-H | --show-hash]\n'
         '{pad} [-s | --show-size] [-t | --show-type] [-m | --show-mime]\n'
-        '{pad} [-a | --show-all] [-S COL | --sort=COL]\n\n'
+        '{pad} [-a | --show-all] [-S COL | --sort=COL] [--reverse]\n\n'
         '   or: tagfile find [--type=TYPE] [--mime=MIMETYPE] '
         '[--size-gt=BYTES]\n'
         '{pad} [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]\n'
         '{pad} [--name=NAME | --in-name=STRING] [-0 | --print0]\n'
-        '{pad} [-S COL | --sort=COL]\n\n'
+        '{pad} [-S COL | --sort=COL] [--reverse]\n\n'
         '   or: tagfile find [-h | --help]'
     ).format(pad=' ' * 19)
     description = __doc__
@@ -81,6 +81,7 @@ class FindCommand(pycommand.CommandBase):
         ('show-mime', ('m', False, 'display column with MIME type/subtype')),
         ('show-all', ('a', False, 'display hash, size, mime (same as -Hsm)')),
         ('sort', ('S', 'COL', 'sort on: name, hash, size, type or mime')),
+        ('reverse', ('', False, 'reverse sort order')),
         ('print0', ('0', False, 'end lines with null instead of newline')),
     )
 
@@ -141,17 +142,18 @@ class FindCommand(pycommand.CommandBase):
             return 1
 
     # handle sort flag and build ORDER BY statement ######################
-        sortcol = '`filepath`'
+        a_d = 'DESC' if self.flags.reverse else ''
+        sortcol = f'`filepath` {a_d}'
         if self.flags.sort == 'name':
-            sortcol = '`basename`'
+            sortcol = f'`basename` {a_d}'
         elif self.flags.sort == 'hash':
-            sortcol = '`filehash`, `filepath`'
+            sortcol = f'`filehash` {a_d}, `filepath`'
         elif self.flags.sort == 'size':
-            sortcol = '`filesize`'
+            sortcol = f'`filesize` {a_d}'
         elif self.flags.sort == 'type':
-            sortcol = '`cat`, `filepath`'
+            sortcol = f'`cat` {a_d}, `filepath`'
         elif self.flags.sort == 'mime':
-            sortcol = '`mime`, `filepath`'
+            sortcol = f'`mime` {a_d}, `filepath`'
 
     # all passed args are valid, create query and output rows ############
         statement = "SELECT * FROM `index` WHERE {} ORDER BY {}".format(

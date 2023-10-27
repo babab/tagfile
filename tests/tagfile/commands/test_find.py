@@ -41,12 +41,12 @@ output_help = (
                     [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]
                     [--name=NAME | --in-name=STRING] [-H | --show-hash]
                     [-s | --show-size] [-t | --show-type] [-m | --show-mime]
-                    [-a | --show-all] [-S COL | --sort=COL]
+                    [-a | --show-all] [-S COL | --sort=COL] [--reverse]
 
    or: tagfile find [--type=TYPE] [--mime=MIMETYPE] [--size-gt=BYTES]
                     [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]
                     [--name=NAME | --in-name=STRING] [-0 | --print0]
-                    [-S COL | --sort=COL]
+                    [-S COL | --sort=COL] [--reverse]
 
    or: tagfile find [-h | --help]
 
@@ -68,6 +68,7 @@ Options:
 -m, --show-mime     display column with MIME type/subtype
 -a, --show-all      display hash, size, mime (same as -Hsm)
 -S COL, --sort=COL  sort on: name, hash, size, type or mime
+--reverse           reverse sort order
 -0, --print0        end lines with null instead of newline
 
 ''')

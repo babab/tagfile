@@ -40,8 +40,9 @@ output_help = (
     'usage: tagfile list [-H | --show-hash] [-s | --show-size] '
     '''[-t | --show-type]
                     [-m | --show-mime] [-a | --show-all] [-S COL | --sort=COL]
+                    [--reverse]
 
-   or: tagfile list [-0 | --print0] [-S COL | --sort=COL]
+   or: tagfile list [-0 | --print0] [-S COL | --sort=COL] [--reverse]
 
    or: tagfile list [-h | --help]
 
@@ -56,6 +57,7 @@ Options:
 -m, --show-mime     display column with MIME type/subtype
 -a, --show-all      display hash, size, mime (same as -Hsm)
 -S COL, --sort=COL  sort on: name, hash, size, type or mime
+--reverse           reverse sort order
 -0, --print0        end lines with null instead of newline
 
 ''')

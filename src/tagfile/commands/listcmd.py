@@ -47,8 +47,10 @@ class ListCommand(pycommand.CommandBase):
         'usage: tagfile list [-H | --show-hash] [-s | --show-size] '
         '[-t | --show-type]\n'
         '                    [-m | --show-mime] [-a | --show-all] '
-        '[-S COL | --sort=COL]\n\n'
-        '   or: tagfile list [-0 | --print0] [-S COL | --sort=COL]\n\n'
+        '[-S COL | --sort=COL]\n'
+        '                    [--reverse]\n\n'
+        '   or: tagfile list [-0 | --print0] [-S COL | --sort=COL] '
+        '[--reverse]\n\n'
         '   or: tagfile list [-h | --help]'
     )
     description = f'{__doc__}\nBy default, the list is sorted on file path.'
@@ -60,6 +62,7 @@ class ListCommand(pycommand.CommandBase):
         ('show-mime', ('m', False, 'display column with MIME type/subtype')),
         ('show-all', ('a', False, 'display hash, size, mime (same as -Hsm)')),
         ('sort', ('S', 'COL', 'sort on: name, hash, size, type or mime')),
+        ('reverse', ('', False, 'reverse sort order')),
         ('print0', ('0', False, 'end lines with null instead of newline')),
     )
 
@@ -74,17 +77,33 @@ class ListCommand(pycommand.CommandBase):
             self.flags['show-mime'] = True
 
         if self.flags.sort == 'name':
-            query = Index.select().order_by(Index.basename)
+            query = Index.select().order_by(
+                -Index.basename if self.flags.reverse else +Index.basename
+            )
         elif self.flags.sort == 'hash':
-            query = Index.select().order_by(Index.filehash, Index.filepath)
+            query = Index.select().order_by(
+                -Index.filehash if self.flags.reverse else +Index.filehash,
+                Index.filepath
+            )
         elif self.flags.sort == 'size':
-            query = Index.select().order_by(Index.filesize, Index.filepath)
+            query = Index.select().order_by(
+                -Index.filesize if self.flags.reverse else +Index.filesize,
+                Index.filepath
+            )
         elif self.flags.sort == 'type':
-            query = Index.select().order_by(Index.cat, Index.filepath)
+            query = Index.select().order_by(
+                -Index.cat if self.flags.reverse else +Index.cat,
+                Index.filepath
+            )
         elif self.flags.sort == 'mime':
-            query = Index.select().order_by(Index.mime, Index.filepath)
+            query = Index.select().order_by(
+                -Index.mime if self.flags.reverse else +Index.mime,
+                Index.filepath
+            )
         else:  # default / self.flags.sort == 'path'
-            query = Index.select().order_by(Index.filepath)
+            query = Index.select().order_by(
+                -Index.filepat if self.flags.reverse else +Index.filepath
+            )
 
         for i in query:
             if self.flags['print0']:
