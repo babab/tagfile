@@ -1,5 +1,22 @@
 # tagfile
 
+<!-- vim-markdown-toc GFM -->
+
+* [Introduction](#introduction)
+* [Features](#features)
+* [Quick Manual](#quick-manual)
+    * [Adding paths, indexing files and housekeeping](#adding-paths-indexing-files-and-housekeeping)
+    * [Finding duplicate files with clones command](#finding-duplicate-files-with-clones-command)
+    * [Listing, searching and filtering files using the list and find commands](#listing-searching-and-filtering-files-using-the-list-and-find-commands)
+* [Installing tagfile](#installing-tagfile)
+* [Relation between media-paths, databases and config files](#relation-between-media-paths-databases-and-config-files)
+* [Status](#status)
+* [Software license](#software-license)
+
+<!-- vim-markdown-toc -->
+
+## Introduction
+
 Search, index and tag your files and find duplicates.
 
 The goal of tagfile is to manage and organize documents, downloads,
