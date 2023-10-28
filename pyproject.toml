@@ -6,7 +6,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "tagfile"
 authors = [{name = "Benjamin Althues", email = "benjamin@babab.nl"}]
-readme = "README.rst"
+readme = "README.md"
 requires-python = ">=3.7"
 license = {file = "LICENSE"}
 classifiers = [
