@@ -38,9 +38,10 @@ Added
 - Unit and integration tests with coverage reporting
 - Support for running library module as a script with
   ``python -m tagfile [opts] <command>``
-- Support for ENV variables: *TAGFILE_CONF_HOME* and *TAGFILE_DATA_HOME*
-  using parent dirs of ENV vars XDG_{DATA,CONFIG}_HOME when defined or the
-  expected defaults otherwise.
+- Support for ENV variables: ``TAGFILE_CONF_HOME`` and
+  ``TAGFILE_DATA_HOME`` using parent dirs of ENV vars
+  ``XDG_{DATA,CONFIG}_HOME`` when defined or the expected defaults
+  otherwise.
 - Option -q, --quiet to commands add and updatedb
 - Option -v, --verbose to command updatedb
 - Dependency ``python-magic``
