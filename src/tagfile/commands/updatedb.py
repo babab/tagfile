@@ -30,31 +30,38 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
+import os
+
 import pycommand
 
 import tagfile.core
 import tagfile.output
+from tagfile.models import Repository
 
 
 class UpdateDbCommand(pycommand.CommandBase):
-    '''Scan all media paths. Index added files and prune removed files.'''
+    '''Scan media paths. Index added files and prune removed files.'''
     usagestr = (
-        'usage: tagfile updatedb [--prune] [--scan] [-v, --verbose]'
-        ' [-q, --quiet]\n'
+        'usage: tagfile updatedb [-v, --verbose] [-q, --quiet] [--prune] '
+        '[--scan]\n'
+        '                        [-n ID, --path-id=ID]\n\n'
         '   or: tagfile updatedb [-h | --help]'
     )
     description = (
         '{}\n\n'
         'Use the option `--prune` if you only want to remove entries\n'
         'from the index if files are missing. Use the option `--scan`\n'
-        'to only scan for newly added files without pruning.'
+        'to only scan for newly added files without pruning.\n\n'
+        'To prune and/or scan for a single media-path only, use\n'
+        "`--path-id=ID`. See tagfile info for an overview of paths/ID's."
     ).format(__doc__)
     optionList = (
         ('help', ('h', False, 'show this help information')),
+        ('verbose', ('v', False, 'display a message for every action')),
+        ('quiet', ('q', False, 'display nothing except fatal errors')),
         ('prune', ('', False, "prune removed files only; don't scan")),
         ('scan', ('', False, "scan for new files only; don't prune")),
-        ('verbose', ('v', False, 'print message for all actions')),
-        ('quiet', ('q', False, 'print nothing except fatal errors')),
+        ('path-id', ('n', 'ID', "prune/scan only files in path with this id")),
     )
     usageTextExtra = (
         'When no options are specified, updatedb will both scan and prune.\n'
@@ -68,15 +75,33 @@ class UpdateDbCommand(pycommand.CommandBase):
 
         tagfile.output.settings.quiet = self.flags.quiet
         tagfile.output.settings.verbose = self.flags.verbose
+        path_filter = None
 
-        # All options that reach here are valid. We need the repos for
-        # everything that follows.
-        tagfile.core.tfman.loadKnownRepos()
+        if self.flags['path-id']:
+            # Load only files in a single media-path/repo
+            mp_id = self.flags['path-id']
+            try:
+                mpath = Repository.get_by_id(mp_id)
+            except Repository.DoesNotExist:
+                tagfile.output.fatal(f'No media-path known with id {mp_id}')
+                return 1
+
+            if not os.path.exists(mpath.filepath):
+                tagfile.output.fatal(
+                    f'Media-path {mpath.filepath} with id {mp_id}\n'
+                    'does not exist on the filesystem (anymore)'
+                )
+                return 2
+            tagfile.core.tfman.addPath(mpath.filepath)
+            path_filter = mpath.filepath
+        else:
+            # Load all files in media-path/repo
+            tagfile.core.tfman.loadKnownRepos()
 
         # support flagging of both options; don't skip or exit early with elif
         if self.flags.prune or self.flags.scan:
             if self.flags.prune:
-                tagfile.core.prune()
+                tagfile.core.prune(path_filter)
             if self.flags.scan:
                 tagfile.core.tfman.scan()
             return 0

@@ -182,21 +182,27 @@ Options:
 ''')
 
 output_help_updatedb = (
-    '''usage: tagfile updatedb [--prune] [--scan] [-v, --verbose] [-q, --quiet]
+    '''usage: tagfile updatedb [-v, --verbose] [-q, --quiet] [--prune] [--scan]
+                        [-n ID, --path-id=ID]
+
    or: tagfile updatedb [-h | --help]
 
-Scan all media paths. Index added files and prune removed files.
+Scan media paths. Index added files and prune removed files.
 
 Use the option `--prune` if you only want to remove entries
 from the index if files are missing. Use the option `--scan`
 to only scan for newly added files without pruning.
 
+To prune and/or scan for a single media-path only, use
+`--path-id=ID`. See tagfile info for an overview of paths/ID's.
+
 Options:
--h, --help     show this help information
---prune        prune removed files only; don't scan
---scan         scan for new files only; don't prune
--v, --verbose  print message for all actions
--q, --quiet    print nothing except fatal errors
+-h, --help           show this help information
+-v, --verbose        display a message for every action
+-q, --quiet          display nothing except fatal errors
+--prune              prune removed files only; don't scan
+--scan               scan for new files only; don't prune
+-n ID, --path-id=ID  prune/scan only files in path with this id
 
 When no options are specified, updatedb will both scan and prune.
 It will always prune deleted files before scanning for new files.
