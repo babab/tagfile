@@ -30,6 +30,7 @@ It also is a package for Python (but the API is unstable at this point).
     * [Adding paths, indexing files and housekeeping](#adding-paths-indexing-files-and-housekeeping)
     * [Finding duplicate files with clones command](#finding-duplicate-files-with-clones-command)
     * [Usage examples: listing, searching and filtering files](#usage-examples-listing-searching-and-filtering-files)
+    * [Help and synopses for commands](#help-and-synopses-for-commands)
 * [Installing tagfile](#installing-tagfile)
 * [Relation between media-paths, databases and config files](#relation-between-media-paths-databases-and-config-files)
 * [Status](#status)
@@ -162,6 +163,205 @@ tagfile find --type video --size-gt 104857600 -stS size --reverse
 tagfile find --type video --size-gt 104857600 --show-size --show-type \
    --sort=size --reverse
 ```
+
+### Help and synopses for commands
+
+<details><summary>tagfile</summary>
+
+``` console
+Usage: tagfile [--config <filename>] [--db <name>] <command>
+   or: tagfile [-h | --help] | [-V | --version]
+
+Search, index and tag your files and find duplicates
+
+Options:
+--config=<filename>  use specified config file
+--db=<name>          use database <name>, defined in config file
+-h, --help           show this help information
+-V, --version        show version and platform information
+
+Commands:
+  add        add a directory to media paths
+  clones     show all indexed duplicate files
+  find       find files according to certain criterias
+  help       show help information
+  info       show statistics for index and media paths
+  list       show all indexed files
+  updatedb   scan media paths and index newly added files
+  version    show version and platform information
+
+See 'tagfile help <command>' for more information on a
+specific command, before using it.
+```
+
+</details>
+
+<details><summary>tagfile add</summary>
+
+``` console
+usage: tagfile add [-q | --quiet] [--scan] <media-path>
+   or: tagfile add [-h | --help]
+
+Add a directory to media paths (to be scanned later or right away)
+
+Options:
+-h, --help   show this help information
+--scan       scan path now (this may take a long time)
+-q, --quiet  print nothing except fatal errors
+```
+
+</details>
+
+<details><summary>tagfile clones</summary>
+
+``` console
+usage: tagfile clones [-s | --show-size] [-t | --show-type] [-m | --show-mime]
+   or: tagfile clones [-h | --help]
+
+Show all indexed duplicate files
+
+Options:
+-h, --help       show this help information
+-s, --show-size  display column with filesizes
+-t, --show-type  display column with MIME type
+-m, --show-mime  display column with MIME type/subtype
+```
+
+</details>
+
+<details><summary>tagfile find</summary>
+
+``` console
+usage: tagfile find [--type=TYPE] [--mime=MIMETYPE] [--size-gt=BYTES]
+                    [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]
+                    [--name=NAME | --in-name=STRING] [-H | --show-hash]
+                    [-s | --show-size] [-t | --show-type] [-m | --show-mime]
+                    [-a | --show-all] [-S COL | --sort=COL] [--reverse]
+
+   or: tagfile find [--type=TYPE] [--mime=MIMETYPE] [--size-gt=BYTES]
+                    [--size-lt=BYTES] [--hash=HEX] [--in-path=STRING]
+                    [--name=NAME | --in-name=STRING] [-0 | --print0]
+                    [-S COL | --sort=COL] [--reverse]
+
+   or: tagfile find [-h | --help]
+
+Find files according to certain criterias
+
+Options:
+-h, --help          show this help information
+--type=TYPE         match files on 1st part of MIME type
+--mime=MIMETYPE     match files on full MIME type/subtype
+--size-gt=BYTES     match files where size is greater than BYTES
+--size-lt=BYTES     match files where size is lesser than BYTES
+--hash=HEX          match files where checksum is (or starts with) HEX
+--in-path=STRING    match absolute paths with a substring of STRING
+--name=NAME         match filenames that are exactly NAME
+--in-name=STRING    match filenames with a substring of STRING
+-H, --show-hash     display column with checksum hash
+-s, --show-size     display column with filesizes
+-t, --show-type     display column with MIME type
+-m, --show-mime     display column with MIME type/subtype
+-a, --show-all      display hash, size, mime (same as -Hsm)
+-S COL, --sort=COL  sort on: name, hash, size, type or mime
+--reverse           reverse sort order
+-0, --print0        end lines with null instead of newline
+```
+
+</details>
+
+<details><summary>tagfile help</summary>
+
+``` console
+usage: tagfile help [<command>]
+
+Show usage information (for subcommands)
+
+Options:
+-h, --help  show usage information for help command
+```
+
+</details>
+
+<details><summary>tagfile info</summary>
+
+``` console
+usage: tagfile info [-C | --show-config]
+   or: tagfile info [-h | --help]
+
+Show media paths, user config and statistics for index.
+
+Options:
+-h, --help         show this help information
+-C, --show-config  pretty print active config in python
+```
+
+</details>
+
+<details><summary>tagfile list</summary>
+
+``` console
+usage: tagfile list [-H | --show-hash] [-s | --show-size] [-t | --show-type]
+                    [-m | --show-mime] [-a | --show-all] [-S COL | --sort=COL]
+                    [--reverse]
+
+   or: tagfile list [-0 | --print0] [-S COL | --sort=COL] [--reverse]
+
+   or: tagfile list [-h | --help]
+
+Output a list of all indexed files.
+By default, the list is sorted on file path.
+
+Options:
+-h, --help          show this help information
+-H, --show-hash     display column with checksum hash
+-s, --show-size     display column with filesizes
+-t, --show-type     display column with MIME type
+-m, --show-mime     display column with MIME type/subtype
+-a, --show-all      display hash, size, mime (same as -Hsm)
+-S COL, --sort=COL  sort on: name, hash, size, type or mime
+--reverse           reverse sort order
+-0, --print0        end lines with null instead of newline
+```
+
+</details>
+
+<details><summary>tagfile updatedb</summary>
+
+``` console
+usage: tagfile updatedb [--prune] [--scan] [-v, --verbose] [-q, --quiet]
+   or: tagfile updatedb [-h | --help]
+
+Scan all media paths. Index added files and prune removed files.
+
+Use the option `--prune` if you only want to remove entries
+from the index if files are missing. Use the option `--scan`
+to only scan for newly added files without pruning.
+
+Options:
+-h, --help     show this help information
+--prune        prune removed files only; don't scan
+--scan         scan for new files only; don't prune
+-v, --verbose  print message for all actions
+-q, --quiet    print nothing except fatal errors
+
+When no options are specified, updatedb will both scan and prune.
+It will always prune deleted files before scanning for new files.
+```
+
+</details>
+
+<details><summary>tagfile version</summary>
+
+``` console
+usage: tagfile version [-h | --help]
+
+Show version and platform information
+
+Options:
+-h, --help  show this help information
+```
+
+</details>
 
 ## Installing tagfile
 
