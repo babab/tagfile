@@ -251,11 +251,14 @@ tfman = _TagFileManager()
 use. The class `_TagFileManager` should not be used directly.'''
 
 
-def prune():
-    lnout('\n[bold]PRUNING[/bold]')
+def prune(path_filter=None):
+    lnout('[bold]PRUNING[/bold]')
     text = 'Checking index for entries with missing files... '
     with c.status(text, spinner='simpleDotsScrolling'):
-        res = Index.raw('''SELECT * FROM `index`''')
+        if path_filter:
+            res = Index.select().where(Index.filepath.startswith(path_filter))
+        else:
+            res = Index.select()
         npruned = 0
 
     disable_bar = False if cfg['ui']['progressbars'] else True

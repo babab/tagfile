@@ -40,6 +40,12 @@ import tagfile.core
 import tagfile.files
 
 
+output_prune_with_path_filter = '''PRUNING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{whitespace}
+DONE. 0 files were removed from the index.
+'''.format(whitespace='   ')
+
+
 # testing workings before init() step
 ##############################################################################
 
@@ -74,3 +80,13 @@ def test_core_tfman_before_and_after_init():
     assert tfman.ready is False
     tfman.init()
     assert tfman.ready is True
+
+
+# testing after files and database has been set up
+##############################################################################
+
+def test_prune_with_path_filter(capfd):
+    tagfile.core.prune(path_filter='/tmp/x-DOESNOTEXIST-x')
+    cap = capfd.readouterr()
+    assert cap.out == output_prune_with_path_filter
+    assert cap.err == ''
