@@ -1,13 +1,35 @@
 # tagfile
 
+## Introduction
+
+Search, index and tag your files and find duplicates.
+
+The goal of tagfile is to manage and organize any sort of file
+(documents, music, pictures and videos in particular) in a way that is
+not tied to any file browser program, filesystem or operating system.
+The metadata that tagfile creates and uses to keep track of these
+files should be portable for use in multiple computer systems and be
+independent from any persistent mount points, filepaths or filenames.
+
+Tagfile is primarily a unixy command-line application with a focus on
+simplicity, interactivity and scriptabilty through (shell) scripts. It
+is shaping up to be an amalgamation of features from applications such
+as locate, ls, find, file, cksum, sort and grep performed in constrained
+scopes of specific sets of files that are defined and controlled by the
+user in one or more sqlite databases.
+
+It also is a package for Python (but the API is unstable at this point).
+
+## Index
+
 <!-- vim-markdown-toc GFM -->
 
-* [Introduction](#introduction)
+* [Homes](#homes)
 * [Features](#features)
 * [Quick Manual](#quick-manual)
     * [Adding paths, indexing files and housekeeping](#adding-paths-indexing-files-and-housekeeping)
     * [Finding duplicate files with clones command](#finding-duplicate-files-with-clones-command)
-    * [Listing, searching and filtering files using the list and find commands](#listing-searching-and-filtering-files-using-the-list-and-find-commands)
+    * [Usage examples: listing, searching and filtering files](#usage-examples-listing-searching-and-filtering-files)
 * [Installing tagfile](#installing-tagfile)
 * [Relation between media-paths, databases and config files](#relation-between-media-paths-databases-and-config-files)
 * [Status](#status)
@@ -15,21 +37,7 @@
 
 <!-- vim-markdown-toc -->
 
-## Introduction
-
-Search, index and tag your files and find duplicates.
-
-The goal of tagfile is to manage and organize documents, downloads,
-music, pictures and videos in a way that is not tied to any file browser
-program, filesystem or operating system.
-
-The metadata that tagfile creates and uses to keep track of these files
-should be portable for use in multiple computer systems and be
-independent from any persistent mount points, filepaths or filenames.
-
-Tagfile is primarily a unixy command-line application with a focus on
-simplicity, interactivity and scriptabilty through (shell) scripts. It
-also is a package for Python (but the API is unstable at this point).
+## Homes
 
 -   Codeberg: <https://codeberg.org/babab/tagfile>
 -   Github: <https://github.com/babab/tagfile>
@@ -117,11 +125,11 @@ Show hash, path, size and first part of MIME-type (using short opts):
 tagfile clones -st
 ```
 
-### Listing, searching and filtering files using the list and find commands
+### Usage examples: listing, searching and filtering files
 
-This is the most important part of tagfile and the reason why you might
-want to use it. What follows are some usage examples with both short and
-long optional arguments.
+The list and find commands are the most important part of tagfile and
+probably the reason why you might want to use it. What follows are some
+usage examples with both short and long optional arguments.
 
 List all files sorted by filesize (showing checksum, filesize and
 mimetype columns):
@@ -205,10 +213,8 @@ A config file:
 A database:
 
 -   Can contain zero, one or multiple media-paths.
-
 -   The most used commands/actions (add, find, list and updatedb) are
     performed in a database-wide scope.
-
 -   The default database to use can be:
 
     > -   configured in the config file `default_database = "name"`
