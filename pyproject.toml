@@ -7,7 +7,7 @@ build-backend = "flit_core.buildapi"
 name = "tagfile"
 authors = [{name = "Benjamin Althues", email = "benjamin@babab.nl"}]
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 license = {file = "LICENSE"}
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -33,9 +33,41 @@ classifiers = [
     "Topic :: Utilities",
 ]
 keywords = [
-    "tag", "files", "media", "duplicate", "duplicates", "organize",
-    "checksum", "locate", "database", "find", "hash", "filter",
-    "harddisk", "space"
+    "checksum",
+    "cli",
+    "clones",
+    "console",
+    "database",
+    "duplicate",
+    "duplicates",
+    "file",
+    "files",
+    "filesize",
+    "filetype",
+    "filter",
+    "find",
+    "harddisk",
+    "hash",
+    "list",
+    "locate",
+    "ls",
+    "magic",
+    "manager",
+    "match",
+    "media",
+    "mimetype",
+    "organize",
+    "scripting",
+    "search",
+    "shell",
+    "size",
+    "sort",
+    "space",
+    "sqlite",
+    "tag",
+    "tui",
+    "unix",
+    "updatedb",
 ]
 dynamic = ["version", "description"]
 dependencies = [
@@ -60,7 +92,8 @@ test = [
 
 
 [project.urls]
-Home = "https://github.com/babab/tagfile"
+Codeberg = "https://codeberg.org/babab/tagfile"
+Github = "https://github.com/babab/tagfile"
 
 
 [project.scripts]
