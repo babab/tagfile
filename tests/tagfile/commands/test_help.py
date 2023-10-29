@@ -81,14 +81,13 @@ Options:
 
 '''
 
-output_help_add = '''usage: tagfile add [-q | --quiet] [--scan] <media-path>
+output_help_add = '''usage: tagfile add [-q | --quiet] <media-path>
    or: tagfile add [-h | --help]
 
-Add a directory to media paths (to be scanned later or right away)
+Add a directory to media paths
 
 Options:
 -h, --help   show this help information
---scan       scan path now (this may take a long time)
 -q, --quiet  print nothing except fatal errors
 
 '''

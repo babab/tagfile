@@ -43,23 +43,20 @@ TAGFILE_DATA_HOME = os.environ['TAGFILE_DATA_HOME']
 TAGFILEDEV_MEDIA_PATH = os.environ['TAGFILEDEV_MEDIA_PATH']
 
 
-output_help = '''usage: tagfile add [-q | --quiet] [--scan] <media-path>
+output_help = '''usage: tagfile add [-q | --quiet] <media-path>
    or: tagfile add [-h | --help]
 
-Add a directory to media paths (to be scanned later or right away)
+Add a directory to media paths
 
 Options:
 -h, --help   show this help information
---scan       scan path now (this may take a long time)
 -q, --quiet  print nothing except fatal errors
 
 '''
 
 output_noargs = '''error: command add requires argument
 
-To add and scan current dir, use `tagfile add --scan .`
-See `tagfile help add` OR `tagfile add -h` for more info.
-'''
+{}'''.format(output_help)
 
 output_add_tmp_tagfiletests = '''Added media path: {}
 '''.format(TAGFILEDEV_MEDIA_PATH)
@@ -92,19 +89,11 @@ def test_help_bool_flag_is_True_or_None():
 def test_bool_flags_with_1_option():
     cmd = Command(['-h'])
     assert cmd.flags['help'] is True
-    assert cmd.flags['scan'] is None
-
-
-def test_bool_flags_with_2_options():
-    cmd = Command(['-h', '--scan'])
-    assert cmd.flags['help'] is True
-    assert cmd.flags['scan'] is True
 
 
 def test_flags_are_accessible_by_attribute():
     cmd = Command(['-h'])
     assert cmd.flags.help is True
-    assert cmd.flags.scan is None
 
 
 def test_optionerror_on_unset_flags_attributes():

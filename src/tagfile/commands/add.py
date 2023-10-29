@@ -39,15 +39,14 @@ from tagfile.core import tfman  # instance of tagfile.core._TagFileManager
 
 
 class AddCommand(pycommand.CommandBase):
-    '''Add a directory to media paths (to be scanned later or right away)'''
+    '''Add a directory to media paths'''
     usagestr = (
-        'usage: tagfile add [-q | --quiet] [--scan] <media-path>\n'
+        'usage: tagfile add [-q | --quiet] <media-path>\n'
         '   or: tagfile add [-h | --help]'
     )
     description = __doc__
     optionList = (
         ('help', ('h', False, 'show this help information')),
-        ('scan', ('', False, 'scan path now (this may take a long time)')),
         ('quiet', ('q', False, 'print nothing except fatal errors')),
     )
 
@@ -65,9 +64,8 @@ class AddCommand(pycommand.CommandBase):
 
         if not arg:
             output.lnerr(
-                'error: command add requires argument\n\n'
-                'To add and scan current dir, use `tagfile add --scan .`\n'
-                'See `tagfile help add` OR `tagfile add -h` for more info.'
+                f'error: command add requires argument\n\n{self.usage}',
+                hl=False
             )
             return 1
 
@@ -83,5 +81,3 @@ class AddCommand(pycommand.CommandBase):
         with output.consout.status('', spinner='simpleDotsScrolling'):
             tfman.addPath(filepath)
             output.lnout('Added media path: {}'.format(filepath))
-            if self.flags.scan:
-                tfman.scan()
