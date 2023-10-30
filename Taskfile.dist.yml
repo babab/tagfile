@@ -33,7 +33,7 @@ version: '3'  # https://taskfile.dev
 vars:
   ### Settings ###############################################################
   NAME: tagfile
-  VERSION: 0.2.0a12
+  VERSION: 0.2.0a13
   SCRIPT: ./src/{{.NAME}}/commands/main_cmd.py
   CODE_DIRS: src tests
   # absolute path to system python (version)

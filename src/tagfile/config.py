@@ -38,7 +38,7 @@ import tomllib
 
 from tagfile import common
 
-defaultconfig = '''# config created by tagfile 0.2.0a12 at {date}
+defaultconfig = '''# config created by tagfile 0.2.0a13 at {date}
 
 # Use multiple config files to:
 # - define (sets of) database locations

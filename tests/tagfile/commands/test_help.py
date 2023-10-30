@@ -97,13 +97,20 @@ output_help_clones = (
     ''' [-m | --show-mime]
    or: tagfile clones [-h | --help]
 
-Show all indexed duplicate files
+Show files with matching checksums. In this overview the column
+with hashes is always printed. Add `-stm` flags to display more
+columns.
+
+By default, an extra line is printed after each list of clones,
+showing the total number of duplicates. This can be hidden with
+`--hide-sum`.
 
 Options:
 -h, --help       show this help information
 -s, --show-size  display column with filesizes
 -t, --show-type  display column with MIME type
 -m, --show-mime  display column with MIME type/subtype
+--hide-sum       do not print "X clones/duplicates" line
 
 ''')
 

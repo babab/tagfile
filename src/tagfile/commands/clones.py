@@ -37,18 +37,27 @@ import tagfile.output
 
 
 class ClonesCommand(pycommand.CommandBase):
-    '''Show all indexed duplicate files'''
+    '''Show files with matching checksums.'''
     usagestr = (
         'usage: tagfile clones [-s | --show-size] [-t | --show-type] '
         '[-m | --show-mime]\n'
         '   or: tagfile clones [-h | --help]'
     )
     description = __doc__
+    description = (
+        'Show files with matching checksums. In this overview the column\n'
+        'with hashes is always printed. Add `-stm` flags to display more\n'
+        'columns.\n\n'
+        'By default, an extra line is printed after each list of clones,\n'
+        'showing the total number of duplicates. This can be hidden with\n'
+        '`--hide-sum`.'
+    )
     optionList = (
         ('help', ('h', False, 'show this help information')),
         ('show-size', ('s', False, 'display column with filesizes')),
         ('show-type', ('t', False, 'display column with MIME type')),
         ('show-mime', ('m', False, 'display column with MIME type/subtype')),
+        ('hide-sum', ('', False, 'do not print "X clones/duplicates" line')),
     )
 
     def run(self):

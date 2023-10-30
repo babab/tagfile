@@ -36,7 +36,7 @@ import sys
 import tagfile
 from tagfile import common
 
-TFVERSION = '0.2.0a12'
+TFVERSION = '0.2.0a13'
 
 
 def test_tagfile_package_version_author_copyright_in_namespace():

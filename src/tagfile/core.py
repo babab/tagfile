@@ -286,14 +286,14 @@ def clones(flags):
     hashes = clones_list()
     res = (Index.select()
                 .where(Index.filehash << hashes)
-                .order_by(Index.filehash))
+                .order_by(Index.filehash, Index.filepath))
     count = -1
     changed = ''
     toggler = False
     for i in res:
         if changed != i.filehash:
             toggler = False if toggler else True
-            if count != -1:
+            if count != -1 and not flags['hide-sum']:
                 # Display total ONLY after the first iteration
                 lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')
             count = 0
@@ -312,8 +312,10 @@ def clones(flags):
         lnout(f'{_type}{_mime} {i.filepath}')
         changed = i.filehash
         count += 1
-    if count == -1:
-        lnout('No clones/duplicates found in index')
-    else:
-        # Display total for last iteration, after loop is done
-        lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')
+
+    if not flags['hide-sum']:
+        if count == -1:
+            lnout('No clones/duplicates found in index')
+        else:
+            # Display total for last iteration, after loop is done
+            lnout(f'└──── [italic]{count:>3} clones/duplicates[/italic]')
