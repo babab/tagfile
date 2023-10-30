@@ -78,6 +78,12 @@ main = "{data_home}/main.db"
 #custom = "{data_home}/custom.db"
 #cats = "{data_home}/cat-pictures.sqlite"
 
+[alias]
+ls = ['list', '-st']
+up = ['updatedb']
+# ls-type = ['list', '-Hst', '-S', 'type']
+# videos = ['find', '--type=video', '-st']
+
 [ignore.name-based]
 # Will try to match paths/filenames in the order of:
 # 1. paths (substrings of the absolute full path to file)
@@ -211,6 +217,11 @@ class Configuration:
         val.is_dict('ui')
         val.is_bool('ui.progressbars')
         val.is_str('ui.colors', options=['auto', 'always', 'never'])
+
+        val.is_dict('alias')
+        for key in cfg['alias'].keys():
+            val.is_list(f'alias.{key}')
+
         val.is_dict('databases', min_size=1)
         val.is_str('databases.main')
         val.is_dict('ignore', min_size=2)

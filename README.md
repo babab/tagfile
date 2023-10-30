@@ -58,6 +58,7 @@ It also is a package for Python (but the API is unstable at this point).
 -   prune index from files that got moved or deleted
 -   print results of *list* and *find* commands terminated with a null
     character to use for piping to other utilities like xargs.
+-   configure aliases for certain commands and options (like git alias)
 
 Features to be implemented in later versions:
 

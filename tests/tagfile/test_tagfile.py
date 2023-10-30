@@ -51,7 +51,7 @@ def test_default_cfg_structure():
     cfg = tagfile.cfg
     assert cfg
     assert type(cfg) is dict
-    assert len(cfg) == 6
+    assert len(cfg) == 7
     assert cfg['default_database'] == 'main'
     assert cfg['logging']
     assert type(cfg['logging']) is dict
@@ -64,6 +64,13 @@ def test_default_cfg_structure():
     assert len(cfg['ui']) == 2
     assert cfg['ui']['progressbars'] is True
     assert cfg['ui']['colors'] == 'auto'
+    assert cfg['alias']
+    assert type(cfg['alias']) is dict
+    assert len(cfg['alias']) == 2
+    assert cfg['alias']['ls']
+    assert type(cfg['alias']['ls']) is list
+    assert cfg['alias']['up']
+    assert type(cfg['alias']['up']) is list
     assert cfg['ignore']
     assert type(cfg['ignore']) is dict
     assert len(cfg['ignore']) == 2

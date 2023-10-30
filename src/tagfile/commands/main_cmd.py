@@ -197,16 +197,23 @@ class Command(pycommand.CommandBase):
             DB_OK = tfman.init(db_name=self.flags['db'])
         else:
             DB_OK = tfman.init()
-
         if not DB_OK:
-            return 1
+            return 1  # any error messages will be printed in tfman.init()
 
-        # temporary handling of old commands, the super call will catch
-        # and handle these further with 'error: unknown command'
         try:
             command = self.args[0]
         except IndexError:
             command = None
+
+        # On a match of `command` with one of the configured aliases:
+        # Using the entry function, create new Command instance with the
+        # aliased argument list and call this run() method again.
+        if command in tagfile.cfg['alias'].keys():
+            alias_args = tagfile.cfg['alias'][command]
+            return entry(alias_args + self.args[1:])
+
+        # temporary handling of old commands, the super call will catch
+        # and handle these further with 'error: unknown command'
         if command == 'scan':
             lnout(
                 "Command 'scan' is removed. The equivalent to 'scan' is\n"

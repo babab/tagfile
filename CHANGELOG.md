@@ -34,6 +34,8 @@ from scratch.
 -   Flexible settings for toggling colored output: auto, always and
     never
 -   Unit and integration tests with coverage reporting
+-   Support for configuring aliases for certain commands and options
+    (like git [alias] in .gitconfig)
 -   Support for running library module as a script with
     `python -m tagfile [opts] <command>`
 -   Support for ENV variables: `TAGFILE_CONF_HOME` and
