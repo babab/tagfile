@@ -217,6 +217,7 @@ clean:
 	rm -rf build dist reports ${VENVDIR}
 	rm -f ${NAME}.spec
 	find -type d -name __pycache__ -print0 | xargs -0 rm -rf
+	find -type d -name .pytest_cache -print0 | xargs -0 rm -rf
 	@printf '\nWarning: The cache/media dir must be manually removed if needed!\n' #custom
 
 
