@@ -89,7 +89,7 @@ tagfile add ~/Videos
 This will only save a reference to the directory. To actually walk
 through the directories and hash the files to get checksums, you can use
 the `updatedb` command. This will recursively scan all media-paths
-you\'ve added and may take some time, especially the first time.
+you've added and may take some time, especially the first time.
 
 For both the prune and scan actions, progressbars will be shown with
 estimates of the remaining time to complete. Add a `--verbose` flag to
@@ -161,8 +161,7 @@ List all videos larger than 100MB, sorted by filesize from big to small
 
 ``` console
 tagfile find --type video --size-gt 104857600 -stS size --reverse
-tagfile find --type video --size-gt 104857600 --show-size --show-type \
-   --sort=size --reverse
+tagfile find --type video --size-gt 104857600 --show-size --show-type --sort=size --reverse
 ```
 
 ### Help and synopses for commands
@@ -384,7 +383,7 @@ Tagfile is a command-line end-user application written in Python that is
 dependant on packages from PyPI. You can install it using pip. But using
 pipx (<https://pypa.github.io/pipx/>) is recommended because it avoids
 dependency problems and/or clashes with python packages from your
-system\'s package manager in the future.
+system's package manager in the future.
 
 Install latest **release** from PyPI:
 
@@ -410,6 +409,7 @@ To **upgrade** or **uninstall** tagfile in the future you can use:
 pipx upgrade tagfile
 pipx uninstall tagfile
 ```
+
 
 ## Relation between media-paths, databases and config files
 
@@ -455,7 +455,7 @@ Tagfile has been written in a short time and used by me sporadically for
 8 years after that. All code was contained in a single file script in
 `~/bin`, available from Github only.
 
-Starting in March 2023 I\'ve decided to properly release it to PyPI and
+Starting in March 2023 I've decided to properly release it to PyPI and
 flesh out the current project structure, command interface and database
 handling before working on new features so it may live up to its name.
 Since at this moment in time, you cannot tag your files yet :)
@@ -475,6 +475,6 @@ Dependencies (automatically installed with pipx / pip):
 
 Copyright (c) 2015-2023 Benjamin Althues \<benjamin at babab . nl\>
 
-tagfile is open source software, licensed under a BSD-3-Clause license.
+Tagfile is open source software, licensed under a BSD-3-Clause license.
 See the [LICENSE](https://github.com/babab/tagfile/blob/devel/LICENSE)
 file for the full license text.

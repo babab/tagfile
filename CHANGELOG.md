@@ -1,10 +1,10 @@
 # Change Log
 
-tagfile adheres to [Semantic Versioning](http://semver.org/).
+Tagfile adheres to [Semantic Versioning](http://semver.org/).
 
-## 0.2.0 - to be released
+## 0.2.0 - to be released (now in devel branch)
 
-### Notes for \"updating\" from v0.1.0
+### Notes for "updating" from v0.1.0
 
 Compared to version 0.1.0, the configfile and database fields are
 changed completely. There are no migrations available for config or
@@ -54,7 +54,7 @@ from scratch.
 -   Commands *prune* and *scan* are removed and its features are
     included and expanded upon in a new *updatedb* command. By default,
     updatedb will prune first and scan afterwards. The old behaviour can
-    be approximated through updatedb\'s option flags `--prune` and
+    be approximated through updatedb's option flags `--prune` and
     `--scan`.
 -   Command *same* is replaced with *clones*
 -   Command *stats* is replaced with *info*
@@ -65,7 +65,7 @@ from scratch.
     matches of filenames using separate lists.
 -   Show first 7 chars instead of first 5 chars of checksum
 -   Replaced dependency `ansicolors` with `rich`
--   Don\'t scan symlinks (by default, but configurable)
+-   Don't scan symlinks (by default, but configurable)
 -   Logging level can be configured.
 
 ### Removed
