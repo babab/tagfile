@@ -1,4 +1,4 @@
-# tagfile
+# Tagfile
 
 ## Introduction
 
@@ -30,7 +30,7 @@ It also is a package for Python (but the API is unstable at this point).
     * [Adding paths, indexing files and housekeeping](#adding-paths-indexing-files-and-housekeeping)
     * [Finding duplicate files with clones command](#finding-duplicate-files-with-clones-command)
     * [Usage examples: listing, searching and filtering files](#usage-examples-listing-searching-and-filtering-files)
-    * [Help and synopses for commands](#help-and-synopses-for-commands)
+* [Help and synopses for commands](#help-and-synopses-for-commands)
 * [Installing tagfile](#installing-tagfile)
 * [Relation between media-paths, databases and config files](#relation-between-media-paths-databases-and-config-files)
 * [Status](#status)
@@ -40,6 +40,7 @@ It also is a package for Python (but the API is unstable at this point).
 
 ## Homes
 
+-   Docs: <https://babab.codeberg.page/tagfile>
 -   Codeberg: <https://codeberg.org/babab/tagfile>
 -   Github: <https://github.com/babab/tagfile>
 
@@ -164,7 +165,7 @@ tagfile find --type video --size-gt 104857600 -stS size --reverse
 tagfile find --type video --size-gt 104857600 --show-size --show-type --sort=size --reverse
 ```
 
-### Help and synopses for commands
+## Help and synopses for commands
 
 <details><summary>tagfile</summary>
 

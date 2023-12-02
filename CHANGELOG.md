@@ -2,7 +2,7 @@
 
 Tagfile adheres to [Semantic Versioning](http://semver.org/).
 
-## 0.2.0 - to be released (now in devel branch)
+## v0.2.0 - to be released (now in devel branch)
 
 ### Notes for "updating" from v0.1.0
 
@@ -76,6 +76,6 @@ from scratch.
 
 -   Fixed race condition for temp. files when scanning
 
-## 0.1.0 - 2023-03-23
+## v0.1.0 - 2023-03-23
 
 -   Initial release
