@@ -6,7 +6,9 @@
 config.mk
 
 /build/
+/.cache/
 /cache/
 /dist/
 /reports/
+/site/
 /.virtualenv/

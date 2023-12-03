@@ -1,0 +1,63 @@
+site_name: Tagfile documentation
+site_description: Manage and organize files in a way that is not tied to any file-browser program, filesystem or operating system.
+site_url: https://babab.codeberg.page/tagfile
+repo_url: https://codeberg.org/babab/tagfile
+copyright: Copyright &copy; 2015-2023 Benjamin Althues
+theme:
+  name: material
+  font:
+    text: Merriweather Sans
+    code: Fira Code
+  favicon: assets/favicon.png
+  logo: assets/logo512.png
+  icon:
+    repo: fontawesome/brands/git #simple/codeberg
+  #   logo: fontawesome/solid/file-circle-question
+  features:
+    - navigation.footer
+    - search.suggest
+    - search.share
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      media: "(prefers-color-scheme: light)"
+      primary: deep orange
+      accent: amber
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      media: "(prefers-color-scheme: dark)"
+      primary: amber
+      accent: deep orange
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+nav:
+  - Home: index.md
+  - Manual: manual.md
+  - Command help: commands.md
+  - Installing: installing.md
+  - Change Log: changes.md
+  - License: license.md
+markdown_extensions:
+  - attr_list
+extra:
+  social:
+    - icon: fontawesome/solid/house-chimney
+      link: https://benjamin.althu.es
+      name: Personal website
+    - icon: simple/forgejo
+      link: https://git.babab.nl
+      name: self-hosted git repositories
+    - icon: simple/codeberg
+      link: https://codeberg.org/babab
+      name: babab on Codeberg
+    - icon: fontawesome/brands/github
+      link: https://github.com/babab
+      name: babab on Github
+plugins:
+  - search
+  - social
+  # - offline

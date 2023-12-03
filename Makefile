@@ -218,7 +218,18 @@ clean:
 	rm -f ${NAME}.spec
 	find -type d -name __pycache__ -print0 | xargs -0 rm -rf
 	find -type d -name .pytest_cache -print0 | xargs -0 rm -rf
-	@printf '\nWarning: The cache/media dir must be manually removed if needed!\n' #custom
+
+clean-all: clean
+	@printf '\n--- CLEANING UP extra FILES ---\n'
+	rm -rf cache .cache site
+	rm -f tags
+
+documentation:
+	rm -rf site
+	${SYSPYTHON} documentation.py
+	${VENVDIR}/bin/mkdocs build
+	vim -c wq README.md
+	cd site; ${SYSPYTHON} -m http.server
 
 
 ### pipx targets / user packages #############################################
