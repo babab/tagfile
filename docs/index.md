@@ -12,7 +12,7 @@ files should be portable for use in multiple computer systems and be
 independent from any persistent mount points, filepaths or filenames.
 
 
-![Image title](http://localhost:8000/assets/logo128.png){ align=right }
+![logo](https://babab.codeberg.page/tagfile/assets/logo128.png){ align=right }
 Tagfile is primarily a unixy command-line application with a focus on
 simplicity, interactivity and scriptabilty through (shell) scripts. It
 is shaping up to be an amalgamation of features from applications such

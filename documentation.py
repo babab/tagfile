@@ -58,7 +58,7 @@ independent from any persistent mount points, filepaths or filenames.
 
 # Display logo using extended markdown syntax - docs only
     {'text': '''
-![Image title](http://localhost:8000/assets/logo128.png){ align=right }''',
+![logo](https://babab.codeberg.page/tagfile/assets/logo128.png){ align=right }''',
      'destinations': ['docs/index.md']},
 
 # Introduction 2/2
