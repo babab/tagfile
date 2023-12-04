@@ -45,5 +45,8 @@ extra:
       name: babab on Github
 plugins:
   - search
-  - social
+  - social:
+      cards_layout_options:
+        background_color: "#2e3b4e"
+        color: white
   # - offline
