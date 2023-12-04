@@ -11,29 +11,15 @@ theme:
   favicon: assets/favicon.png
   logo: assets/logo512.png
   icon:
-    repo: fontawesome/brands/git #simple/codeberg
-  #   logo: fontawesome/solid/file-circle-question
+    repo: fontawesome/brands/git
   features:
     - navigation.footer
     - search.suggest
     - search.share
   palette:
-    # Palette toggle for light mode
-    - scheme: default
-      media: "(prefers-color-scheme: light)"
-      primary: deep orange
-      accent: amber
-      toggle:
-        icon: material/weather-night
-        name: Switch to dark mode
-    # Palette toggle for dark mode
-    - scheme: slate
-      media: "(prefers-color-scheme: dark)"
-      primary: amber
-      accent: deep orange
-      toggle:
-        icon: material/weather-sunny
-        name: Switch to light mode
+    scheme: slate
+    primary: teal
+    accent: amber
 nav:
   - Home: index.md
   - Manual: manual.md
